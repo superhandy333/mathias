@@ -1,39 +1,40 @@
 
 # ESTW 2 <!-- omit in toc -->
 
-Anleitung zum Aufsetzen eines Datenbankservers zur Entwicklung von `estw2`.
+Privates Stellwerkssystem `estw2` zum Steuern von Modelleisenbahnen.
 
-- [Begriffe](#begriffe)
-- [Aufsetzen des Docker-Containers mit der Datenbank](#aufsetzen-des-docker-containers-mit-der-datenbank)
-  - [Parameter](#parameter)
-  - [Docker-Befehl](#docker-befehl)
-- [Anlegen der Datenstruktur](#anlegen-der-datenstruktur)
-- [Anlegen des DB-Users](#anlegen-des-db-users)
-- [Vergabe Schreibberechtigung des Export-Verzeichnisses](#vergabe-schreibberechtigung-des-export-verzeichnisses)
-- [Export der Daten nach csv](#export-der-daten-nach-csv)
-- [Transfer der csv-Dateien nach Windows](#transfer-der-csv-dateien-nach-windows)
-- [Files](#files)
+- [Projektierung](#projektierung)
+  - [Projekte](#projekte)
+  - [Elemente](#elemente)
+  - [Files](#files)
   - [create\_database.sql](#create_databasesql)
-  - [create\_user.sql](#create_usersql)
-  - [export.sql](#exportsql)
-  - [transfer.sql](#transfersql)
+      - [create\_user.sql](#create_usersql)
+      - [export.sql](#exportsql)
+      - [transfer.sql](#transfersql)
 - [Autor](#autor)
 
+## Datenbankserver
 
-## Begriffe
+Anleitung zum Aufsetzen eines Datenbankservers
 
-| | |
+### Installation und Einrichtung
+
+#### Begriffee
+
+<!-- |Begriff | Beschreibung| -->
+
+|||
 |-|-|
 |Windows|Windows-Rechner auf dem das System `estw` läuft und auf dem die csv-Dateien für den Zugriff von `estw` abgelegt werden.|
 |Host|Linux-Server auf ein Docker-Dienst läuft. Der Platzhalter 192.168.xxx.xxx innerhalb dieser Dokumentation ist die Adresse des Hostes.|
   |Docker|Docker-Container auf dem Host mit MariaDB-Datenbank. Im Beispiel heißt der Container `franzidb`.|
 
-## Aufsetzen des Docker-Containers mit der Datenbank
+#### Aufsetzen des Docker-Containers mit der Datenbank
 
 Der Docker-Container wird mit dem Befehl `docker run` erstellt und enthält eine Instanz von `mariadb`.
 Eingerichtet werden eine Portweiterleitung und ein Sharing-Verzeichnis zum Zugriff auf die abgelegten csv-Dateien vom Host aus.
 
-### Parameter
+#### Parameter
 
 |||
 |-|-|
@@ -43,13 +44,13 @@ Eingerichtet werden eine Portweiterleitung und ein Sharing-Verzeichnis zum Zugri
 |-d|Der Container wird detached. Das bedeuted, dass der Prompt nach dem Start wieder freigegeben wird. Die Datenbank läuft so lange weiter, bis der Container wieder gestoppt wird.|
 |--name franzidb|Name des Docker-Containers.|
 
-### Docker-Befehl
+#### Docker-Befehl
 
 ~~~batch
 docker run -it -p 3300:3306 -v ~/docker/export/:/home/hostfiles/export --name franzidb -e MARIADB_ROOT_PASSWORD=xyz -d mariadb
 ~~~
 
-## Anlegen der Datenstruktur
+### Anlegen der Datenstruktur
 
 Verbinde dich von Windows aus mit dem DB-Server als `root` und führe das Skript in der Datei `create_database.sql` aus. Du findest die Datei im Projektverzeichnis des Repositories unter 
 `sql`.
@@ -60,7 +61,7 @@ Benutze dafür ein SQL-Programm deiner Wahl, z.B. `Heidi`. Alternativ kannst du 
 mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f create_database.sql
 ~~~
 
-## Anlegen des DB-Users
+### Anlegen des DB-Users
 
 Führe das Skript in der Datei [create_user.sql](#create_usersql) aus.
 
@@ -68,7 +69,7 @@ Führe das Skript in der Datei [create_user.sql](#create_usersql) aus.
 mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f create_user.sql
 ~~~
 
-## Vergabe Schreibberechtigung des Export-Verzeichnisses
+### Vergabe Schreibberechtigung des Export-Verzeichnisses
 
 Wechsle auf die Kommandozeile des Docker-Containers der Datenbank.
 
@@ -82,15 +83,17 @@ Navigiere zum Verzeichnis `/home/hostfiles`. Vergebe dort für das Export-Verzei
 chmod 777 export
 ~~~
 
-## Export der Daten nach csv
+## Datenexport
 
-Führe das Skript in der Datei [export.sql](#exportsql) aus.
+### Ausleitung nach csv
+
+Speichern der Daten in csv-Dateien. Führe dazu das Skript in der Datei [export.sql](#exportsql) aus.
 
 ~~~batch
 mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f export.sql
 ~~~
 
-## Transfer der csv-Dateien nach Windows
+### Transfer der Dateien nach Windows
 
 Kopieren der csv-Dateien vom export-Verzeichnis des Hostes auf den Windows-Rechner. Führe dazu das Skript in der Datei [transfer.sql](#transfer-der-csv-dateien-nach-windows) aus.
 
@@ -98,9 +101,17 @@ Kopieren der csv-Dateien vom export-Verzeichnis des Hostes auf den Windows-Rechn
 mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f transfer.sql
 ~~~
 
+# Projektierung
+
+## Projekte
+
+## Elemente
+
+
+
 ## Files
 
-### create_database.sql
+## create_database.sql
 
 Auszug aus 07/2025. Das Original befindet sich im Repository.
 
@@ -154,7 +165,7 @@ foreign key (hauptelement_id) references elemente (id)  -- nur ids erlaubt, die 
 create unique index index3 on elemente (projekt_id,elementtyp_id,bezeichnung);
 ~~~
 
-### create_user.sql
+#### create_user.sql
 
 ~~~sql
 CREATE USER 'estw'@'192.168.%' IDENTIFIED BY 'estw';
@@ -163,7 +174,7 @@ GRANT FILE  ON *.* TO 'estw'@'192.168.%';
 FLUSH PRIVILEGES;
 ~~~
 
-### export.sql
+#### export.sql
 
 Auszug aus 07/2025. Das Original befindet sich im Repository.
 
@@ -202,7 +213,7 @@ FIELDS TERMINATED BY '[[SEP]]'
 LINES TERMINATED BY '\n';
 ~~~
 
-### transfer.sql
+#### transfer.sql
 
 Beispiel. Das Original befindet sich im Repository.
 
@@ -213,7 +224,7 @@ scp <user>@192.168.xxx.xxx:/home/<user>/docker/export/elemente>.csv d:\estwdaten
 ~~~
 
 
-## Autor
+# Autor
 
 Mathias Rentsch<br>
 rentsch@online.de<br>
