@@ -14,13 +14,31 @@ Privates Stellwerkssystem `estw2` zum Steuern von Modelleisenbahnen.
 
 ## Projekte
 
-|||
-|-|-|
-|ID||
-|Bezeichnung||
-|Beschreibung||
+|Feld|Beschreibung|Pflichtfeld|
+|-|-|-|
+|ID|Eindeutige Identifikationsnummer des Projektes. Diese ID wird in den Tabellen `Elemente` und `Fahrstrassen` referenziert.|x|
+|Bezeichnung|Name des Projektes (max. 50 Zeichen)|x|
+|Beschreibung|Erläuternder Text als Beschreibung zum Projektes (max. 254 Zeichen)||
 
 ## Elementtypen
+
+|Feld|Beschreibung|Pflichtfeld|
+|-|-|-|
+|ID|Eindeutige Identifikationsnummer des Elementtyps. Diese ID wird in der Tabelle `Elemente` referenziert.|x|
+|Bezeichnung|Name des Elementtyps (max. 50 Zeichen)|x|
+|Beschreibung|Erläuternder Text als Beschreibung zum Elementtyp (max. 254 Zeichen)||
+
+|ID|Bezeichnung|Beschreibung|
+|-|-|-|
+|1| G| Gleis|
+|2| W| Weiche|
+|3| S| Signal|
+|4| B| Blindziel|
+|5| A| Auflöseelement|
+|6| P| Prellbock|
+|7| Z| Zusatzelement|
+|99| T| Test|
+
 
 ## Elemente
 
@@ -46,6 +64,12 @@ Privates Stellwerkssystem `estw2` zum Steuern von Modelleisenbahnen.
 
 ## Fahrstrassenelementtypen
 
+|Feld|Beschreibung|Pflichtfeld|
+|-|-|-|
+|ID|Eindeutige Identifikationsnummer des Fahrstrassenelementtyps. Diese ID wird in der Tabelle `Fahrstrassenelemente` referenziert.|x|
+|Bezeichnung|Name des Fahrstrassenelementtyps (max. 50 Zeichen)|x|
+|Beschreibung|Erläuternder Text als Beschreibung zum Fahrstrassenelementtyp (max. 254 Zeichen)||
+
 ## Fahrstrassenelemente
 
 
@@ -56,4 +80,4 @@ Privates Stellwerkssystem `estw2` zum Steuern von Modelleisenbahnen.
 
 Mathias Rentsch<br>
 rentsch@online.de<br>
-Juli 2025
+Oktober 2025
