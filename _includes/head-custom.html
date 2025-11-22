@@ -1,0 +1,11 @@
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: "default"   // z.B. 'dark', 'forest', 'neutral'...
+  });
+
+  // Falls du ```mermaid-Codeblöcke nutzt:
+  await mermaid.run({ querySelector: "code.language-mermaid" });
+</script>
