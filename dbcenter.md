@@ -6,7 +6,12 @@ dbcenter ist ein Datenviewer für [mrdb](mrdb.md).
 
 ## Fenster-Klassenhierachie
 
-![Klassendiagramm](images/dbcenter1.png)
+neues Format:
+
+~~~mermaid
+graph TD
+    A[NanaForm] --> B[DataForm]
+~~~
 
 ### NanaForm
 
