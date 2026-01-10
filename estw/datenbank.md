@@ -87,7 +87,7 @@ chmod 777 export
 
 ### Ausleitung nach csv
 
-Speichern der Daten in csv-Dateien. Führe dazu das Skript in der Datei [export.sql](#exportsql) aus.
+Speichern der Daten in csv-Dateien. Führe dazu das Skript in der Datei [export.sql](https://github.com/superhandy333/csharp/blob/6b0e968f4034b0f4640607b1c1efba44735616f8/CPP/estw/sql/export.sql) aus.
 
 ~~~batch
 mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f export.sql
@@ -95,7 +95,7 @@ mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f export.sql
 
 ### Transfer der Dateien nach Windows
 
-Kopieren der csv-Dateien vom export-Verzeichnis des Hostes auf den Windows-Rechner. Führe dazu das Skript in der Datei [transfer.sql](#transfer-der-csv-dateien-nach-windows) aus.
+Kopieren der csv-Dateien vom export-Verzeichnis des Hostes auf den Windows-Rechner. Führe dazu das Skript in der Datei [transfer.sql](https://github.com/superhandy333/csharp/blob/6b0e968f4034b0f4640607b1c1efba44735616f8/CPP/estw/sql/transfer.bat) aus.
 
 ~~~batch
 mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f transfer.sql
