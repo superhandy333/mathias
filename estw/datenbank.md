@@ -52,7 +52,7 @@ docker run -it -p 3300:3306 -v ~/docker/export/:/home/hostfiles/export --name fr
 
 ### Anlegen der Datenstruktur
 
-Verbinde dich von Windows aus mit dem DB-Server als `root` und führe das Skript in der Datei `create_database.sql` aus. Du findest die Datei im Projektverzeichnis des Repositories unter 
+Verbinde dich von Windows aus mit dem DB-Server als `root` und führe das Skript in der Datei [create_database.sql](https://github.com/superhandy333/csharp/blob/6b0e968f4034b0f4640607b1c1efba44735616f8/CPP/estw/sql/create_database.sql) aus. Du findest die Datei im Projektverzeichnis des Repositories unter 
 `sql`.
 
 Benutze dafür ein SQL-Programm deiner Wahl, z.B. `Heidi`. Alternativ kannst du das Script auch mit dem Terminalprogramm `mysqlsh` starten.
@@ -63,7 +63,7 @@ mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f create_database.sql
 
 ### Anlegen des DB-Users
 
-Führe das Skript in der Datei [create_user.sql](#create_usersql) aus.
+Führe das Skript in der Datei [create_user.sql](https://github.com/superhandy333/csharp/blob/6b0e968f4034b0f4640607b1c1efba44735616f8/CPP/estw/sql/create_user.sql) aus.
 
 ~~~batch
 mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f create_user.sql
