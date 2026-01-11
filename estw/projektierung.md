@@ -4,6 +4,8 @@
 
 # Projektierung
 
+Planungsprozess mit Festlegungen der funktionalen Anforderungen zu Weichen, Signalen und Fahrstrassen.
+
 <!-- TOC -->
 
 - [Projekte](#projekte)
