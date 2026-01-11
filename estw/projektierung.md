@@ -89,10 +89,6 @@ Planungsprozess mit Festlegungen der funktionalen Anforderungen zu Weichen, Sign
 
 ## Fahrstrassenelemente
 
-
-
-
-
 <hr>
 Autor<br>
 
