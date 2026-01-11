@@ -1,17 +1,16 @@
-
-# ESTW
-
 <button>ESTW</button>
 
-Privates Stellwerkssystem `estw` zum Steuern von Modelleisenbahnen.
+<small>[Entwicklung](../develop.md) / ESTW</small>
 
-- [Datenbankserver](datenbank.md)
-- [Projektierung](projektierung.md)
-- [Files](files.md)
+Privates Stellwerkssystem zum Steuern von Modelleisenbahnen.
 
+[Datenbankserver](datenbank.md)  
+[Projektierung](projektierung.md)  
+[Files](files.md)  
 
-## Autor
+<hr>
+Autor<br>
 
 Mathias Rentsch<br>
 rentsch@online.de<br>
-August 2025
+Januar 2026

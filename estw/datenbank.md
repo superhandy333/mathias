@@ -1,21 +1,26 @@
+<button>ESTW</button>
 
-# Datenbankserver <!-- omit in toc -->
+<small>[Entwicklung](../develop.md) / [ESTW](estw.md) / Datenbankserver</small>
 
-Anleitung zum Aufsetzen des Datenbankservers für estw
+# Datenbankserver
+
+Anleitung zum Aufsetzen des Datenbankservers für `estw`.
+
+<!-- TOC -->
 
 - [Installation und Einrichtung](#installation-und-einrichtung)
-  - [Begriffe](#begriffe)
-  - [Aufsetzen des Datenbank-Containers als Docker](#aufsetzen-des-datenbank-containers-als-docker)
-    - [Parameter](#parameter)
-    - [Docker-Befehl](#docker-befehl)
-  - [Anlegen der Datenstruktur](#anlegen-der-datenstruktur)
-  - [Anlegen des DB-Users](#anlegen-des-db-users)
-  - [Vergabe Schreibberechtigung des Export-Verzeichnisses](#vergabe-schreibberechtigung-des-export-verzeichnisses)
+    - [Begriffe](#begriffe)
+    - [Aufsetzen des Datenbank-Containers als Docker](#aufsetzen-des-datenbank-containers-als-docker)
+        - [Parameter](#parameter)
+        - [Docker-Befehl](#docker-befehl)
+    - [Anlegen der Datenstruktur](#anlegen-der-datenstruktur)
+    - [Anlegen des DB-Users](#anlegen-des-db-users)
+    - [Vergabe Schreibberechtigung des Export-Verzeichnisses](#vergabe-schreibberechtigung-des-export-verzeichnisses)
 - [Datenexport](#datenexport)
-  - [Ausleitung nach csv](#ausleitung-nach-csv)
-  - [Transfer der Dateien nach Windows](#transfer-der-dateien-nach-windows)
-- [Autor](#autor)
+    - [Ausleitung nach csv](#ausleitung-nach-csv)
+    - [Transfer der Dateien nach Windows](#transfer-der-dateien-nach-windows)
 
+<!-- /TOC -->
 
 ## Installation und Einrichtung
 
@@ -101,8 +106,9 @@ Kopieren der csv-Dateien vom export-Verzeichnis des Hostes auf den Windows-Rechn
 mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f transfer.sql
 ~~~
 
-## Autor
+<hr>
+Autor<br>
 
 Mathias Rentsch<br>
 rentsch@online.de<br>
-Juli 2025
+Januar 2026

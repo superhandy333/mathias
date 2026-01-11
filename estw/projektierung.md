@@ -1,7 +1,10 @@
+<button>ESTW</button>
 
-# Projektierung <!-- omit in toc -->
+<small>[Entwicklung](../develop.md) / [ESTW](estw.md) / Projektierung</small>
 
-Privates Stellwerkssystem `estw2` zum Steuern von Modelleisenbahnen.
+# Projektierung
+
+<!-- TOC -->
 
 - [Projekte](#projekte)
 - [Elementtypen](#elementtypen)
@@ -9,24 +12,24 @@ Privates Stellwerkssystem `estw2` zum Steuern von Modelleisenbahnen.
 - [Fahrstrassen](#fahrstrassen)
 - [Fahrstrassenelementtypen](#fahrstrassenelementtypen)
 - [Fahrstrassenelemente](#fahrstrassenelemente)
-- [Autor](#autor)
 
+<!-- /TOC -->
 
 ## Projekte
 
 |Feld|Beschreibung|Pflichtfeld|
 |-|-|-|
-|ID|Eindeutige Identifikationsnummer des Projektes. Diese ID wird in den Tabellen `Elemente` und `Fahrstrassen` referenziert.|x|
-|Bezeichnung|Name des Projektes (max. 50 Zeichen)|x|
-|Beschreibung|Erläuternder Text als Beschreibung zum Projektes (max. 254 Zeichen)||
+|id|Eindeutige Identifikationsnummer des Projektes. Diese ID wird in den Tabellen [Elemente](#elemente) und [Fahrstrassen](#fahrstrassen) referenziert.|x|
+|bezeichnung|Name des Projektes (max. 50 Zeichen)|x|
+|beschreibung|Erläuternder Text als Beschreibung zum Projektes (max. 254 Zeichen)||
 
 ## Elementtypen
 
 |Feld|Beschreibung|Pflichtfeld|
 |-|-|-|
-|ID|Eindeutige Identifikationsnummer des Elementtyps. Diese ID wird in der Tabelle `Elemente` referenziert.|x|
-|Bezeichnung|Name des Elementtyps (max. 50 Zeichen)|x|
-|Beschreibung|Erläuternder Text als Beschreibung zum Elementtyp (max. 254 Zeichen)||
+|id|Eindeutige Identifikationsnummer des Elementtyps. Diese ID wird in der Tabelle [Elemente](#elemente) referenziert.|x|
+|bezeichnung|Name des Elementtyps (max. 50 Zeichen)|x|
+|beschreibung|Erläuternder Text als Beschreibung zum Elementtyp (max. 254 Zeichen)||
 
 |ID|Bezeichnung|Beschreibung|
 |-|-|-|
@@ -39,8 +42,20 @@ Privates Stellwerkssystem `estw2` zum Steuern von Modelleisenbahnen.
 |7| Z| Zusatzelement|
 |99| T| Test|
 
-
 ## Elemente
+
+|Feld|Beschreibung|Pflichtfeld|
+|-|-|-|
+|id|Eindeutige Identifikationsnummer des Elements. Diese ID wird in der Tabelle [Fahrstrassenelemente](#fahrstrassenelemente) referenziert.|x|
+|projekt_id|Identifikationsnummer des Projektes, dem das Element angehört|x|
+|typ_id|Identifikationsnummer des Elementtyps. Wert aus dem Feld `id` der Tabelle [Elementtypen](#elementtypen)|x|
+|bezeichnung|Name des Elements (max. 50 Zeichen)|x|
+|beschreibung|Erläuternder Text als Beschreibung zum Element (max. 254 Zeichen)||
+|PFZS|Rangierstrassenzielsperre||
+|lupe1x||x|
+|lupe1y||x|
+|rotation||x|
+|mirror||x|
 
 |Nr.|Typ-ID|Typ|Grafik|Rotation|Mirror|
 |-|-|-|-|-|-|
@@ -66,9 +81,9 @@ Privates Stellwerkssystem `estw2` zum Steuern von Modelleisenbahnen.
 
 |Feld|Beschreibung|Pflichtfeld|
 |-|-|-|
-|ID|Eindeutige Identifikationsnummer des Fahrstrassenelementtyps. Diese ID wird in der Tabelle `Fahrstrassenelemente` referenziert.|x|
-|Bezeichnung|Name des Fahrstrassenelementtyps (max. 50 Zeichen)|x|
-|Beschreibung|Erläuternder Text als Beschreibung zum Fahrstrassenelementtyp (max. 254 Zeichen)||
+|id|Eindeutige Identifikationsnummer des Fahrstrassenelementtyps. Diese ID wird in der Tabelle `Fahrstrassenelemente` referenziert.|x|
+|bezeichnung|Name des Fahrstrassenelementtyps (max. 50 Zeichen)|x|
+|beschreibung|Erläuternder Text als Beschreibung zum Fahrstrassenelementtyp (max. 254 Zeichen)||
 
 ## Fahrstrassenelemente
 
@@ -76,8 +91,9 @@ Privates Stellwerkssystem `estw2` zum Steuern von Modelleisenbahnen.
 
 
 
-## Autor
+<hr>
+Autor<br>
 
 Mathias Rentsch<br>
 rentsch@online.de<br>
-Oktober 2025
+Januar 2026

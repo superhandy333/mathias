@@ -1,108 +1,17 @@
+<button>ESTW</button>
 
-# ESTW 2 <!-- omit in toc -->
+<small>[Entwicklung](../develop.md) / [ESTW](estw.md) / Files</small>
 
-Privates Stellwerkssystem `estw2` zum Steuern von Modelleisenbahnen.
+# Files
 
-- [Projektierung](#projektierung)
-  - [Projekte](#projekte)
-  - [Elemente](#elemente)
-  - [Files](#files)
-  - [create\_database.sql](#create_databasesql)
-      - [create\_user.sql](#create_usersql)
-      - [export.sql](#exportsql)
-      - [transfer.sql](#transfersql)
-- [Autor](#autor)
+<!-- TOC -->
 
-## Datenbankserver
+- [create_database.sql](#create_databasesql)
+- [create_user.sql](#create_usersql)
+- [export.sql](#exportsql)
+- [transfer.sql](#transfersql)
 
-Anleitung zum Aufsetzen eines Datenbankservers
-
-### Installation und Einrichtung
-
-#### Begriffee
-
-<!-- |Begriff | Beschreibung| -->
-
-|||
-|-|-|
-|Windows|Windows-Rechner auf dem das System `estw` läuft und auf dem die csv-Dateien für den Zugriff von `estw` abgelegt werden.|
-|Host|Linux-Server auf ein Docker-Dienst läuft. Der Platzhalter 192.168.xxx.xxx innerhalb dieser Dokumentation ist die Adresse des Hostes.|
-  |Docker|Docker-Container auf dem Host mit MariaDB-Datenbank. Im Beispiel heißt der Container `franzidb`.|
-
-#### Aufsetzen des Docker-Containers mit der Datenbank
-
-Der Docker-Container wird mit dem Befehl `docker run` erstellt und enthält eine Instanz von `mariadb`.
-Eingerichtet werden eine Portweiterleitung und ein Sharing-Verzeichnis zum Zugriff auf die abgelegten csv-Dateien vom Host aus.
-
-#### Parameter
-
-|||
-|-|-|
-|-p 3300:3306|Portweiterleitung `3300:3360` vom Container (3306) zum Host (3300). Auf die Datenbank kann vom Host auf Port 3300 zugegriffen werden. Die Änderung des Standardports ist notwendig, da auf dem  Host selber eine andere Instanz einer MySQL-Datenbank läuft.|
-|-v ~/docker/export/:/home/hostfiles/export|Das Verzeichnis `~/docker/export/` vom Host-Rechner wird in den Container als Verzeichnis `/home/hostfiles/export` eingebunden. Die csv-Dateien werden vom Datenbank-Server hier abgelegt und können vom Host in dessen Verzeichnis `~/docker/export/` abgeholt werden.|
-|-e MARIADB_ROOT_PASSWORD=xyz|Legt das Root-Passwort der Datenbank fest.|
-|-d|Der Container wird detached. Das bedeuted, dass der Prompt nach dem Start wieder freigegeben wird. Die Datenbank läuft so lange weiter, bis der Container wieder gestoppt wird.|
-|--name franzidb|Name des Docker-Containers.|
-
-#### Docker-Befehl
-
-~~~batch
-docker run -it -p 3300:3306 -v ~/docker/export/:/home/hostfiles/export --name franzidb -e MARIADB_ROOT_PASSWORD=xyz -d mariadb
-~~~
-
-### Anlegen der Datenstruktur
-
-Verbinde dich von Windows aus mit dem DB-Server als `root` und führe das Skript in der Datei `create_database.sql` aus. Du findest die Datei im Projektverzeichnis des Repositories unter 
-`sql`.
-
-Benutze dafür ein SQL-Programm deiner Wahl, z.B. `Heidi`. Alternativ kannst du das Script auch mit dem Terminalprogramm `mysqlsh` starten.
-
-~~~batch
-mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f create_database.sql
-~~~
-
-### Anlegen des DB-Users
-
-Führe das Skript in der Datei [create_user.sql](#create_usersql) aus.
-
-~~~batch
-mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f create_user.sql
-~~~
-
-### Vergabe Schreibberechtigung des Export-Verzeichnisses
-
-Wechsle auf die Kommandozeile des Docker-Containers der Datenbank.
-
-~~~batch
-docker exec -it franzidb /bin/bash
-~~~
-
-Navigiere zum Verzeichnis `/home/hostfiles`. Vergebe dort für das Export-Verzeichnis `export` alle verfügbaren Berechtigungen.
-
-~~~batch
-chmod 777 export
-~~~
-
-## Datenexport
-
-### Ausleitung nach csv
-
-Speichern der Daten in csv-Dateien. Führe dazu das Skript in der Datei [export.sql](#exportsql) aus.
-
-~~~batch
-mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f export.sql
-~~~
-
-### Transfer der Dateien nach Windows
-
-Kopieren der csv-Dateien vom export-Verzeichnis des Hostes auf den Windows-Rechner. Führe dazu das Skript in der Datei [transfer.sql](#transfer-der-csv-dateien-nach-windows) aus.
-
-~~~batch
-mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f transfer.sql
-~~~
-
-
-## Files
+<!-- /TOC -->
 
 ## create_database.sql
 
@@ -226,7 +135,7 @@ END%%
 DELIMITER ;
 ~~~
 
-#### create_user.sql
+## create_user.sql
 
 ~~~sql
 CREATE USER 'estw'@'192.168.%' IDENTIFIED BY 'estw';
@@ -235,7 +144,7 @@ GRANT FILE  ON *.* TO 'estw'@'192.168.%';
 FLUSH PRIVILEGES;
 ~~~
 
-#### export.sql
+## export.sql
 
 Auszug aus 07/2025. Das Original befindet sich im Repository.
 
@@ -274,7 +183,7 @@ FIELDS TERMINATED BY '[[SEP]]'
 LINES TERMINATED BY '\n';
 ~~~
 
-#### transfer.sql
+## transfer.sql
 
 Beispiel. Das Original befindet sich im Repository.
 
@@ -284,9 +193,9 @@ scp <user>@192.168.xxx.xxx:/home/<user>/docker/export/elementtypen>.csv d:\estwd
 scp <user>@192.168.xxx.xxx:/home/<user>/docker/export/elemente>.csv d:\estwdaten
 ~~~
 
-
-# Autor
+<hr>
+Autor<br>
 
 Mathias Rentsch<br>
 rentsch@online.de<br>
-Juli 2025
+Januar 2026
