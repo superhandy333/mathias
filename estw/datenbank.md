@@ -1,7 +1,7 @@
 
 # Datenbankserver <!-- omit in toc -->
 
-Anleitung zum Aufsetzen eines Datenbankservers
+Anleitung zum Aufsetzen des Datenbankservers für estw
 
 - [Installation und Einrichtung](#installation-und-einrichtung)
   - [Begriffe](#begriffe)
