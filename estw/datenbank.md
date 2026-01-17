@@ -101,10 +101,10 @@ mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f export.sql
 
 ### Transfer der Dateien nach Windows
 
-Kopieren der csv-Dateien vom export-Verzeichnis des Hostes auf den Windows-Rechner. Führe dazu das Skript in der Datei [transfer.sql](https://github.com/superhandy333/csharp/blob/6b0e968f4034b0f4640607b1c1efba44735616f8/CPP/estw/sql/transfer.bat) aus.
+Kopieren der csv-Dateien vom export-Verzeichnis des Hostes auf den Windows-Rechner. Führe dazu das Skript in der Datei [transfer.bat](https://github.com/superhandy333/csharp/blob/6b0e968f4034b0f4640607b1c1efba44735616f8/CPP/estw/sql/transfer.bat) aus.
 
 ~~~batch
-mysqlsh --uri root@192.168.xxx.xxx:3300 --sql -f transfer.sql
+transfer.bat
 ~~~
 
 <hr>

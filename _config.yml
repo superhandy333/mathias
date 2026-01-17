@@ -1,3 +1,5 @@
 ## Site settings
 # title: "ESTW"
 # description: "Eine kurze Beschreibung der Seite"
+
+theme: jekyll-theme-cayman
