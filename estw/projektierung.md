@@ -63,6 +63,8 @@ Planungsprozess mit Festlegungen der funktionalen Anforderungen zu Weichen, Sign
 |-|-|-|-|-|-|
 |1|1|Gleis|![svg01](images/svg01.svg)|0|N|
 |2|1|Gleis|![svg02](images/svg02.svg)|1|N|
+|T|T|Gleis|![svgTest](images/svgTest.svg)|1|N|
+|T|T|Gleis|![svgTest](images/svgTest2.svg)|1|N|
 |3|1|Gleis|![svg03](images/svg03.svg)|0|J|
 |4|1|Gleis|![svg04](images/svg04.svg)|1|J|
 |5|1|Gleis|![svg05](images/svg05.svg)|2|J|
