@@ -71,12 +71,11 @@ Planungsprozess mit Festlegungen der funktionalen Anforderungen zu Weichen, Sign
 |8|2|Gleis|![svg08](images/svg08.svg)|1|J|2|
 |9|2|Gleis|![svg09](images/svg09.svg)|2|J|2|
 |10|2|Gleis|![svg10](images/svg10.svg)|3|J|2|
-<!--
 |11|2|Weiche|![svg11](images/svg11.svg)|0|J|0|
 |12|2|Weiche|![svg12](images/svg12.svg)|1|J|0|
 |13|2|Weiche|![svg13](images/svg13.svg)|2|J|0|
 |14|2|Weiche|![svg14](images/svg14.svg)|3|J|0|
--->
+
 
 ## Fahrstrassen
 
