@@ -8,6 +8,7 @@
 
 - [create_database.sql](#create_databasesql)
 - [create_user.sql](#create_usersql)
+- [export.bat](#exportbat)
 - [export.sql](#exportsql)
 - [transfer.sql](#transfersql)
 
@@ -15,10 +16,10 @@
 
 ## create_database.sql
 
-Auszug aus 01/2026. Das Original befindet sich im [Repository](https://github.com/superhandy333/csharp/blob/6b0e968f4034b0f4640607b1c1efba44735616f8/CPP/estw/sql/create_database.sql).
+Auszug aus 01/2026. Das Original befindet sich im [Repository](https://github.com/superhandy333).
 
 ~~~sql
-create database estw;
+create database if not exists estw;
 use estw;
 
 create table projekte (
@@ -41,7 +42,8 @@ create table elemente (
 id int not null auto_increment,
 projekt_id int not null,
 typ_id int not null,
-hauptelement_id int comment 'Ist ein Zusatzelement, wenn nicht NULL',
+unterelementart int not null default 1,
+hauptelement_id int default 0 comment 'Ist ein Zusatzelement, wenn nicht 0',
 bezeichnung varchar(50) not null,
 beschreibung varchar(254),
 PFZS ENUM('N','J') comment 'Rangierstraßenzielsperre',
@@ -132,6 +134,34 @@ BEGIN
     END IF;
 END%%
 
+CREATE TRIGGER check_projekt_id_on_update
+BEFORE UPDATE ON fahrstrassenelemente
+FOR EACH ROW
+BEGIN
+    DECLARE element_pid INT DEFAULT NULL;
+    DECLARE fahrstrasse_pid INT DEFAULT NULL;
+
+    SELECT e.projekt_id
+      INTO element_pid
+      FROM elemente e
+     WHERE e.id = NEW.element_id
+     LIMIT 1;
+
+    SELECT f.projekt_id
+      INTO fahrstrasse_pid
+      FROM fahrstrassen f
+     WHERE f.id = NEW.fahrstrasse_id
+     LIMIT 1;
+
+    IF element_pid IS NULL
+       OR fahrstrasse_pid IS NULL
+       OR element_pid <> fahrstrasse_pid
+    THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'projekt_id mismatch (oder element/fahrstrasse nicht gefunden)';
+    END IF;
+END%%
+
 DELIMITER ;
 ~~~
 
@@ -144,53 +174,108 @@ GRANT FILE  ON *.* TO 'estw'@'192.168.%';
 FLUSH PRIVILEGES;
 ~~~
 
+## export.bat
+
+~~~
+mysqlsh --uri estw@192.168.xxx.xx:3300/estw --sql -f export.sql
+~~~
+
 ## export.sql
 
-Auszug aus 07/2025. Das Original befindet sich im Repository.
+Auszug aus 07/2025. Das Original befindet sich im [Repository](https://github.com/superhandy333).
 
 ~~~sql
+use estw;
+
 SELECT 
    id,
    bezeichnung,
    beschreibung
-from projekte
+FROM projekte
 ORDER BY id
 INTO OUTFILE '/home/hostfiles/export/projekte.csv'
 FIELDS TERMINATED BY '[[SEP]]'
 LINES TERMINATED BY '\n';
 
 SELECT 
-   id,
-   bezeichnung,
-   beschreibung
-from elementtypen
+   id,           -- 0
+   bezeichnung,  -- 1
+   beschreibung  -- 2
+FROM elementtypen
 ORDER BY id
 INTO OUTFILE '/home/hostfiles/export/elementtypen.csv'
 FIELDS TERMINATED BY '[[SEP]]'
 LINES TERMINATED BY '\n';
 
 SELECT 
-   id,
-   projekt_id,
-   elementtyp_id,
-   hauptelement_id,
-   bezeichnung,
-   beschreibung
-from elemente
+   id,               -- 0
+   projekt_id,      -- 1
+   typ_id,          -- 2
+   unterelementart, -- 3
+   hauptelement_id, -- 4
+   bezeichnung,     -- 5
+   beschreibung,    -- 6
+   PFZS,            -- 7
+   PR,             -- 8
+   PRS,            -- 9
+   PRZ,            -- 10
+   PSSL,           -- 11
+   PSSR,           -- 12
+   PZ,             -- 13
+   PZS,            -- 14
+   PZZ,            -- 15
+   lupe1x,        -- 16
+   lupe1y,        -- 17
+   rotation,     -- 18
+   mirror       -- 19
+FROM elemente
 ORDER BY id
 INTO OUTFILE '/home/hostfiles/export/elemente.csv'
 FIELDS TERMINATED BY '[[SEP]]'
 LINES TERMINATED BY '\n';
+
+SELECT 
+   id,               -- 0
+   projekt_id,      -- 1
+   typ_id,          -- 2
+   bezeichnung,     -- 3
+   beschreibung     -- 4
+FROM fahrstrassen
+ORDER BY id
+INTO OUTFILE '/home/hostfiles/export/fahrstrassen.csv'
+FIELDS TERMINATED BY '[[SEP]]'
+LINES TERMINATED BY '\n';
+
+SELECT
+   id,               -- 0
+   bezeichnung,     -- 1
+   beschreibung     -- 2
+FROM fahrstrassenelementtypen
+ORDER BY id
+INTO OUTFILE '/home/hostfiles/export/fahrstrassenelementtypen.csv'
+FIELDS TERMINATED BY '[[SEP]]'
+LINES TERMINATED BY '\n';
+
+SELECT 
+   id,                       -- 0
+   fahrstrasse_id,           -- 1
+   element_id,               -- 2
+   fahrstrassenelementtyp_id,-- 3
+   sollstellung              -- 4
+FROM fahrstrassenelemente
+ORDER BY id
+INTO OUTFILE '/home/hostfiles/export/fahrstrassenelemente.csv'
+FIELDS TERMINATED BY '[[SEP]]'
+LINES TERMINATED BY '\n';
+
 ~~~
 
 ## transfer.sql
 
-Beispiel. Das Original befindet sich im Repository.
+Beispiel. Das Original befindet sich im [Repository](https://github.com/superhandy333).
 
 ~~~sql
-scp <user>@192.168.xxx.xxx:/home/<user>/docker/export/projekte.csv d:\estwdaten
-scp <user>@192.168.xxx.xxx:/home/<user>/docker/export/elementtypen>.csv d:\estwdaten
-scp <user>@192.168.xxx.xxx:/home/<user>/docker/export/elemente>.csv d:\estwdaten
+scp papa@192.168.xxx.xx:/home/papa/docker/export/*.csv d:\rentsch\estwdaten
 ~~~
 
 <hr>

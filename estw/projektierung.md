@@ -4,18 +4,16 @@
 
 # Projektierung
 
-Planungsprozess mit Festlegungen der funktionalen Anforderungen zu Weichen, Signalen und Fahrstrassen.
+Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Festlegungen der funktionalen Anforderungen zu Weichen, Signalen und Fahrstrassen.
 
-<!-- TOC -->
+[Projekte](#projekte)  
+[Elementtypen](#elementtypen)  
+[Elemente](#elemente)  
+[Fahrstrassen](#fahrstrassen)  
+[Fahrstrassenelementtypen](#fahrstrassenelementtypen)  
+[Fahrstrassenelemente](#fahrstrassenelemente)  
 
-- [Projekte](#projekte)
-- [Elementtypen](#elementtypen)
-- [Elemente](#elemente)
-- [Fahrstrassen](#fahrstrassen)
-- [Fahrstrassenelementtypen](#fahrstrassenelementtypen)
-- [Fahrstrassenelemente](#fahrstrassenelemente)
 
-<!-- /TOC -->
 
 ## Projekte
 
@@ -49,15 +47,18 @@ Planungsprozess mit Festlegungen der funktionalen Anforderungen zu Weichen, Sign
 |Feld|Beschreibung|Pflichtfeld|
 |-|-|-|
 |id|Eindeutige Identifikationsnummer des Elements. Diese ID wird in der Tabelle [Fahrstrassenelemente](#fahrstrassenelemente) referenziert.|x|
-|projekt_id|Identifikationsnummer des Projektes, dem das Element angehört|x|
-|typ_id|Identifikationsnummer des Elementtyps. Wert aus dem Feld `id` der Tabelle [Elementtypen](#elementtypen)|x|
+|projekt_id|Identifikationsnummer des [Projektes](#projekte), dem das Element angehört|x|
+|typ_id|Identifikationsnummer des Elementtyps. Wert aus dem Feld `id` der Tabelle [Elementtypen](#elementtypen).|x|
+|unterelementart|Bildliche Differenzierung eines Elements innerhalb eines Elementtyps. Werte siehe [Projektierungstabelle](#projektierungstabelle).|x|
 |bezeichnung|Name des Elements (max. 50 Zeichen)|x|
 |beschreibung|Erläuternder Text als Beschreibung zum Element (max. 254 Zeichen)||
+|lupe1x|Horizontale Position im des Elements im Bildschirmraster|x|
+|lupe1y|Vertikale Position im des Elements im Bildschirmraster|x|
+|rotation|Drehwinkel des Elements: 0: 0 Grad, 1: 90 Grad, 2: 180 Grad, 3: 270 Grad|x|
+|mirror|Angabe, ob Element gespiegelt dargestellt werden soll|x|
 |PFZS|Rangierstrassenzielsperre||
-|lupe1x||x|
-|lupe1y||x|
-|rotation||x|
-|mirror||x|
+
+#### Projektierungstabelle
 
 |Nr.|Typ-ID|Typ|Grafik|Rotation|Mirror|Unterelementart|
 |-|-|-|-|-|-|-|
@@ -71,10 +72,14 @@ Planungsprozess mit Festlegungen der funktionalen Anforderungen zu Weichen, Sign
 |8|2|Gleis|![svg08](images/svg08.svg)|1|J|2|
 |9|2|Gleis|![svg09](images/svg09.svg)|2|J|2|
 |10|2|Gleis|![svg10](images/svg10.svg)|3|J|2|
-|11|2|Weiche|![svg11](images/svg11.svg)|0|J|0|
-|12|2|Weiche|![svg12](images/svg12.svg)|1|J|0|
-|13|2|Weiche|![svg13](images/svg13.svg)|2|J|0|
-|14|2|Weiche|![svg14](images/svg14.svg)|3|J|0|
+|11|2|Weiche|![svg11](images/svg11.svg)|0|N||
+|12|2|Weiche|![svg12](images/svg12.svg)|1|N||
+|13|2|Weiche|![svg13](images/svg13.svg)|2|N||
+|14|2|Weiche|![svg14](images/svg14.svg)|3|N||
+|15|2|Weiche|![svg15](images/svg15.svg)|0|J||
+|16|2|Weiche|![svg16](images/svg16.svg)|1|J||
+|17|2|Weiche|![svg17](images/svg17.svg)|2|J||
+|18|2|Weiche|![svg18](images/svg18.svg)|3|J||
 
 
 ## Fahrstrassen
