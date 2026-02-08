@@ -56,9 +56,26 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |lupe1y|Vertikale Position im des Elements im Bildschirmraster|x|
 |rotation|Drehwinkel des Elements: 0: 0 Grad, 1: 90 Grad, 2: 180 Grad, 3: 270 Grad|x|
 |mirror|Angabe, ob Element gespiegelt dargestellt werden soll|x|
-|PFZS|Rangierstrassenzielsperre||
+|PRS|Rangierstraßenstart zulässig<br>Signal darf Startelement einer Rangierstrasse sein.||
+|PRZ|Rangierstraßenziel zulässig<br>Signal darf Zielelement einer Rangierstrasse sein.||
+|PZS|Zugstraßenstart zulässig<br>Signal darf Startelement einer Zugstrasse sein.||
+|PZZ|Zugstraßenziel zulässig<br>Signal darf Zielelement einer Zugstrasse sein.||
+|PZSP|Zielsperre<br>Signal kann während es als Flankenschutzelement dient, nicht als Ziel einer Rangierstrasse dienen.||
 
-#### Projektierungstabelle
+#### Projektierungstabellen
+
+Programmfälle
+
+|Fall|Gleis|Weiche|Signal|Blindziel|Auflöse|Prellbock|
+|-|-|-|-|-|-|-|
+|PRS|||x||||
+|PRZ|||x||||
+|PZS|||x|x|||
+|PZZ|||x|x|||
+|PZSP|||x||||
+||||||||
+
+Lupenbilder
 
 |Nr.|Typ-ID|Typ|Grafik|Rotation|Mirror|Unterelementart|
 |-|-|-|-|-|-|-|
@@ -80,6 +97,9 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |16|2|Weiche|![svg16](images/svg16.svg)|1|J||
 |17|2|Weiche|![svg17](images/svg17.svg)|2|J||
 |18|2|Weiche|![svg18](images/svg18.svg)|3|J||
+
+
+
 
 
 ## Fahrstrassen0
