@@ -6,14 +6,18 @@
 
 Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Festlegungen der funktionalen Anforderungen zu Weichen, Signalen und Fahrstrassen.
 
-[Projekte](#projekte)  
-[Elementtypen](#elementtypen)  
-[Elemente](#elemente)  
-[Fahrstrassen](#fahrstrassen)  
-[Fahrstrassenelementtypen](#fahrstrassenelementtypen)  
-[Fahrstrassenelemente](#fahrstrassenelemente)  
+<!-- TOC -->
 
+- [Projekte](#projekte)
+- [Elementtypen](#elementtypen)
+- [Elemente](#elemente)
+    - [Datenfelder](#datenfelder)
+    - [Programmfälle](#programmf%C3%A4lle)
+- [Fahrstrassen](#fahrstrassen)
+- [Fahrstrassenelementtypen](#fahrstrassenelementtypen)
+- [Fahrstrassenelemente](#fahrstrassenelemente)
 
+<!-- /TOC -->
 
 ## Projekte
 
@@ -44,6 +48,7 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 
 ## Elemente
 
+### Datenfelder
 |Feld|Beschreibung|Pflichtfeld|
 |-|-|-|
 |id|Eindeutige Identifikationsnummer des Elements. Diese ID wird in der Tabelle [Fahrstrassenelemente](#fahrstrassenelemente) referenziert.|x|
@@ -56,24 +61,35 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |lupe1y|Vertikale Position im des Elements im Bildschirmraster|x|
 |rotation|Drehwinkel des Elements: 0: 0 Grad, 1: 90 Grad, 2: 180 Grad, 3: 270 Grad|x|
 |mirror|Angabe, ob Element gespiegelt dargestellt werden soll|x|
-|PRS|Rangierstraßenstart zulässig<br>Signal darf Startelement einer Rangierstrasse sein.||
-|PRZ|Rangierstraßenziel zulässig<br>Signal darf Zielelement einer Rangierstrasse sein.||
-|PZS|Zugstraßenstart zulässig<br>Signal darf Startelement einer Zugstrasse sein.||
-|PZZ|Zugstraßenziel zulässig<br>Signal darf Zielelement einer Zugstrasse sein.||
-|PZSP|Zielsperre<br>Signal kann während es als Flankenschutzelement dient, nicht als Ziel einer Rangierstrasse dienen.||
 
-#### Projektierungstabellen
 
-Programmfälle
+### Programmfälle
 
-|Fall|Gleis|Weiche|Signal|Blindziel|Auflöse|Prellbock|
+|Fall|Beschreibung|Gleis|Weiche|Signal|Blindziel|Auflöse|
 |-|-|-|-|-|-|-|
-|PRS|||x||||
-|PRZ|||x||||
-|PZS|||x|x|||
-|PZZ|||x|x|||
-|PZSP|||x||||
-||||||||
+|PR|Rangierstraße zulässig<br>Gleis darf Element einer Rangierstrasse sein.||||||
+|PZSP|Zielsperre<br>Signal kann während es als Flankenschutzelement dient, nicht gleichzeitig Ziel einer Rangierstrasse dienen. Signal kann während es Ziel einer Rangierstrasse, nicht gleichzeitig als Flankenschutzelement dienen.|||x|||
+
+|PZ|Zugstraße zulässig<br>Gleis darf Element einer Zugstrasse sein.|
+|PRS|Rangierstraßenstart zulässig<br>Signal darf Startelement einer Rangierstrasse sein.|
+|PRZ|Rangierstraßenziel zulässig<br>Signal darf Zielelement einer Rangierstrasse sein.|
+|PZS|Zugstraßenstart zulässig<br>Signal darf Startelement einer Zugstrasse sein.|
+|PZZ|Zugstraßenziel zulässig<br>Signal darf Zielelement einer Zugstrasse sein.|
+
+|PZSP|Zielsperre<br>Signal |
+
+|Fall|Gleis|Weiche|Signal|Blindziel|Auflöse|
+|-|:-:|:-:|:-:|:-:|:-:|
+|PRS|||x|||
+|PRZ|||x|x||
+|PZS|||x|||
+|PZZ|||x|x||
+|PZSP|||x|||
+|PR|x|||||
+|PZ|x|||||
+|PSSL||x||||
+|PSSR||x||||
+|||||||
 
 Lupenbilder
 
@@ -100,9 +116,7 @@ Lupenbilder
 
 
 
-
-
-## Fahrstrassen0
+## Fahrstrassen
 
 
 ## Fahrstrassenelementtypen
@@ -120,4 +134,4 @@ Autor<br>
 
 Mathias Rentsch<br>
 rentsch@online.de<br>
-Januar 2026
+Februar 2026
