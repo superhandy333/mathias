@@ -13,6 +13,7 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 - [Elemente](#elemente)
     - [Datenfelder](#datenfelder)
     - [Programmfälle](#programmf%C3%A4lle)
+    - [Lupenbilder](#lupenbilder)
 - [Fahrstrassen](#fahrstrassen)
 - [Fahrstrassenelementtypen](#fahrstrassenelementtypen)
 - [Fahrstrassenelemente](#fahrstrassenelemente)
@@ -42,13 +43,13 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |3| S| Signal|
 |4| B| Blindziel|
 |5| A| Auflöseelement|
-|6| P| Prellbock|
 |7| Z| Zusatzelement|
 |99| T| Test|
 
 ## Elemente
 
 ### Datenfelder
+
 |Feld|Beschreibung|Pflichtfeld|
 |-|-|-|
 |id|Eindeutige Identifikationsnummer des Elements. Diese ID wird in der Tabelle [Fahrstrassenelemente](#fahrstrassenelemente) referenziert.|x|
@@ -65,33 +66,25 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 
 ### Programmfälle
 
-|Fall|Beschreibung|Gleis|Weiche|Signal|Blindziel|Auflöse|
-|-|-|-|-|-|-|-|
-|PR|Rangierstraße zulässig<br>Gleis darf Element einer Rangierstrasse sein.||||||
+G = Gleis  
+W = Weiche  
+S = Signal  
+B = Blindziel  
+A = Auflöse Element
+
+|Fall|Beschreibung|G|W|S|B|A|
+|-|-|:-:|:-:|:-:|:-:|:-:|
+|PR|Rangierstraße zulässig<br>Gleis darf Element einer Rangierstrasse sein.|x|||||
+|PZ|Zugstraße zulässig<br>Gleis darf Element einer Zugstrasse sein.|x|||||
+|PRS|Rangierstraßenstart zulässig<br>Signal darf Startelement einer Rangierstrasse sein.|||x|||
+|PRZ|Rangierstraßenziel zulässig<br>Signal darf Zielelement einer Rangierstrasse sein.|||x|||
+|PZS|Zugstraßenstart zulässig<br>Signal darf Startelement einer Zugstrasse sein.|||x|||
+|PZZ|Zugstraßenziel zulässig<br>Signal darf Zielelement einer Zugstrasse sein.|||x|||
+|PSSL|Umstellsperre links<br>Weiche ist in Stellung Links verriegelt ||x||||
+|PSSR|Umstellsperre rechts<br>Weiche ist in Stellung Rechts verriegelt||x||||
 |PZSP|Zielsperre<br>Signal kann während es als Flankenschutzelement dient, nicht gleichzeitig Ziel einer Rangierstrasse dienen. Signal kann während es Ziel einer Rangierstrasse, nicht gleichzeitig als Flankenschutzelement dienen.|||x|||
 
-|PZ|Zugstraße zulässig<br>Gleis darf Element einer Zugstrasse sein.|
-|PRS|Rangierstraßenstart zulässig<br>Signal darf Startelement einer Rangierstrasse sein.|
-|PRZ|Rangierstraßenziel zulässig<br>Signal darf Zielelement einer Rangierstrasse sein.|
-|PZS|Zugstraßenstart zulässig<br>Signal darf Startelement einer Zugstrasse sein.|
-|PZZ|Zugstraßenziel zulässig<br>Signal darf Zielelement einer Zugstrasse sein.|
-
-|PZSP|Zielsperre<br>Signal |
-
-|Fall|Gleis|Weiche|Signal|Blindziel|Auflöse|
-|-|:-:|:-:|:-:|:-:|:-:|
-|PRS|||x|||
-|PRZ|||x|x||
-|PZS|||x|||
-|PZZ|||x|x||
-|PZSP|||x|||
-|PR|x|||||
-|PZ|x|||||
-|PSSL||x||||
-|PSSR||x||||
-|||||||
-
-Lupenbilder
+### Lupenbilder
 
 |Nr.|Typ-ID|Typ|Grafik|Rotation|Mirror|Unterelementart|
 |-|-|-|-|-|-|-|
@@ -101,10 +94,14 @@ Lupenbilder
 |4|1|Gleis|![svg04](images/svg04.svg)|1|N|2|
 |5|1|Gleis|![svg05](images/svg05.svg)|2|N|2|
 |6|1|Gleis|![svg06](images/svg06.svg)|3|N|2|
-|7|2|Gleis|![svg07](images/svg07.svg)|0|J|2|
-|8|2|Gleis|![svg08](images/svg08.svg)|1|J|2|
-|9|2|Gleis|![svg09](images/svg09.svg)|2|J|2|
-|10|2|Gleis|![svg10](images/svg10.svg)|3|J|2|
+|7|1|Gleis|![svg07](images/svg07.svg)|0|J|2|
+|8|1|Gleis|![svg08](images/svg08.svg)|1|J|2|
+|9|1|Gleis|![svg09](images/svg09.svg)|2|J|2|
+|10|1|Gleis|![svg10](images/svg10.svg)|3|J|2|
+|xx|1|Gleis|![svgxx](images/svgxx.svg)|2|J|3|
+|xx|1|Gleis|![svgxx](images/svgxx.svg)|2|J|3|
+|xx|1|Gleis|![svgxx](images/svgxx.svg)|2|J|3|
+|xx|1|Gleis|![svgxx](images/svgxx.svg)|2|J|3|
 |11|2|Weiche|![svg11](images/svg11.svg)|0|N||
 |12|2|Weiche|![svg12](images/svg12.svg)|1|N||
 |13|2|Weiche|![svg13](images/svg13.svg)|2|N||
@@ -113,6 +110,10 @@ Lupenbilder
 |16|2|Weiche|![svg16](images/svg16.svg)|1|J||
 |17|2|Weiche|![svg17](images/svg17.svg)|2|J||
 |18|2|Weiche|![svg18](images/svg18.svg)|3|J||
+|xx|1|Blindziel|![svgxx](images/svgxx.svg)|0|0|1|
+|xx|1|Blindziel|![svgxx](images/svgxx.svg)|0|0|1|
+|xx|1|Blindziel|![svgxx](images/svgxx.svg)|0|0|1|
+|xx|1|Blindziel|![svgxx](images/svgxx.svg)|0|0|1|
 
 
 
