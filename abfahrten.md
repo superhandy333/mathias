@@ -39,7 +39,9 @@ h1 {
 -->
 # Abfahrten
 
+<!--
 <div class="btnlist">
+-->
 
 [Braunschweig](https://www.bahnhof.de/braunschweig-hbf/abfahrt)  
 [Berlin Hbf](https://www.bahnhof.de/berlin-hauptbahnhof/abfahrt)  
@@ -48,6 +50,7 @@ h1 {
 [Frankfurt Hbf](https://www.bahnhof.de/frankfurt-main-hbf/abfahrt)  
 [Köln Hbf](https://www.bahnhof.de/koeln-hbf/abfahrt)  
 
-
+<!--
 </div>
+-->
 
