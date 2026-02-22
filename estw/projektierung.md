@@ -66,12 +66,6 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 
 ### Programmfälle
 
-G = Gleis  
-W = Weiche  
-S = Signal  
-B = Blindziel  
-A = Auflöse Element
-
 |Fall|Beschreibung|G|W|S|B|A|
 |-|-|:-:|:-:|:-:|:-:|:-:|
 |PR|Rangierstraße zulässig<br>Gleis darf Element einer Rangierstrasse sein.|x|||||
@@ -98,10 +92,10 @@ A = Auflöse Element
 |8|1|Gleis|![svg08](images/svg08.svg)|1|J|2|
 |9|1|Gleis|![svg09](images/svg09.svg)|2|J|2|
 |10|1|Gleis|![svg10](images/svg10.svg)|3|J|2|
-|xx|1|Gleis|![svgxx](images/svgxx.svg)|2|J|3|
-|xx|1|Gleis|![svgxx](images/svgxx.svg)|2|J|3|
-|xx|1|Gleis|![svgxx](images/svgxx.svg)|2|J|3|
-|xx|1|Gleis|![svgxx](images/svgxx.svg)|2|J|3|
+|xx|1|Gleis|![svgxx](images/svg20.svg)|0|N|3|
+|xx|1|Gleis|![svgxx](images/svg21.svg)|1|N|3|
+|xx|1|Gleis|![svgxx](images/svg22.svg)|2|N|3|
+|xx|1|Gleis|![svgxx](images/svg23.svg)|3|N|3|
 |11|2|Weiche|![svg11](images/svg11.svg)|0|N||
 |12|2|Weiche|![svg12](images/svg12.svg)|1|N||
 |13|2|Weiche|![svg13](images/svg13.svg)|2|N||
@@ -110,12 +104,10 @@ A = Auflöse Element
 |16|2|Weiche|![svg16](images/svg16.svg)|1|J||
 |17|2|Weiche|![svg17](images/svg17.svg)|2|J||
 |18|2|Weiche|![svg18](images/svg18.svg)|3|J||
-|xx|1|Blindziel|![svgxx](images/svgxx.svg)|0|0|1|
-|xx|1|Blindziel|![svgxx](images/svgxx.svg)|0|0|1|
-|xx|1|Blindziel|![svgxx](images/svgxx.svg)|0|0|1|
-|xx|1|Blindziel|![svgxx](images/svgxx.svg)|0|0|1|
-
-
+|xx|1|Blindziel|![svg30](images/svg30.svg)|0|0|1|
+|xx|1|Blindziel|![svg31](images/svg31.svg)|0|0|1|
+|xx|1|Blindziel|![svg32](images/svg32.svg)|0|0|1|
+|xx|1|Blindziel|![svg33](images/svg33.svg)|0|0|1|
 
 ## Fahrstrassen
 
