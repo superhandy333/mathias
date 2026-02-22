@@ -1,10 +1,16 @@
 <button>ESTW</button>
 
-<small>[Entwicklung](../develop.md) / [ESTW](estw.md) / [Files](files.md) / create_database.sql</small>
+<small>[Entwicklung](../develop.md) / [ESTW](estw.md) / [Files](files.md) / export.sql</small>
 
 # export.sql
 
 ~~~sql
+-- estw3
+-- export.sql
+-- Author: Mathias Rentsch
+-- Februar 2026
+-- äöüÄÖÜß
+
 use estw;
 
 SELECT 

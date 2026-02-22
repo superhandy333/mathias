@@ -5,9 +5,10 @@
 # create_database.sql
 
 ~~~sql
--- estw2 Datenbank
--- Verschlussplanprinzip 
-
+-- estw3
+-- create_database.sql
+-- Author: Mathias Rentsch
+-- Februar 2026
 -- äöüÄÖÜß
 
 create database if not exists estw;

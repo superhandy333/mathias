@@ -17,6 +17,7 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 - [Fahrstrassen](#fahrstrassen)
 - [Fahrstrassenelementtypen](#fahrstrassenelementtypen)
 - [Fahrstrassenelemente](#fahrstrassenelemente)
+- [Steller](#steller)
 
 <!-- /TOC -->
 
@@ -56,7 +57,7 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |projekt_id|Identifikationsnummer des [Projektes](#projekte), dem das Element angehört|x|
 |typ_id|Identifikationsnummer des Elementtyps. Wert aus dem Feld `id` der Tabelle [Elementtypen](#elementtypen).|x|
 |hauptelement_id|Identifikationsnummer des ESTW-Elementes, wenn dieses Element über kein eigenes ESTW-Element verfügt.||
-|unterelementart|Bildliche Differenzierung eines Elements innerhalb eines Elementtyps. Werte siehe [Projektierungstabelle](#projektierungstabelle).|x|
+|unterelementart|Bildliche Differenzierung eines Elements innerhalb eines Elementtyps. Werte siehe [Lupenbilder](#lupenbilder).|x|
 |bezeichnung|Name des Elements (max. 50 Zeichen)|x|
 |beschreibung|Erläuternder Text als Beschreibung zum Element (max. 254 Zeichen)||
 |lupe1x|Horizontale Position im des Elements im Bildschirmraster|x|
@@ -72,9 +73,9 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |PR|Rangierstraße zulässig<br>Gleis darf Element einer Rangierstrasse sein.|x|||||
 |PZ|Zugstraße zulässig<br>Gleis darf Element einer Zugstrasse sein.|x|||||
 |PRS|Rangierstraßenstart zulässig<br>Signal darf Startelement einer Rangierstrasse sein.|||x|||
-|PRZ|Rangierstraßenziel zulässig<br>Signal darf Zielelement einer Rangierstrasse sein.|||x|||
+|PRZ|Rangierstraßenziel zulässig<br>Signal darf Zielelement einer Rangierstrasse sein.|||x|x||
 |PZS|Zugstraßenstart zulässig<br>Signal darf Startelement einer Zugstrasse sein.|||x|||
-|PZZ|Zugstraßenziel zulässig<br>Signal darf Zielelement einer Zugstrasse sein.|||x|||
+|PZZ|Zugstraßenziel zulässig<br>Signal darf Zielelement einer Zugstrasse sein.|||x|x||
 |PSSL|Umstellsperre links<br>Weiche ist in Stellung Links verriegelt ||x||||
 |PSSR|Umstellsperre rechts<br>Weiche ist in Stellung Rechts verriegelt||x||||
 |PZSP|Zielsperre<br>Signal kann während es als Flankenschutzelement dient, nicht gleichzeitig Ziel einer Rangierstrasse dienen. Signal kann während es Ziel einer Rangierstrasse, nicht gleichzeitig als Flankenschutzelement dienen.|||x|||
@@ -105,18 +106,18 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |20|2|Weiche|![svg20](images/svg20.svg)|1|J|1|
 |21|2|Weiche|![svg21](images/svg21.svg)|2|J|1|
 |22|2|Weiche|![svg22](images/svg22.svg)|3|J|1|
-|23|3|Signal|![svg23](images/svg23.svg)|3|J|1|
-|24|3|Signal|![svg24](images/svg24.svg)|3|J|1|
-|25|3|Signal|![svg25](images/svg25.svg)|3|J|1|
-|26|3|Signal|![svg26](images/svg26.svg)|3|J|1|
-|27|3|Signal|![svg27](images/svg27.svg)|3|J|2|
-|28|3|Signal|![svg28](images/svg28.svg)|3|J|2|
-|29|3|Signal|![svg29](images/svg29.svg)|3|J|2|
-|30|3|Signal|![svg30](images/svg30.svg)|3|J|2|
-|31|1|Blindziel|![svg31](images/svg31.svg)|0|0|1|
-|32|1|Blindziel|![svg32](images/svg32.svg)|1|0|1|
-|33|1|Blindziel|![svg33](images/svg33.svg)|2|0|1|
-|34|1|Blindziel|![svg34](images/svg34.svg)|3|0|1|
+|23|3|Signal|![svg23](images/svg23.svg)|0|N|1|
+|24|3|Signal|![svg24](images/svg24.svg)|1|N|1|
+|25|3|Signal|![svg25](images/svg25.svg)|2|N|1|
+|26|3|Signal|![svg26](images/svg26.svg)|3|N|1|
+|27|3|LS-Signal|![svg27](images/svg27.svg)|0|J|2|
+|28|3|LS-Signal|![svg28](images/svg28.svg)|1|J|2|
+|29|3|LS-Signal|![svg29](images/svg29.svg)|2|J|2|
+|30|3|LS-Signal|![svg30](images/svg30.svg)|3|J|2|
+|31|1|Blindziel|![svg31](images/svg31.svg)|0|N|1|
+|32|1|Blindziel|![svg32](images/svg32.svg)|1|N|1|
+|33|1|Blindziel|![svg33](images/svg33.svg)|2|N|1|
+|34|1|Blindziel|![svg34](images/svg34.svg)|3|N|1|
 
 ## Fahrstrassen
 
@@ -129,6 +130,10 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |beschreibung|Erläuternder Text als Beschreibung zum Fahrstrassenelementtyp (max. 254 Zeichen)||
 
 ## Fahrstrassenelemente
+
+## Steller
+
+[Stellerprojektierung](steller.md)
 
 <hr>
 Autor<br>
