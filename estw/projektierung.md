@@ -97,18 +97,26 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |12|1|Gleis|![svg12](images/svg12.svg)|1|N|3|
 |13|1|Gleis|![svg13](images/svg13.svg)|2|N|3|
 |14|1|Gleis|![svg14](images/svg14.svg)|3|N|3|
-|15|2|Weiche|![svg15](images/svg15.svg)|0|N||
-|16|2|Weiche|![svg16](images/svg16.svg)|1|N||
-|17|2|Weiche|![svg17](images/svg17.svg)|2|N||
-|18|2|Weiche|![svg18](images/svg18.svg)|3|N||
-|19|2|Weiche|![svg19](images/svg19.svg)|0|J||
-|20|2|Weiche|![svg20](images/svg20.svg)|1|J||
-|21|2|Weiche|![svg21](images/svg21.svg)|2|J||
-|22|2|Weiche|![svg22](images/svg22.svg)|3|J||
-|xx|1|Blindziel|![svg30](images/svg30.svg)|0|0|1|
-|xx|1|Blindziel|![svg31](images/svg31.svg)|0|0|1|
-|xx|1|Blindziel|![svg32](images/svg32.svg)|0|0|1|
-|xx|1|Blindziel|![svg33](images/svg33.svg)|0|0|1|
+|15|2|Weiche|![svg15](images/svg15.svg)|0|N|1|
+|16|2|Weiche|![svg16](images/svg16.svg)|1|N|1|
+|17|2|Weiche|![svg17](images/svg17.svg)|2|N|1|
+|18|2|Weiche|![svg18](images/svg18.svg)|3|N|1|
+|19|2|Weiche|![svg19](images/svg19.svg)|0|J|1|
+|20|2|Weiche|![svg20](images/svg20.svg)|1|J|1|
+|21|2|Weiche|![svg21](images/svg21.svg)|2|J|1|
+|22|2|Weiche|![svg22](images/svg22.svg)|3|J|1|
+|23|3|Signal|![svg23](images/svg23.svg)|3|J|1|
+|24|3|Signal|![svg24](images/svg24.svg)|3|J|1|
+|25|3|Signal|![svg25](images/svg25.svg)|3|J|1|
+|26|3|Signal|![svg26](images/svg26.svg)|3|J|1|
+|27|3|Signal|![svg27](images/svg27.svg)|3|J|2|
+|28|3|Signal|![svg28](images/svg28.svg)|3|J|2|
+|29|3|Signal|![svg29](images/svg29.svg)|3|J|2|
+|30|3|Signal|![svg30](images/svg30.svg)|3|J|2|
+|31|1|Blindziel|![svg31](images/svg31.svg)|0|0|1|
+|32|1|Blindziel|![svg32](images/svg32.svg)|1|0|1|
+|33|1|Blindziel|![svg33](images/svg33.svg)|2|0|1|
+|34|1|Blindziel|![svg34](images/svg34.svg)|3|0|1|
 
 ## Fahrstrassen
 

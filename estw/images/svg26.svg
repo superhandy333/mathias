@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+    <g transform="rotate(270 5 5)">
+        <line x1="0" y1="0" x2="10" y2="0" stroke="black" stroke-width="0.5" />
+        <line x1="10" y1="0" x2="10" y2="10" stroke="black" stroke-width="0.5" />
+        <line x1="10" y1="10" x2="0" y2="10" stroke="black" stroke-width="0.5" />
+        <line x1="0" y1="10" x2="0" y2="0" stroke="black" stroke-width="0.5" />
+
+        <line x1="0" y1="5" x2="10" y2="5" stroke="black" stroke-width="1" />
+        <rect x="5" y="6.5" width="3" height="2" fill="black" />
+        <line x1="3" y1="7.5" x2="6.5" y2="7.5" stroke="black" stroke-width="0.5" />
+        <line x1="3" y1="6.5" x2="3" y2="8.5" stroke="black" stroke-width="0.5" />
+    </g>
+</svg>
