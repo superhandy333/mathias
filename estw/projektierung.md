@@ -93,25 +93,24 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |8|1|Gleis|![svg08](images/svg08.svg)|1|J|2|
 |9|1|Gleis|![svg09](images/svg09.svg)|2|J|2|
 |10|1|Gleis|![svg10](images/svg10.svg)|3|J|2|
-|xx|1|Gleis|![svgxx](images/svg20.svg)|0|N|3|
-|xx|1|Gleis|![svgxx](images/svg21.svg)|1|N|3|
-|xx|1|Gleis|![svgxx](images/svg22.svg)|2|N|3|
-|xx|1|Gleis|![svgxx](images/svg23.svg)|3|N|3|
-|11|2|Weiche|![svg11](images/svg11.svg)|0|N||
-|12|2|Weiche|![svg12](images/svg12.svg)|1|N||
-|13|2|Weiche|![svg13](images/svg13.svg)|2|N||
-|14|2|Weiche|![svg14](images/svg14.svg)|3|N||
-|15|2|Weiche|![svg15](images/svg15.svg)|0|J||
-|16|2|Weiche|![svg16](images/svg16.svg)|1|J||
-|17|2|Weiche|![svg17](images/svg17.svg)|2|J||
-|18|2|Weiche|![svg18](images/svg18.svg)|3|J||
+|11|1|Gleis|![svg11](images/svg11.svg)|0|N|3|
+|12|1|Gleis|![svg12](images/svg12.svg)|1|N|3|
+|13|1|Gleis|![svg13](images/svg13.svg)|2|N|3|
+|14|1|Gleis|![svg14](images/svg14.svg)|3|N|3|
+|15|2|Weiche|![svg15](images/svg15.svg)|0|N||
+|16|2|Weiche|![svg16](images/svg16.svg)|1|N||
+|17|2|Weiche|![svg17](images/svg17.svg)|2|N||
+|18|2|Weiche|![svg18](images/svg18.svg)|3|N||
+|19|2|Weiche|![svg19](images/svg19.svg)|0|J||
+|20|2|Weiche|![svg20](images/svg20.svg)|1|J||
+|21|2|Weiche|![svg21](images/svg21.svg)|2|J||
+|22|2|Weiche|![svg22](images/svg22.svg)|3|J||
 |xx|1|Blindziel|![svg30](images/svg30.svg)|0|0|1|
 |xx|1|Blindziel|![svg31](images/svg31.svg)|0|0|1|
 |xx|1|Blindziel|![svg32](images/svg32.svg)|0|0|1|
 |xx|1|Blindziel|![svg33](images/svg33.svg)|0|0|1|
 
 ## Fahrstrassen
-
 
 ## Fahrstrassenelementtypen
 
