@@ -14,7 +14,7 @@
 
 <!-- /TOC -->
 
-[create_database_test](create_database.sql)  
+[create_database_test](create_database.md)  
 
 ## create_database.sql
 
