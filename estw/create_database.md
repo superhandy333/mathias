@@ -4,6 +4,7 @@
 
 # create_database.sql
 
+~~~sql
 -- estw2 Datenbank
 -- Verschlussplanprinzip 
 
@@ -317,4 +318,4 @@ INSERT INTO `elemente` (`projekt_id`, `typ_id`, `hauptelement_id`, `bezeichnung`
 INSERT INTO `elemente` (`projekt_id`, `typ_id`, `hauptelement_id`, `bezeichnung`, `beschreibung`, `PFZS`, `PR`, `PRS`, `PRZ`, `PSSL`, `PSSR`, `PZ`, `PZS`, `PZZ`, `lupe1x`, `lupe1y`, `rotation`, `mirror`) VALUES (4, 1, NULL, '35G01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, 1, 0, 'N');
 INSERT INTO `elemente` (`projekt_id`, `typ_id`, `hauptelement_id`, `bezeichnung`, `beschreibung`, `PFZS`, `PR`, `PRS`, `PRZ`, `PSSL`, `PSSR`, `PZ`, `PZS`, `PZZ`, `lupe1x`, `lupe1y`, `rotation`, `mirror`) VALUES (4, 3, NULL, '35N1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 1, 0, 'N');
 
-```
+~~~
