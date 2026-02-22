@@ -14,6 +14,8 @@
 
 <!-- /TOC -->
 
+[create_database_test](create_database.sql)  
+
 ## create_database.sql
 
 Auszug aus 01/2026. Das Original befindet sich im [Repository](https://github.com/superhandy333).

@@ -55,6 +55,7 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |id|Eindeutige Identifikationsnummer des Elements. Diese ID wird in der Tabelle [Fahrstrassenelemente](#fahrstrassenelemente) referenziert.|x|
 |projekt_id|Identifikationsnummer des [Projektes](#projekte), dem das Element angehört|x|
 |typ_id|Identifikationsnummer des Elementtyps. Wert aus dem Feld `id` der Tabelle [Elementtypen](#elementtypen).|x|
+|hauptelement_id|Identifikationsnummer des ESTW-Elementes, wenn dieses Element über kein eigenes ESTW-Element verfügt.||
 |unterelementart|Bildliche Differenzierung eines Elements innerhalb eines Elementtyps. Werte siehe [Projektierungstabelle](#projektierungstabelle).|x|
 |bezeichnung|Name des Elements (max. 50 Zeichen)|x|
 |beschreibung|Erläuternder Text als Beschreibung zum Element (max. 254 Zeichen)||
