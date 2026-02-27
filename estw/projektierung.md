@@ -1,4 +1,4 @@
-<button>ESTW</button>
+﻿<button>ESTW</button>
 
 <small>[Entwicklung](../develop.md) / [ESTW](estw.md) / Projektierung</small>
 
@@ -82,46 +82,46 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 
 ### Lupenbilder
 
-|Nr.|Typ-ID|Typ|Grafik|Rotation|Mirror|Unterelementart|
+|Nr.|Typ|U-Art|Typ|Grafik|Rotation|Mirror|
 |-|-|-|-|-|-|-|
-|1|1|Gleis|![svg01](images/svg01.svg)|0|N|1|
-|2|1|Gleis|![svg02](images/svg02.svg)|1|N|1|
-|3|1|Gleis|![svg03](images/svg03.svg)|0|N|2|
-|4|1|Gleis|![svg04](images/svg04.svg)|1|N|2|
-|5|1|Gleis|![svg05](images/svg05.svg)|2|N|2|
-|6|1|Gleis|![svg06](images/svg06.svg)|3|N|2|
-|7|1|Gleis|![svg07](images/svg07.svg)|0|J|2|
-|8|1|Gleis|![svg08](images/svg08.svg)|1|J|2|
-|9|1|Gleis|![svg09](images/svg09.svg)|2|J|2|
-|10|1|Gleis|![svg10](images/svg10.svg)|3|J|2|
-|11|1|Gleis|![svg11](images/svg11.svg)|0|N|3|
-|12|1|Gleis|![svg12](images/svg12.svg)|1|N|3|
-|13|1|Gleis|![svg13](images/svg13.svg)|2|N|3|
-|14|1|Gleis|![svg14](images/svg14.svg)|3|N|3|
-|15|2|Weiche|![svg15](images/svg15.svg)|0|N|1|
-|16|2|Weiche|![svg16](images/svg16.svg)|1|N|1|
-|17|2|Weiche|![svg17](images/svg17.svg)|2|N|1|
-|18|2|Weiche|![svg18](images/svg18.svg)|3|N|1|
-|19|2|Weiche|![svg19](images/svg19.svg)|0|J|1|
-|20|2|Weiche|![svg20](images/svg20.svg)|1|J|1|
-|21|2|Weiche|![svg21](images/svg21.svg)|2|J|1|
-|22|2|Weiche|![svg22](images/svg22.svg)|3|J|1|
-|23|3|Signal|![svg23](images/svg23.svg)|0|N|1|
-|24|3|Signal|![svg24](images/svg24.svg)|1|N|1|
-|25|3|Signal|![svg25](images/svg25.svg)|2|N|1|
-|26|3|Signal|![svg26](images/svg26.svg)|3|N|1|
-|27|3|LS-Signal|![svg27](images/svg27.svg)|0|J|2|
-|28|3|LS-Signal|![svg28](images/svg28.svg)|1|J|2|
-|29|3|LS-Signal|![svg29](images/svg29.svg)|2|J|2|
-|30|3|LS-Signal|![svg30](images/svg30.svg)|3|J|2|
-|31|4|Blindziel|![svg31](images/svg31.svg)|0|N|1|
-|32|4|Blindziel|![svg32](images/svg32.svg)|1|N|1|
-|33|4|Blindziel|![svg33](images/svg33.svg)|2|N|1|
-|34|4|Blindziel|![svg34](images/svg34.svg)|3|N|1|
-|35|5|Aufloese|![svg35](images/svg35.svg)|0|N|1|
-|36|5|Aufloese|![svg36](images/svg36.svg)|1|N|1|
-|37|5|Aufloese|![svg37](images/svg37.svg)|2|N|1|
-|38|5|Aufloese|![svg38](images/svg38.svg)|3|N|1|
+|1|1|1|Gleis|![svg01](images/svg01.svg)|0|N|
+|2|1|1|Gleis|![svg02](images/svg02.svg)|1|N|
+|3|1|2|Gleis|![svg03](images/svg03.svg)|0|N|
+|4|1|2|Gleis|![svg04](images/svg04.svg)|1|N|
+|5|1|2|Gleis|![svg05](images/svg05.svg)|2|N|
+|6|1|2|Gleis|![svg06](images/svg06.svg)|3|N|
+|7|1|2|Gleis|![svg07](images/svg07.svg)|0|J|
+|8|1|2|Gleis|![svg08](images/svg08.svg)|1|J|
+|9|1|2|Gleis|![svg09](images/svg09.svg)|2|J|
+|10|1|2|Gleis|![svg10](images/svg10.svg)|3|J|
+|11|1|3|Gleis|![svg11](images/svg11.svg)|0|N|
+|12|1|3|Gleis|![svg12](images/svg12.svg)|1|N|
+|13|1|3|Gleis|![svg13](images/svg13.svg)|2|N|
+|14|1|3|Gleis|![svg14](images/svg14.svg)|3|N|
+|15|2|1|Weiche|![svg15](images/svg15.svg)|0|N|
+|16|2|1|Weiche|![svg16](images/svg16.svg)|1|N|
+|17|2|1|Weiche|![svg17](images/svg17.svg)|2|N|
+|18|2|1|Weiche|![svg18](images/svg18.svg)|3|N|
+|19|2|1|Weiche|![svg19](images/svg19.svg)|0|J|
+|20|2|1|Weiche|![svg20](images/svg20.svg)|1|J|
+|21|2|1|Weiche|![svg21](images/svg21.svg)|2|J|
+|22|2|1|Weiche|![svg22](images/svg22.svg)|3|J|
+|23|3|1|Signal|![svg23](images/svg23.svg)|0|N|
+|24|3|1|Signal|![svg24](images/svg24.svg)|1|N|
+|25|3|1|Signal|![svg25](images/svg25.svg)|2|N|
+|26|3|1|Signal|![svg26](images/svg26.svg)|3|N|
+|27|3|2|LS-Signal|![svg27](images/svg27.svg)|0|J|
+|28|3|2|LS-Signal|![svg28](images/svg28.svg)|1|J|
+|29|3|2|LS-Signal|![svg29](images/svg29.svg)|2|J|
+|30|3|2|LS-Signal|![svg30](images/svg30.svg)|3|J|
+|31|4|1|Blindziel|![svg31](images/svg31.svg)|0|N|
+|32|4|1|Blindziel|![svg32](images/svg32.svg)|1|N|
+|33|4|1|Blindziel|![svg33](images/svg33.svg)|2|N|
+|34|4|1|Blindziel|![svg34](images/svg34.svg)|3|N|
+|35|5|1|Aufloese|![svg35](images/svg35.svg)|0|N|
+|36|5|1|Aufloese|![svg36](images/svg36.svg)|1|N|
+|37|5|1|Aufloese|![svg37](images/svg37.svg)|2|N|
+|38|5|1|Aufloese|![svg38](images/svg38.svg)|3|N|
 
 ## Fahrstrassen
 
