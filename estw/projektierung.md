@@ -110,18 +110,18 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |24|3|1|Signal|![svg24](images/svg24.svg)|1|N|
 |25|3|1|Signal|![svg25](images/svg25.svg)|2|N|
 |26|3|1|Signal|![svg26](images/svg26.svg)|3|N|
-|27|3|2|LS-Signal|![svg27](images/svg27.svg)|0|J|
-|28|3|2|LS-Signal|![svg28](images/svg28.svg)|1|J|
-|29|3|2|LS-Signal|![svg29](images/svg29.svg)|2|J|
-|30|3|2|LS-Signal|![svg30](images/svg30.svg)|3|J|
+|27|3|2|LS-Signal|![svg27](images/svg27.svg)|0|N|
+|28|3|2|LS-Signal|![svg28](images/svg28.svg)|1|N|
+|29|3|2|LS-Signal|![svg29](images/svg29.svg)|2|N|
+|30|3|2|LS-Signal|![svg30](images/svg30.svg)|3|N|
 |31|4|1|Blindziel|![svg31](images/svg31.svg)|0|N|
 |32|4|1|Blindziel|![svg32](images/svg32.svg)|1|N|
 |33|4|1|Blindziel|![svg33](images/svg33.svg)|2|N|
 |34|4|1|Blindziel|![svg34](images/svg34.svg)|3|N|
-|35|5|1|Aufloese|![svg35](images/svg35.svg)|0|N|
-|36|5|1|Aufloese|![svg36](images/svg36.svg)|1|N|
-|37|5|1|Aufloese|![svg37](images/svg37.svg)|2|N|
-|38|5|1|Aufloese|![svg38](images/svg38.svg)|3|N|
+|35|5|1|Auflöse|![svg35](images/svg35.svg)|0|N|
+|36|5|1|Auflöse|![svg36](images/svg36.svg)|1|N|
+|37|5|1|Auflöse|![svg37](images/svg37.svg)|2|N|
+|38|5|1|Auflöse|![svg38](images/svg38.svg)|3|N|
 
 ## Fahrstrassen
 
