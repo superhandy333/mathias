@@ -27,8 +27,6 @@ mysqlsh --uri estw@192.168.xxx.xx:3300/estw --sql -f export.sql
 
 ## transfer.sql
 
-Beispiel. Das Original befindet sich im [Repository](https://github.com/superhandy333).
-
 ~~~sql
 scp papa@192.168.xxx.xx:/home/papa/docker/export/*.csv d:\rentsch\estwdaten
 ~~~
