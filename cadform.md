@@ -3,7 +3,7 @@
 ## CadPoint
 
 ### Eigenschaften
-| name | beschreibung |
+|name|beschreibung|
 |---|---|
 | Name |  |
 | OnRedrawNeeded |  |
