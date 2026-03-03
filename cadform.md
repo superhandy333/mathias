@@ -2,16 +2,8 @@
 
 ## CadPoint
 
-### Eigenschaften
-
-|name|beschreibuxng|
+|Name|Beschreibung|
 |-|-|
-|Name||
-|OnRedrawNeeded||
-
-### Methoden
-| name | beschreibung |
-|---|---|
 | CadPoint() |  |
 | ~CadPoint() |  |
 | get_backcolor() const |  |
@@ -36,19 +28,10 @@
 | set_usedParentLinewidth(bool) |  |
 | set_visible(bool) |  |
 
----
-
 ## CadNode
 
-### Eigenschaften
-| name | beschreibung |
-|---|---|
-| Name |  |
-| OnRedrawNeeded |  |
-
-### Methoden
-| name | beschreibung |
-|---|---|
+|Name|Beschreibung|
+|-|-|
 | CadNode() |  |
 | ~CadNode() |  |
 | add_circle(CadCoord const &, int const) |  |
