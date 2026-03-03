@@ -1,5 +1,14 @@
 # CAD-Klassenhierarchie – Public API (Eigenschaften & Methoden)
 
+[CadPoint](#cadpoint)  
+[CadNode](#cadnode)  
+[CadPrimitive](#cadprimitive)  
+[CadLine](#cadline)  
+[CadCircle](#cadcircle)  
+[CadRect](#cadrect)  
+[CadTriangle](#cadtriangle)  
+[CadText](#cadtext)  
+
 ## CadPoint
 
 |Name|Beschreibung|
@@ -78,19 +87,10 @@
 | set_usedParentLinewidth(bool) |  |
 | set_visible(bool) |  |
 
----
-
 ## CadPrimitive
 
-### Eigenschaften
-| name | beschreibung |
-|---|---|
-| Name |  |
-| OnRedrawNeeded |  |
-
-### Methoden
-| name | beschreibung |
-|---|---|
+|Name|Beschreibung|
+|-|-|
 | CadPrimitive() |  |
 | ~CadPrimitive() |  |
 | get_backcolor() const |  |
@@ -117,19 +117,10 @@
 | set_usedParentLinewidth(bool) |  |
 | set_visible(bool) |  |
 
----
-
 ## CadLine
 
-### Eigenschaften
-| name | beschreibung |
-|---|---|
-| Name |  |
-| OnRedrawNeeded |  |
-
-### Methoden
-| name | beschreibung |
-|---|---|
+|Name|Beschreibung|
+|-|-|
 | CadLine() |  |
 | ~CadLine() |  |
 | get_backcolor() const |  |
@@ -163,19 +154,10 @@
 | set_usedParentLinewidth(bool) |  |
 | set_visible(bool) |  |
 
----
-
 ## CadCircle
 
-### Eigenschaften
-| name | beschreibung |
-|---|---|
-| Name |  |
-| OnRedrawNeeded |  |
-
-### Methoden
-| name | beschreibung |
-|---|---|
+|Name|Beschreibung|
+|-|-|
 | CadCircle() |  |
 | ~CadCircle() |  |
 | get_backcolor() const |  |
@@ -205,19 +187,10 @@
 | set_usedParentLinewidth(bool) |  |
 | set_visible(bool) |  |
 
----
-
 ## CadRect
 
-### Eigenschaften
-| name | beschreibung |
-|---|---|
-| Name |  |
-| OnRedrawNeeded |  |
-
-### Methoden
-| name | beschreibung |
-|---|---|
+|Name|Beschreibung|
+|-|-|
 | CadRect() |  |
 | ~CadRect() |  |
 | get_backcolor() const |  |
@@ -249,19 +222,10 @@
 | set_visible(bool) |  |
 | set_width(int) |  |
 
----
-
 ## CadTriangle
 
-### Eigenschaften
-| name | beschreibung |
-|---|---|
-| Name |  |
-| OnRedrawNeeded |  |
-
-### Methoden
-| name | beschreibung |
-|---|---|
+|Name|Beschreibung|
+|-|-|
 | CadTriangle() |  |
 | ~CadTriangle() |  |
 | get_backcolor() const |  |
@@ -298,19 +262,10 @@
 | set_usedParentLinewidth(bool) |  |
 | set_visible(bool) |  |
 
----
-
 ## CadText
 
-### Eigenschaften
-| name | beschreibung |
-|---|---|
-| Name |  |
-| OnRedrawNeeded |  |
-
-### Methoden
-| name | beschreibung |
-|---|---|
+|Name|Beschreibung|
+|-|-|
 | CadText() |  |
 | ~CadText() |  |
 | get_alignment() const |  |
