@@ -175,7 +175,11 @@ Fortschrittsanzeige im farbig markiertem [Netzplan](netzplan.html) der Berliner 
 |Zeuthen|S8|||
 |Zoologischer Garten|S3, S5, S7, S9||[![Zoologischer Garten](thumbs/zoo.jpg)](images/zoo.jpg)|
 
+## Hinweise
 
+Autor:  
 Mathias Rentsch  
 rentsch@online.de  
 Stand: 06.04.2026  
+
+Für die Erstellung der Karte auf der Seite "netzplan.html" wurde die Datei "Netzplan neu.svg" von Autor **Arbalete** via Wikipedia/Wikimedia Commons verwendet, die unter <a href ="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> lizenziert ist. Dieses Werk wurde durch die Umwandlung in eine Schwarz-Weiß-Version modifiziert und um farbige Markierungen ergänzt. Gemäß der Lizenz muss dieses bearbeitete Werk unter derselben Lizenz (CC BY-SA 4.0) weitergegeben werden.
