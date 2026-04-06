@@ -56,6 +56,12 @@ Manche sammeln Briefmarken, ich sammle Bahnhöfe. Berlin hat eines der größten
 }
 </style>
 
+Fortschrittsanzeige im farbig markiertem [Netzplan](netzplan.html) der Berliner S-Bahn. Je mehr Stationen ich besuche, desto grüner wird die Karte.
+
+- Idee zum Projekt: 06.04.2026
+- Erster Upload: 06.04.2026
+
+
 
 <!-- Muster für Bildlinks
 |Teststation|S||[![Teststation](thumbs/teststation.jpg)](images/teststation.jpg)| -->
@@ -169,11 +175,9 @@ Manche sammeln Briefmarken, ich sammle Bahnhöfe. Berlin hat eines der größten
 |Zeuthen|S8|||
 |Zoologischer Garten|S3, S5, S7, S9||[![Zoologischer Garten](thumbs/zoo.jpg)](images/zoo.jpg)|
 
-|Station|Linien|Datum||
-|-|-|-|-|
-|Alexanderplatz|S5, S7, S75|05.04.2026|[![alt text](thumbs/alexanderplatz.jpg)](images/alexanderplatz.jpg)|
-|Beusselstraße|S41, S42||[![Beusselstraße](thumbs/beusselstrasse.jpg)](images/beusselstrasse.jpg)|
-|Gartenstraße|S41, S42||[![Gartenstraße](thumbs/gartenstrasse.jpg)](images/gartenstrasse.jpg)|
-|Günzelstrasse|S41, S42||[![Günzelstraße](thumbs/guenzelstrasse.jpg)](images/guenzelstrasse.jpg)|
-|schoenholz|S41, S42||[![Schönholz](thumbs/schoenholz.jpg)](images/schoenholz.jpg)|
-|Westkreuz|S41, S42||[![Westkreuz](thumbs/westkreuz.jpg)](images/westkreuz.jpg)|
+<small>
+Mathias Rentsch<br>
+rentsch@online.de<br>
+Stand: 06.04.2026  
+
+</small>
