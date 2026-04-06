@@ -175,9 +175,7 @@ Fortschrittsanzeige im farbig markiertem [Netzplan](netzplan.html) der Berliner 
 |Zeuthen|S8|||
 |Zoologischer Garten|S3, S5, S7, S9||[![Zoologischer Garten](thumbs/zoo.jpg)](images/zoo.jpg)|
 
-<small>
-Mathias Rentsch<br>
-rentsch@online.de<br>
-Stand: 06.04.2026  
 
-</small>
+Mathias Rentsch  
+rentsch@online.de  
+Stand: 06.04.2026  
