@@ -70,10 +70,12 @@ Fortschrittsanzeige im farbig markiertem [Netzplan](netzplan.html) der Berliner 
 |-|-|-|-|
 |Adlershof|S8, S9|||
 |Ahrensfelde|S7|||
+|Alexanderplatz|S3, S5, S7, S9|||
 |Alt-Reinickendorf|S25|||
 |Altglienicke|S8, S85|||
 |Anhalter Bahnhof|S1, S2, S25, S26|||
 |Attilastraße|S2|||
+|Babelsberg|S7|||
 |Baumschulenweg|S8, S9, S45, S46, S47|||
 |Bellevue|S3, S5, S7, S9|||
 |Bergfelde|S8|||
@@ -89,13 +91,19 @@ Fortschrittsanzeige im farbig markiertem [Netzplan](netzplan.html) der Berliner 
 |Borgsdorf|S1|||
 |Bornholmer Straße|S1, S2, S25, S26, S8, S41, S42|||
 |Botanischer Garten|S1|||
+|Brandenburger Tor|S1, S2, S25, S26|||
 |Buch|S2|||
 |Buckower Chaussee|S2|||
+|Bundesplatz|S41, S42, S46|||
 |Charlottenburg|S3, S5, S7, S9|||
 |Eichborndamm|S25|||
+|Eichwalde|S8, S46|||
 |Erkner|S3|||
 |Fennpfuhl|S41, S42|||
 |Feuerbachstraße|S1|||
+|Flughafen Berlin Brandenburg|S9, S45|||
+|Frankfurter Allee|S41, S42, S8, S85|||
+|Fredersdorf|S5|||
 |Friedenau|S1|||
 |Friedrichsfelde Ost|S5, S7, S75|||
 |Friedrichshagen|S3|||
@@ -106,29 +114,44 @@ Fortschrittsanzeige im farbig markiertem [Netzplan](netzplan.html) der Berliner 
 |Greifswalder Straße|S41, S42, S8, S85|||
 |Griebnitzsee|S7|||
 |Grünau|S8, S9, S46, S85|||
+|Grünbergallee|S9, S45|||
 |Grunewald|S7|||
 |Hackescher Markt|S3, S5, S7, S9|||
 |Halensee|S41, S42, S46|||
+|Hauptbahnhof|S3, S5, S7, S9|||
+|Heerstraße|S3, S9|||
 |Hegermühle|S5|||
 |Heidelberger Platz|S41, S42, S46||[![Heidelberger Platz](thumbs/heidelberger_platz.jpg)](images/heidelberger_platz.jpg)|
-|Heinersdorf|S2, S8|||
+|Heiligensee|S25|||
+|Henningsdorf|S25|||
+|Hermannstraße|S41, S42, S45, S46, S47|||
 |Hermsdorf|S1|||
 |Hirschgarten|S3|||
 |Hohen Neuendorf|S1, S8|||
 |Hohenschönhausen|S75|||
 |Hohenzollerndamm|S41, S42|||
 |Hoppegarten|S5|||
+|Humboldthain|S1, S2, S25, S26|||
+|Insbrucker Platz|S41, S42, S46|||
 |Jannowitzbrücke|S3, S5, S7, S9|||
+|Johannisthal|S8, S9, S45, S46, S85|||
+|Julius-Leber-Brücke|S1|||
+|Jungfernheide|S41, S42|||
 |Karl-Bonhoeffer-Nervenklinik|S25|||
 |Karow|S2|||
+|Kaulsdorf|S3|||
 |Köllnische Heide|S41, S42, S45, S46, S47|||
 |Köpenick|S3|||
 |Königs Wusterhausen|S46|||
 |Landsberger Allee|S41, S42, S8, S85|||
+|Lankwitz|S25, S26|||
+|Lehnitz|S1|||
+|Lichtenberg|S3, S5, S7, S75|||
+|Lichtenrade|S2|||
 |Lichterfelde Ost|S25|||
 |Lichterfelde Süd|S25|||
 |Lichterfelde West|S1|||
-|Lichtenberg|S3, S5, S7, S75|||
+|Mahlow|S2|||
 |Mahlsdorf|S5|||
 |Marienfelde|S2|||
 |Marzahn|S7|||
@@ -180,6 +203,6 @@ Fortschrittsanzeige im farbig markiertem [Netzplan](netzplan.html) der Berliner 
 Autor:  
 Mathias Rentsch  
 rentsch@online.de  
-Stand: 06.04.2026  
+Stand: 08.04.2026  
 
 Für die Erstellung der Karte auf der Seite [netzplan.html](netzplan.html) wurde die Datei [Netzplan neu.svg](https://commons.wikimedia.org/wiki/File:S-Bahn_Berlin_-_Netzplan.svg) von Autor **Arbalete** via Wikipedia/Wikimedia Commons verwendet, die unter [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) lizenziert ist. Dieses Werk wurde durch die Umwandlung in eine Schwarz-Weiß-Version modifiziert und um farbige Markierungen ergänzt. Gemäß der Lizenz muss dieses bearbeitete Werk unter derselben Lizenz (CC BY-SA 4.0) weitergegeben werden.
