@@ -121,7 +121,7 @@ Fortschrittsanzeige im farbig markiertem [Netzplan](netzplan.html) der Berliner 
 |Hauptbahnhof|S3, S5, S7, S9|||
 |Heerstraße|S3, S9|||
 |Hegermühle|S5|||
-|Heidelberger Platz|S41, S42, S46||[![Heidelberger Platz](thumbs/heidelberger_platz.jpg)](images/heidelberger_platz.jpg)|
+|Heidelberger Platz|S41, S42, S46||[![Heidelberger Platz](images/heidelberger_platz.jpg)](images/heidelberger_platz.jpg)|
 |Heiligensee|S25|||
 |Henningsdorf|S25|||
 |Hermannstraße|S41, S42, S45, S46, S47|||
