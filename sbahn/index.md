@@ -74,10 +74,12 @@ S1,S2,S3,S75
 
 ### Westkreuz
 
-S1,S2,S3
+S1,S2,S3,S28
 
 15.04.2025  
 ![Hack](heidelberger_platz.jpg)
+
+### ![](images/greendot.png) Geraberg
 
 <!-- Muster für Bildlinks
 |Teststation|S||[![Teststation](thumbs/teststation.jpg)](images/teststation.jpg)| -->
