@@ -61,28 +61,11 @@ Fortschrittsanzeige im farbig markiertem [Netzplan](netzplan.html) der Berliner 
 - Idee zum Projekt: 06.04.2026
 - Erster Upload: 06.04.2026
 
-### Alexanderplatz
-
-S1,S2,S3
-
-### Hackescher Markt
-
-S1,S2,S3,S75
-
-15.04.2025  
-![Hack](heidelberger_platz.jpg)
-
-### Westkreuz
-
-S1,S2,S3,S28
-
-15.04.2025  
-![Hack](heidelberger_platz.jpg)
-
-### ![](images/greendot.png) Geraberg
-
-<!-- Muster für Bildlinks
-|Teststation|S||[![Teststation](thumbs/teststation.jpg)](images/teststation.jpg)| -->
+<!-- Muster für erledigte Stationen
+### ![](images/greendot.png) Alex
+S41, S42, S46  
+[![Alex](thumbs/alex.jpg)](images/alex.jpg) 15.07.1968
+-->
 
 
 ### Adlershof
@@ -213,71 +196,117 @@ S2
 ### Buckower Chaussee
 S2
 
+<hr>
+
 ### Bundesplatz
 S41, S42, S46
+
+<hr>
 
 ### Charlottenburg
 S3, S5, S7, S9
 
+<hr>
+
 ### Eichborndamm
 S25
+
+<hr>
 
 ### Eichwalde
 S8, S46
 
+<hr>
+
 ### Erkner
 S3
+
+<hr>
 
 ### Fennpfuhl
 S41, S42
 
+<hr>
+
 ### Feuerbachstraße
 S1
+
+<hr>
 
 ### Flughafen Berlin Brandenburg
 S9, S45
 
+<hr>
+
 ### Frankfurter Allee
 S41, S42, S8, S85
+
+<hr>
 
 ### Fredersdorf
 S5
 
+<hr>
+
 ### Friedenau
 S1
+
+<hr>
 
 ### Friedrichsfelde Ost
 S5, S7, S75
 
+<hr>
+
 ### Friedrichshagen
 S3
+
+<hr>
 
 ### Friedrichstraße
 S1, S2, S25, S26, S3, S5, S7, S9
 
+<hr>
+
 ### Frohnau
 S1
+
+<hr>
 
 ### Gehrenseestraße
 S75
 
+<hr>
+
 ### Gesundbrunnen
 S1, S2, S25, S26, S41, S42
+
+<hr>
 
 ### Greifswalder Straße
 S41, S42, S8, S85
 
+<hr>
+
 ### Griebnitzsee
 S7
+
+<hr>
 
 ### Grünau
 S8, S9, S46, S85
 
+<hr>
+
 ### Grünbergallee
 S9, S45
 
+<hr>
+
 ### Grunewald
 S7
+
+<hr>
 
 ### Hackescher Markt
 S3, S5, S7, S9
@@ -357,12 +386,24 @@ S5
 
 ### Humboldthain
 S1, S2, S25, S26
+
+<hr>
+
 ### Insbrucker Platz
 S41, S42, S46
+
+<hr>
+
 ### Jannowitzbrücke
 S3, S5, S7, S9
+
+<hr>
+
 ### Johannisthal
 S8, S9, S45, S46, S85
+
+<hr>
+
 ### Julius-Leber-Brücke
 S1
 
@@ -373,38 +414,118 @@ S41, S42
 
 <hr>
 
-### Karl-Bonhoeffer-Nervenklinik|S25|||
-### Karow|S2|||
-### Kaulsdorf|S3|||
-### Köllnische Heide|S41, S42, S45, S46, S47|||
-### Köpenick|S3|||
-### Königs Wusterhausen|S46|||
-### Landsberger Allee|S41, S42, S8, S85|||
-### Lankwitz|S25, S26|||
-### Lehnitz|S1|||
-### Lichtenberg|S3, S5, S7, S75|||
-### Lichtenrade|S2|||
+### Karl-Bonhoeffer-Nervenklinik
+S25
 
 <hr>
 
-### Lichterfelde Ost|S25|||
+### Karow
+S2
 
 <hr>
 
-### Lichterfelde Süd|S25|||
+### Kaulsdorf
+S3
 
 <hr>
 
-### Lichterfelde West|S1|||
-### Mahlow|S2|||
-### Mahlsdorf|S5|||
-### Marienfelde|S2|||
-### Marzahn|S7|||
-### Mexikoplatz|S1|||
-### Mühlenbeck-Mönchmühle|S8|||
-### Neukölln|S41, S42, S45, S46, S47|||
-### Nikolassee|S1, S7|||
-### Nordbahnhof|S1, S2, S25, S26|||
+### Köllnische Heide
+S41, S42, S45, S46, S47
+
+<hr>
+
+### Köpenick
+S3
+
+<hr>
+
+### Königs Wusterhausen
+S46
+
+<hr>
+
+### Landsberger Allee
+S41, S42, S8, S85
+
+<hr>
+
+### Lankwitz
+S25, S26
+
+<hr>
+
+### Lehnitz
+S1
+
+<hr>
+
+### Lichtenberg
+S3, S5, S7, S75
+
+<hr>
+
+### Lichtenrade
+S2
+
+<hr>
+
+### Lichterfelde Ost
+S25
+
+<hr>
+
+### Lichterfelde Süd
+S25
+
+<hr>
+
+### Lichterfelde West
+S1
+
+<hr>
+
+### Mahlow
+S2
+
+<hr>
+
+### Mahlsdorf
+S5
+
+<hr>
+
+### Marienfelde
+S2
+
+<hr>
+
+### Marzahn
+S7
+
+<hr>
+
+### Mexikoplatz
+S1
+
+<hr>
+
+### Mühlenbeck-Mönchmühle
+S8
+
+<hr>
+
+### Neukölln
+S41, S42, S45, S46, S47
+
+<hr>
+
+### Nikolassee
+S1, S7
+
+<hr>
+
+### Nordbahnhof
+S1, S2, S25, S26
 
 <hr>
 
@@ -414,9 +535,18 @@ S5, S7, S75
 
 <hr>
 
-### Oberspree|S8|||
-### Oranienburger Straße|S1, S2, S25, S26|||
-### Oranienburg|S1|||
+### Oberspree
+S8
+
+<hr>
+
+### Oranienburger Straße
+S1, S2, S25, S26
+
+<hr>
+
+### Oranienburg
+S1
 
 <hr>
 
@@ -432,29 +562,58 @@ S3, S5, S7, S75, S8, S85, S9, S41, S42
 
 <hr>
 
-### Pankow|S2, S8|||
+### Pankow
+S2, S8
 
 <hr>
 
-### Pankow-Heinersdorf|S2, S8|||
+### Pankow-Heinersdorf
+S2, S8
 
 <hr>
 
-### Potsdam Hauptbahnhof|S7|||
+### Potsdam Hauptbahnhof
+S7
 
 <hr>
 
-### Prenzlauer Allee|S41, S42, S8, S85|||
+### Prenzlauer Allee
+S41, S42, S8, S85
 
 <hr>
 
-### Rahnsdorf|S3|||
-### Rathaus Steglitz|S1|||
-### Rummelsburg|S3|||
-### Savignyplatz|S3, S5, S7, S9|||
-### Schlachtensee|S1|||
-### Schöneberg|S1|||
-### Schöneweide|S8, S9, S45, S46, S47, S85|||
+### Rahnsdorf
+S3
+
+<hr>
+
+### Rathaus Steglitz
+S1
+
+<hr>
+
+### Rummelsburg
+S3
+
+<hr>
+
+### Savignyplatz
+S3, S5, S7, S9
+
+<hr>
+
+### Schlachtensee
+S1
+
+<hr>
+
+### Schöneberg
+S1
+
+<hr>
+
+### Schöneweide
+S8, S9, S45, S46, S47, S85
 
 <hr>
 
@@ -462,9 +621,13 @@ S3, S5, S7, S75, S8, S85, S9, S41, S42
 S1, S25  
 [![Schönholz](thumbs/schoenholz.jpg)](images/schoenholz.jpg) 15.07.1968
 
+<hr>
+
 ### ![](images/greendot.png) Spandau  
 S3, S9  
 [![Spandau](thumbs/spandau.jpg)](images/spandau.jpg) 15.07.1968
+
+<hr>
 
 ### ![](images/greendot.png) Springpfuhl  
 S7, S75  
@@ -472,55 +635,87 @@ S7, S75
 
 <hr>
 
-### ![](images/greendot.png) Storkower Straße  
+### Storkower Straße  
 S41, S42, S8, S85
 
-### ![](images/greendot.png) Strausberg  
+<hr>
+
+### Strausberg  
 S5
 
-### ![](images/greendot.png) Strausberg Nord  
+<hr>
+
+### Strausberg Nord
 S5
 
-### ![](images/greendot.png) Südkreuz  
+<hr>
+
+### Südkreuz
 S2, S25, S26, S41, S42, S45, S46
 
-### ![](images/greendot.png) Tempelhof  
+<hr>
+
+### Tempelhof
 S41, S42
 
-### ![](images/greendot.png) Treptower Park  
+<hr>
+
+### Treptower Park
 S41, S42, S8, S9, S85
 
-### ![](images/greendot.png) Wannsee  
+<hr>
+
+### Wannsee
 S1, S7
 
-### ![](images/greendot.png) Warschauer Straße  
+<hr>
+
+### Warschauer Straße
 S3, S5, S7, S9
 
-### ![](images/greendot.png) Westend  
+<hr>
+
+### Westend
 S41, S42, S46
 
-### ![](images/greendot.png) Westkreuz  
+<hr>
+
+### Westkreuz
 S3, S5, S7, S9, S41, S42
+
+<hr>
 
 ### ![](images/greendot.png) Wittenau  
 S1, S25  
 [![Wittenau](thumbs/wittenau.jpg)](images/wittenau.jpg) 15.07.1968
 
-### ![](images/greendot.png) Wollankstraße  
+<hr>
+
+### Wollankstraße  
 S1, S25
+
+<hr>
 
 ### ![](images/greendot.png) Yorckstraße  
 S2, S25, S26  
 [![Yorckstraße](thumbs/yorckstrasse.jpg)](images/yorckstrasse.jpg) 10.05.2014
 
-### ![](images/greendot.png) Yorckstraße (Großgörschenstraße)  
+<hr>
+
+### Yorckstraße (Großgörschenstraße)  
 S1
 
-### ![](images/greendot.png) Zehlendorf  
+<hr>
+
+### Zehlendorf  
 S1
 
-### ![](images/greendot.png) Zeuthen  
+<hr>
+
+### Zeuthen
 S8
+
+<hr>
 
 ### ![](images/greendot.png) Zoologischer Garten  
 S3, S5, S7, S9  
