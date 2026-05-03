@@ -86,155 +86,275 @@ S1,S2,S3,S28
 
 
 ### Adlershof
-
 S8, S9
 
-### Ahrensfelde
+<hr>
 
+### Ahrensfelde
 S7
+
+<hr>
 
 ### Alexanderplatz
 S3, S5, S7, S9
 
+<hr>
+
 ### Alt-Reinickendorf
 S25
+
+<hr>
 
 ### Altglienicke
 S8, S85
 
+<hr>
+
 ### Anhalter Bahnhof
 S1, S2, S25, S26
+
+<hr>
 
 ### Attilastraße
 S2
 
+<hr>
+
 ### Babelsberg
 S7
+
+<hr>
 
 ### Baumschulenweg
 S8, S9, S45, S46, S47
 
+<hr>
+
 ### Bellevue
 S3, S5, S7, S9
+
+<hr>
 
 ### Bergfelde
 S8
 
+<hr>
+
 ### Bernau
 S2
+
+<hr>
 
 ### Bernau-Friedenstal
 S2
 
+<hr>
+
 ### Betriebsbahnhof Rummelsburg
 S3
+
+<hr>
 
 ### Beusselstraße
 S41, S42
 
+<hr>
+
 ### Biesdorf
 S5
+
+<hr>
 
 ### Birkenstein
 S5
 
+<hr>
+
 ### Birkenwerder
 S1, S8
+
+<hr>
 
 ### Blankenburg
 S2, S8
 
+<hr>
+
 ### Blankenfelde
 S2
+
+<hr>
 
 ### Borgsdorf
 S1
 
+<hr>
+
 ### Bornholmer Straße
 S1, S2, S25, S26, S8, S41, S42
+
+<hr>
+
 ### Botanischer Garten
 S1
+
+<hr>
+
 ### Brandenburger Tor
 S1, S2, S25, S26
+
+<hr>
+
 ### Buch
 S2
+
+<hr>
+
 ### Buckower Chaussee
 S2
+
 ### Bundesplatz
 S41, S42, S46
+
 ### Charlottenburg
 S3, S5, S7, S9
+
 ### Eichborndamm
 S25
+
 ### Eichwalde
 S8, S46
+
 ### Erkner
 S3
+
 ### Fennpfuhl
 S41, S42
+
 ### Feuerbachstraße
 S1
+
 ### Flughafen Berlin Brandenburg
 S9, S45
+
 ### Frankfurter Allee
 S41, S42, S8, S85
+
 ### Fredersdorf
 S5
+
 ### Friedenau
 S1
+
 ### Friedrichsfelde Ost
 S5, S7, S75
+
 ### Friedrichshagen
 S3
+
 ### Friedrichstraße
 S1, S2, S25, S26, S3, S5, S7, S9
+
 ### Frohnau
 S1
+
 ### Gehrenseestraße
 S75
+
 ### Gesundbrunnen
 S1, S2, S25, S26, S41, S42
+
 ### Greifswalder Straße
 S41, S42, S8, S85
+
 ### Griebnitzsee
 S7
+
 ### Grünau
 S8, S9, S46, S85
+
 ### Grünbergallee
 S9, S45
+
 ### Grunewald
 S7
+
 ### Hackescher Markt
 S3, S5, S7, S9
+
+<hr>
+
 ### Halensee
 S41, S42, S46
+
+<hr>
+
 ### Hauptbahnhof
 S3, S5, S7, S9
+
+<hr>
+
 ### Heerstraße
 S3, S9
+
+<hr>
+
 ### Hegermühle
 S5
-### Heidelberger Platz
-![Heidelberger Platz](thumbs/heidelberger_platz.jpg)](images/heidelberger_platz.jpg)
-S41, S42, S46
+
+<hr>
+
+### ![](images/greendot.png) Heidelberger Platz
+S41, S42, S46  
+[![Heidelberger Platz](thumbs/heidelberger_platz.jpg)](images/heidelberger_platz.jpg) 15.07.1968
+
+<hr>
+
 ### Heiligensee
 S25
+
+<hr>
+
 ### Henningsdorf
 S25
+
+<hr>
+
 ### Hermannstraße
 S41, S42, S45, S46, S47
+
+<hr>
+
 ### Hermsdorf
 S1
+
+<hr>
+
 ### Hirschgarten
 S3
+
+<hr>
+
 ### Hohen Neuendorf
 S1, S8
+
+<hr>
+
 ### Hohenschönhausen
 S75
+
+<hr>
+
 ### Hohenzollerndamm
 S41, S42
+
+<hr>
+
 ### Hoppegarten
 S5
+
+<hr>
+
 ### Humboldthain
 S1, S2, S25, S26
 ### Insbrucker Platz
@@ -245,8 +365,14 @@ S3, S5, S7, S9
 S8, S9, S45, S46, S85
 ### Julius-Leber-Brücke
 S1
+
+<hr>
+
 ### Jungfernheide
 S41, S42
+
+<hr>
+
 ### Karl-Bonhoeffer-Nervenklinik|S25|||
 ### Karow|S2|||
 ### Kaulsdorf|S3|||
@@ -258,8 +384,17 @@ S41, S42
 ### Lehnitz|S1|||
 ### Lichtenberg|S3, S5, S7, S75|||
 ### Lichtenrade|S2|||
+
+<hr>
+
 ### Lichterfelde Ost|S25|||
+
+<hr>
+
 ### Lichterfelde Süd|S25|||
+
+<hr>
+
 ### Lichterfelde West|S1|||
 ### Mahlow|S2|||
 ### Mahlsdorf|S5|||
@@ -270,16 +405,49 @@ S41, S42
 ### Neukölln|S41, S42, S45, S46, S47|||
 ### Nikolassee|S1, S7|||
 ### Nordbahnhof|S1, S2, S25, S26|||
-### Nöldnerplatz|S5, S7, S75||[![Nöldnerplatz](thumbs/noeldnerplatz.jpg)](images/noeldnerplatz.jpg)|
+
+<hr>
+
+### ![](images/greendot.png) Nöldnerplatz  
+S5, S7, S75  
+[![Nöldnerplatz](thumbs/noeldnerplatz.jpg)](images/noeldnerplatz.jpg) 15.07.1968
+
+<hr>
+
 ### Oberspree|S8|||
 ### Oranienburger Straße|S1, S2, S25, S26|||
 ### Oranienburg|S1|||
-### Ostbahnhof|S3, S5, S7, S9||[![Ostbahnhof](thumbs/ostbahnhof.jpg)](images/ostbahnhof.jpg)|
-### Ostkreuz|S3, S5, S7, S75, S8, S85, S9, S41, S42||[![Ostkreuz](thumbs/ostkreuz.jpg)](images/ostkreuz.jpg)|
+
+<hr>
+
+### ![](images/greendot.png) Ostbahnhof  
+S3, S5, S7, S9  
+[![Ostbahnhof](thumbs/ostbahnhof.jpg)](images/ostbahnhof.jpg) 15.07.1968
+
+<hr>
+
+### ![](images/greendot.png) Ostkreuz  
+S3, S5, S7, S75, S8, S85, S9, S41, S42  
+[![Ostkreuz](thumbs/ostkreuz.jpg)](images/ostkreuz.jpg) 15.07.1968
+
+<hr>
+
 ### Pankow|S2, S8|||
+
+<hr>
+
 ### Pankow-Heinersdorf|S2, S8|||
+
+<hr>
+
 ### Potsdam Hauptbahnhof|S7|||
+
+<hr>
+
 ### Prenzlauer Allee|S41, S42, S8, S85|||
+
+<hr>
+
 ### Rahnsdorf|S3|||
 ### Rathaus Steglitz|S1|||
 ### Rummelsburg|S3|||
@@ -287,32 +455,82 @@ S41, S42
 ### Schlachtensee|S1|||
 ### Schöneberg|S1|||
 ### Schöneweide|S8, S9, S45, S46, S47, S85|||
-### Schönholz|S1, S25||[![Schönholz](thumbs/schoenholz.jpg)](images/schoenholz.jpg)|
-### Spandau|S3, S9||[![Spandau](thumbs/spandau.jpg)](images/spandau.jpg)|
-### Springpfuhl|S7, S75||[![Springpfuhl](thumbs/springpfuhl.jpg)](images/springpfuhl.jpg)|
-### Storkower Straße|S41, S42, S8, S85|||
-### Strausberg|S5|||
-### Strausberg Nord|S5|||
-### Südkreuz|S2, S25, S26, S41, S42, S45, S46|||
-### Tempelhof|S41, S42|||
-### Treptower Park|S41, S42, S8, S9, S85|||
-### Wannsee|S1, S7|||
-### Warschauer Straße|S3, S5, S7, S9|||
-### Westend|S41, S42, S46|||
-### Westkreuz|S3, S5, S7, S9, S41, S42|||
-### Wittenau|S1, S25||[![Wittenau](thumbs/wittenau.jpg)](images/wittenau.jpg)|
-### Wollankstraße|S1, S25|||
-### Yorckstraße|S2, S25, S26|10.05.2014|[![Yorckstraße](thumbs/yorckstrasse.jpg)](images/yorckstrasse.jpg)|
-### Yorckstraße (Großgörschenstraße)|S1|||
-### Zehlendorf|S1|||
-### Zeuthen|S8|||
-### Zoologischer Garten|S3, S5, S7, S9||[![Zoologischer Garten](thumbs/zoo.jpg)](images/zoo.jpg)|
+
+<hr>
+
+### ![](images/greendot.png) Schönholz  
+S1, S25  
+[![Schönholz](thumbs/schoenholz.jpg)](images/schoenholz.jpg) 15.07.1968
+
+### ![](images/greendot.png) Spandau  
+S3, S9  
+[![Spandau](thumbs/spandau.jpg)](images/spandau.jpg) 15.07.1968
+
+### ![](images/greendot.png) Springpfuhl  
+S7, S75  
+[![Springpfuhl](thumbs/springpfuhl.jpg)](images/springpfuhl.jpg) 15.07.1968
+
+<hr>
+
+### ![](images/greendot.png) Storkower Straße  
+S41, S42, S8, S85
+
+### ![](images/greendot.png) Strausberg  
+S5
+
+### ![](images/greendot.png) Strausberg Nord  
+S5
+
+### ![](images/greendot.png) Südkreuz  
+S2, S25, S26, S41, S42, S45, S46
+
+### ![](images/greendot.png) Tempelhof  
+S41, S42
+
+### ![](images/greendot.png) Treptower Park  
+S41, S42, S8, S9, S85
+
+### ![](images/greendot.png) Wannsee  
+S1, S7
+
+### ![](images/greendot.png) Warschauer Straße  
+S3, S5, S7, S9
+
+### ![](images/greendot.png) Westend  
+S41, S42, S46
+
+### ![](images/greendot.png) Westkreuz  
+S3, S5, S7, S9, S41, S42
+
+### ![](images/greendot.png) Wittenau  
+S1, S25  
+[![Wittenau](thumbs/wittenau.jpg)](images/wittenau.jpg) 15.07.1968
+
+### ![](images/greendot.png) Wollankstraße  
+S1, S25
+
+### ![](images/greendot.png) Yorckstraße  
+S2, S25, S26  
+[![Yorckstraße](thumbs/yorckstrasse.jpg)](images/yorckstrasse.jpg) 10.05.2014
+
+### ![](images/greendot.png) Yorckstraße (Großgörschenstraße)  
+S1
+
+### ![](images/greendot.png) Zehlendorf  
+S1
+
+### ![](images/greendot.png) Zeuthen  
+S8
+
+### ![](images/greendot.png) Zoologischer Garten  
+S3, S5, S7, S9  
+[![Zoologischer Garten](thumbs/zoo.jpg)](images/zoo.jpg) 15.07.1968
 
 ## Hinweise
 
 Autor:  
 Mathias Rentsch  
 rentsch@online.de  
-Stand: 08.04.2026  
+Stand: 03.05.2026  
 
 Für die Erstellung der Karte auf der Seite [netzplan.html](netzplan.html) wurde die Datei [Netzplan neu.svg](https://commons.wikimedia.org/wiki/File:S-Bahn_Berlin_-_Netzplan.svg) von Autor **Arbalete** via Wikipedia/Wikimedia Commons verwendet, die unter [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) lizenziert ist. Dieses Werk wurde durch die Umwandlung in eine Schwarz-Weiß-Version modifiziert und um farbige Markierungen ergänzt. Gemäß der Lizenz muss dieses bearbeitete Werk unter derselben Lizenz (CC BY-SA 4.0) weitergegeben werden.
