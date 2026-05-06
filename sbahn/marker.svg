@@ -18,7 +18,21 @@
      
         geänderte Version (Schwarz-Weiss-Darstellung) von Mathias Rentsch, 2026 -->
       
-    
+    <!-- Alexanderplatz -->
+    <rect x="825" y="720" width="75" height="35" fill="#27ae60" fill-opacity="0.35"/>
+
+    <!-- Friedrichstrasse -->
+    <rect x="765" y="720" width="55" height="35" fill="#27ae60" fill-opacity="0.35"/>
+
+    <!-- Hackescher Markt -->
+    <rect x="786" y="790" width="70" height="25" fill="#27ae60" fill-opacity="0.35"/>
+
+    <!-- Jannowitzbrücke -->
+    <rect x="870" y="790" width="70" height="25" fill="#27ae60" fill-opacity="0.35"/>
+
+    <!-- Warschauer Straße -->
+    <rect x="970" y="790" width="70" height="25" fill="#27ae60" fill-opacity="0.35"/>
+
     <!-- Heidelberger Platz -->
     <rect x="350" y="1000" width="100" height="25" fill="#27ae60" fill-opacity="0.35"/>
 
@@ -30,4 +44,22 @@
 
     <!-- Ostkreuz -->
     <rect x="1020" y="730" width="65" height="18" fill="#27ae60" fill-opacity="0.35"/>
+
+    <!-- Spandau -->
+    <rect x="75" y="535" width="65" height="18" fill="#27ae60" fill-opacity="0.35"/>
+
+    <!-- Schönholz -->
+    <rect x="680" y="373" width="65" height="18" fill="#27ae60" fill-opacity="0.35"/>
+
+    <!-- Springpfuhl -->
+    <rect x="1210" y="597" width="65" height="18" fill="#27ae60" fill-opacity="0.35"/>
+
+    <!-- Wittenau -->
+    <rect x="750" y="285" width="65" height="18" fill="#27ae60" fill-opacity="0.35"/>
+
+    <!-- Yorckstraße -->
+    <rect x="765" y="905" width="65" height="18" fill="#27ae60" fill-opacity="0.35"/>
+
+    <!-- Zoo -->
+    <rect x="533" y="787" width="70" height="25" fill="#27ae60" fill-opacity="0.35"/>
 </svg>

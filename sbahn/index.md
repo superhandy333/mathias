@@ -4,11 +4,14 @@ Manche sammeln Briefmarken, ich sammle Bahnhöfe. Berlin hat eines der größten
 
 <big>Willkommen bei der fotografischen Inventur des Berliner Schienennetzes.</big>
 
-<div class="progress-container" style="--current: 10; --total: 168;">
+- Idee zum Projekt: 06.04.2026
+- Erster Upload: 06.04.2026
+
+<div class="progress-container" style="--current: 15; --total: 168;">
   <div class="progress-header">
-    <span class="progress-label">S-Bahn Challenge</span>
+    <span class="progress-label">S-Bahn Challenge (Stand: 06.05.2026)</span>
     <span class="progress-stats">
-      <strong>10</strong> von 168 Stationen
+      <strong>15</strong> von 168 Stationen
     </span>
   </div>
   
@@ -58,8 +61,9 @@ Manche sammeln Briefmarken, ich sammle Bahnhöfe. Berlin hat eines der größten
 
 Fortschrittsanzeige im farbig markiertem [Netzplan](netzplan.html) der Berliner S-Bahn. Je mehr Stationen ich besuche, desto grüner wird die Karte.
 
-- Idee zum Projekt: 06.04.2026
-- Erster Upload: 06.04.2026
+<a href="netzplan.html">
+  <img src="netzplan.svg" alt="Netzplan der Berliner S-Bahn" style="width: 100%; max-width: 300px;">
+</a>
 
 <!-- Muster für erledigte Stationen
 ### ![](images/greendot.png) Alex
@@ -67,6 +71,7 @@ S41, S42, S46
 [![Alex](thumbs/alex.jpg)](images/alex.jpg) 15.07.1968
 -->
 
+<hr>
 
 ### Adlershof
 S8, S9
@@ -78,8 +83,9 @@ S7
 
 <hr>
 
-### Alexanderplatz
-S3, S5, S7, S9
+### ![](images/greendot.png) Alexanderplatz
+S3, S5, S7, S9  
+[![Alexanderplatz](thumbs/alexanderplatz.jpg)](images/alexanderplatz.jpg) 05.05.2026
 
 <hr>
 
@@ -263,8 +269,9 @@ S3
 
 <hr>
 
-### Friedrichstraße
-S1, S2, S25, S26, S3, S5, S7, S9
+### ![](images/greendot.png) Friedrichstraße
+S1, S2, S25, S26, S3, S5, S7, S9  
+[![Friedrichstraße](thumbs/friedrichstrasse.jpg)](images/friedrichstrasse.jpg) 05.05.2026
 
 <hr>
 
@@ -308,8 +315,9 @@ S7
 
 <hr>
 
-### Hackescher Markt
-S3, S5, S7, S9
+### ![](images/greendot.png) Hackescher Markt
+S3, S5, S7, S9  
+[![Hackescher Markt](thumbs/hackescher_markt.jpg)](images/hackescher_markt.jpg) 05.05.2026
 
 <hr>
 
@@ -394,8 +402,9 @@ S41, S42, S46
 
 <hr>
 
-### Jannowitzbrücke
-S3, S5, S7, S9
+### ![](images/greendot.png) Jannowitzbrücke
+S3, S5, S7, S9  
+[![Jannowitzbrücke](thumbs/jannowitzbruecke.jpg)](images/jannowitzbruecke.jpg) 05.05.2026
 
 <hr>
 
@@ -552,7 +561,8 @@ S1
 
 ### ![](images/greendot.png) Ostbahnhof  
 S3, S5, S7, S9  
-[![Ostbahnhof](thumbs/ostbahnhof.jpg)](images/ostbahnhof.jpg) 15.07.1968
+[![Ostbahnhof](thumbs/ostbahnhof.jpg)](images/ostbahnhof.jpg) 15.04.2015  
+[![Ostbahnhof2](thumbs/ostbahnhof2.jpg)](images/ostbahnhof2.jpg) 05.05.2026
 
 <hr>
 
@@ -670,8 +680,9 @@ S1, S7
 
 <hr>
 
-### Warschauer Straße
-S3, S5, S7, S9
+### ![](images/greendot.png) Warschauer Straße
+S3, S5, S7, S9  
+[![Warschauer Straße](thumbs/warschauer_strasse.jpg)](images/warschauer_strasse.jpg) 05.05.2026
 
 <hr>
 
@@ -717,7 +728,7 @@ S8
 
 <hr>
 
-### ![](images/greendot.png) Zoologischer Garten  
+### ![](images/greendot.png) Zoologischer Garten
 S3, S5, S7, S9  
 [![Zoologischer Garten](thumbs/zoo.jpg)](images/zoo.jpg) 15.07.1968
 
@@ -726,6 +737,6 @@ S3, S5, S7, S9
 Autor:  
 Mathias Rentsch  
 rentsch@online.de  
-Stand: 03.05.2026  
+Stand: 06.05.2026  
 
 Für die Erstellung der Karte auf der Seite [netzplan.html](netzplan.html) wurde die Datei [Netzplan neu.svg](https://commons.wikimedia.org/wiki/File:S-Bahn_Berlin_-_Netzplan.svg) von Autor **Arbalete** via Wikipedia/Wikimedia Commons verwendet, die unter [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) lizenziert ist. Dieses Werk wurde durch die Umwandlung in eine Schwarz-Weiß-Version modifiziert und um farbige Markierungen ergänzt. Gemäß der Lizenz muss dieses bearbeitete Werk unter derselben Lizenz (CC BY-SA 4.0) weitergegeben werden.
