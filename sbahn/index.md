@@ -95,7 +95,7 @@ S25
 <hr>
 
 ### Altglienicke
-S8, S85
+S9, S85
 
 <hr>
 
@@ -229,18 +229,13 @@ S3
 
 <hr>
 
-### Fennpfuhl
-S41, S42
-
-<hr>
-
 ### Feuerbachstraße
 S1
 
 <hr>
 
 ### Flughafen Berlin Brandenburg
-S9, S45
+S9, S85
 
 <hr>
 
@@ -270,7 +265,7 @@ S3
 <hr>
 
 ### ![](images/greendot.png) Friedrichstraße
-S1, S2, S3, S5, S7, S9, S25, S26
+S1, S2, S3, S5, S7, S9, S25, S26  
 [![Friedrichstraße](thumbs/friedrichstrasse.jpg)](images/friedrichstrasse.jpg) 05.05.2026
 
 <hr>
@@ -306,7 +301,7 @@ S8, S9, S46, S85
 <hr>
 
 ### Grünbergallee
-S9, S45
+S9, S85
 
 <hr>
 
@@ -701,7 +696,7 @@ S1, S41, S42, S46
 <hr>
 
 ### Schönefeld (bei Berlin)
-S9, S45
+S9, S85
 
 <hr>
 
@@ -840,7 +835,7 @@ S75
 <hr>
 
 ### Waßmannsdorf
-S9, S45
+S9, S85
 
 <hr>
 
