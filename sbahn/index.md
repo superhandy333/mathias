@@ -180,7 +180,7 @@ S1
 <hr>
 
 ### Bornholmer Straße
-S1, S2, S25, S26, S8, S41, S42
+S1, S2, S8, S25, S26, S41, S42
 
 <hr>
 
@@ -245,7 +245,7 @@ S9, S45
 <hr>
 
 ### Frankfurter Allee
-S41, S42, S8, S85
+S8, S41, S42, S85
 
 <hr>
 
@@ -270,7 +270,7 @@ S3
 <hr>
 
 ### ![](images/greendot.png) Friedrichstraße
-S1, S2, S25, S26, S3, S5, S7, S9  
+S1, S2, S3, S5, S7, S9, S25, S26
 [![Friedrichstraße](thumbs/friedrichstrasse.jpg)](images/friedrichstrasse.jpg) 05.05.2026
 
 <hr>
@@ -291,7 +291,7 @@ S1, S2, S25, S26, S41, S42
 <hr>
 
 ### Greifswalder Straße
-S41, S42, S8, S85
+S8, S41, S42, S85
 
 <hr>
 
@@ -343,7 +343,7 @@ S5
 
 ### ![](images/greendot.png) Heidelberger Platz
 S41, S42, S46  
-[![Heidelberger Platz](thumbs/heidelberger_platz.jpg)](images/heidelberger_platz.jpg) 15.07.1968
+[![Heidelberger Platz](thumbs/heidelberger_platz.jpg)](images/heidelberger_platz.jpg) 13.10.2014
 
 <hr>
 
@@ -413,10 +413,6 @@ S8, S9, S45, S46, S85
 
 <hr>
 
-### Karlshorst
-
-<hr>
-
 ### Julius-Leber-Brücke
 S1
 
@@ -430,6 +426,10 @@ S41, S42
 ### Karl-Bonhoeffer-Nervenklinik
 S25
 
+<hr>
+
+### Karlshorst
+S3
 <hr>
 
 ### Karow
@@ -458,24 +458,12 @@ S46
 <hr>
 
 ### Landsberger Allee
-S41, S42, S8, S85
+S8, S41, S42, S85
 
 <hr>
 
 ### Lankwitz
 S25, S26
-
-<hr>
-
-### Mehrower Allee
-
-<hr>
-
-### Messe Nord / ZOB
-
-<hr>
-
-### Messe Süd (Eichkamp)
 
 <hr>
 
@@ -529,6 +517,21 @@ S7
 
 <hr>
 
+### Mehrower Allee
+S7
+
+<hr>
+
+### Messe Nord / ZOB
+S41, S42, S46
+
+<hr>
+
+### Messe Süd (Eichkamp)
+S3, S9
+
+<hr>
+
 ### Mexikoplatz
 S1
 
@@ -545,6 +548,7 @@ S41, S42, S45, S46, S47
 <hr>
 
 ### Neuenhagen
+S5
 
 <hr>
 
@@ -560,7 +564,7 @@ S1, S2, S25, S26
 
 ### ![](images/greendot.png) Nöldnerplatz  
 S5, S7, S75  
-[![Nöldnerplatz](thumbs/noeldnerplatz.jpg)](images/noeldnerplatz.jpg) 15.07.1968
+[![Nöldnerplatz](thumbs/noeldnerplatz.jpg)](images/noeldnerplatz.jpg) 31.08.2014
 
 <hr>
 
@@ -569,21 +573,23 @@ S8
 
 <hr>
 
-### Oranienburger Straße
-S1, S2, S25, S26
-
-<hr>
-
 ### Olympiastadion
-
-<hr>
-
-### Osdorfer Straße
+S3, S9
 
 <hr>
 
 ### Oranienburg
 S1
+
+<hr>
+
+### Oranienburger Straße
+S1, S2, S25, S26
+
+<hr>
+
+### Osdorfer Straße
+S25, S26
 
 <hr>
 
@@ -595,8 +601,8 @@ S3, S5, S7, S9
 <hr>
 
 ### ![](images/greendot.png) Ostkreuz  
-S3, S5, S7, S75, S8, S85, S9, S41, S42  
-[![Ostkreuz](thumbs/ostkreuz.jpg)](images/ostkreuz.jpg) 15.07.1968
+S3, S5, S7, S8, S9, S41, S42, S75, S85  
+[![Ostkreuz](thumbs/ostkreuz.jpg)](images/ostkreuz.jpg) 28.04.2015
 
 <hr>
 
@@ -611,22 +617,21 @@ S2, S8
 <hr>
 
 ### Petershagen Nord
+S5
 
 <hr>
 
 ### Pichelsberg
-
+S3, S9
 <hr>
 
 ### Plänterwald
+S8, S9, S85
 
 <hr>
 
 ### Poelchaustraße
-
-<hr>
-
-### Potsdamer Platz
+S7
 
 <hr>
 
@@ -635,21 +640,28 @@ S7
 
 <hr>
 
+### Potsdamer Platz
+S1, S2, S25, S26
+
+<hr>
+
 ### Prenzlauer Allee
-S41, S42, S8, S85
+S8, S41, S42, S85
 
 <hr>
 
 ### Priesterweg
-
-<hr>
-
-### Raoul-Wallenberg-Straße
+S2, S25, S26
 
 <hr>
 
 ### Rahnsdorf
 S3
+
+<hr>
+
+### Raoul-Wallenberg-Straße
+S7
 
 <hr>
 
@@ -659,6 +671,7 @@ S1
 <hr>
 
 ### Röntgental
+S2
 
 <hr>
 
@@ -667,28 +680,13 @@ S3
 
 <hr>
 
-### Schichauweg
-
-<hr>
-
-### Schönefeld (bei Berlin)
-
-<hr>
-
-### Schönfließ
-
-<hr>
-
-### Schönhauser Allee
-
-<hr>
-
-### Schulzendorf
-
-<hr>
-
 ### Savignyplatz
 S3, S5, S7, S9
+
+<hr>
+
+### Schichauweg
+S2
 
 <hr>
 
@@ -698,7 +696,12 @@ S1
 <hr>
 
 ### Schöneberg
-S1
+S1, S41, S42, S46
+
+<hr>
+
+### Schönefeld (bei Berlin)
+S9, S45
 
 <hr>
 
@@ -707,34 +710,51 @@ S8, S9, S45, S46, S47, S85
 
 <hr>
 
-### Sonnenallee
+### Schönfließ
+S8
 
 <hr>
 
-### Spindlersfeld
+### Schönhauser Allee
+S8, S41, S42, S85
 
 <hr>
 
 ### ![](images/greendot.png) Schönholz  
-S1, S25  
-[![Schönholz](thumbs/schoenholz.jpg)](images/schoenholz.jpg) 15.07.1968
+S1, S25, S85  
+[![Schönholz](thumbs/schoenholz.jpg)](images/schoenholz.jpg) 22.10.2015
+
+<hr>
+
+### Schulzendorf (bei Tegel)
+S25
+
+<hr>
+
+### Sonnenallee
+S41, S42
 
 <hr>
 
 ### ![](images/greendot.png) Spandau  
 S3, S9  
-[![Spandau](thumbs/spandau.jpg)](images/spandau.jpg) 15.07.1968
+[![Spandau](thumbs/spandau.jpg)](images/spandau.jpg) 10.05.2014
+
+<hr>
+
+### Spindlersfeld
+S47
 
 <hr>
 
 ### ![](images/greendot.png) Springpfuhl  
 S7, S75  
-[![Springpfuhl](thumbs/springpfuhl.jpg)](images/springpfuhl.jpg) 15.07.1968
+[![Springpfuhl](thumbs/springpfuhl.jpg)](images/springpfuhl.jpg) 02.08.2014
 
 <hr>
 
 ### Storkower Straße  
-S41, S42, S8, S85
+S8, S41, S42, S85
 
 <hr>
 
@@ -743,16 +763,23 @@ S5
 
 <hr>
 
+### Strausberg Nord
+S5
+
+<hr>
+
 ### Strausberg Stadt
+S5
 
 <hr>
 
 ### Stresow
+S3, S9
 
 <hr>
 
-### Strausberg Nord
-S5
+### Südende
+S25, S26
 
 <hr>
 
@@ -761,62 +788,43 @@ S2, S25, S26, S41, S42, S45, S46
 
 <hr>
 
-### Südende
-
-<hr>
-
 ### Sundgauer Straße
-
-<hr>
-
-### Tempelhof
-S41, S42
+S1
 
 <hr>
 
 ### Tegel
+S25
 
 <hr>
 
 ### Teltow Stadt
+S25
+
+<hr>
+
+### Tempelhof
+S41, S42, S45, S46
 
 <hr>
 
 ### Tiergarten
+S3, S5, S7, S9
 
 <hr>
 
 ### Treptower Park
-S41, S42, S8, S9, S85
+S8, S9, S41, S42, S85
+
+<hr>
+
+### Waidmannslust
+S1, S85
 
 <hr>
 
 ### Wannsee
 S1, S7
-
-<hr>
-
-### Waidmannslust
-
-<hr>
-
-### Wartenberg
-
-<hr>
-
-### Waßmannsdorf
-
-<hr>
-
-### Wildau
-
-<hr>
-
-### Wilhelmshagen
-
-<hr>
-
-### Wilhelmsruh
 
 <hr>
 
@@ -826,36 +834,69 @@ S3, S5, S7, S9
 
 <hr>
 
+### Wartenberg
+S75
+
+<hr>
+
+### Waßmannsdorf
+S9, S45
+
+<hr>
+
+### Wedding
+S41, S42
+
+<hr>
+
 ### Westend
 S41, S42, S46
 
 <hr>
 
 ### Westhafen
+S41, S42
 
 <hr>
 
 ### Westkreuz
-S3, S5, S7, S9, S41, S42
+S3, S5, S7, S9, S41, S42, S46
+
+<hr>
+
+### Wildau
+S46
+
+<hr>
+
+### Wilhelmshagen
+S3
+
+<hr>
+
+### Wilhelmsruh
+S1, S85
 
 <hr>
 
 ### ![](images/greendot.png) Wittenau  
-S1, S25  
-[![Wittenau](thumbs/wittenau.jpg)](images/wittenau.jpg) 15.07.1968
+S1, S85  
+[![Wittenau](thumbs/wittenau.jpg)](images/wittenau.jpg) 22.10.2015
 
 <hr>
 
 ### Wollankstraße  
-S1, S25
+S1, S25, S85
 
 <hr>
 
 ### Wuhletal
+S5
 
 <hr>
 
 ### Wuhlheide
+S3
 
 <hr>
 
@@ -875,24 +916,25 @@ S1
 
 <hr>
 
+### Zepernick
+S2
+
+<hr>
+
 ### Zeuthen
 S8
 
 <hr>
 
-### Zepernick
-
-<hr>
-
 ### ![](images/greendot.png) Zoologischer Garten
 S3, S5, S7, S9  
-[![Zoologischer Garten](thumbs/zoo.jpg)](images/zoo.jpg) 15.07.1968
+[![Zoologischer Garten](thumbs/zoo.jpg)](images/zoo.jpg) 05.05.2014
 
 ## Hinweise
 
 Autor:  
 Mathias Rentsch  
 rentsch@online.de  
-Stand: 06.05.2026  
+Stand: 09.05.2026  
 
 Für die Erstellung der Karte auf der Seite [netzplan.html](netzplan.html) wurde die Datei [Netzplan neu.svg](https://commons.wikimedia.org/wiki/File:S-Bahn_Berlin_-_Netzplan.svg) von Autor **Arbalete** via Wikipedia/Wikimedia Commons verwendet, die unter [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) lizenziert ist. Dieses Werk wurde durch die Umwandlung in eine Schwarz-Weiß-Version modifiziert und um farbige Markierungen ergänzt. Gemäß der Lizenz muss dieses bearbeitete Werk unter derselben Lizenz (CC BY-SA 4.0) weitergegeben werden.
