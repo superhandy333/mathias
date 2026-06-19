@@ -281,7 +281,7 @@ S75
 <hr>
 
 ### Gesundbrunnen
-S1, S2, S25, S26, S41, S42
+S1, S2, S15, S25, S26, S41, S42
 
 <hr>
 
@@ -322,7 +322,7 @@ S41, S42, S46
 <hr>
 
 ### Hauptbahnhof
-S3, S5, S7, S9
+S3, S5, S7, S9, S15
 
 <hr>
 
@@ -840,7 +840,7 @@ S9, S85
 <hr>
 
 ### Wedding
-S41, S42
+S15, S41, S42
 
 <hr>
 
