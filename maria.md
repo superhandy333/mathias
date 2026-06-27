@@ -4,11 +4,6 @@
 
 `MariasDbConnector` ist eine eigene C++-Klasse für die Kapselung von Funktionen der Bibliothek `C++ Connector`. Sie ermöglicht die einfache Anbindung an eine MariaDB-Datenbank und die Durchführung von SQL-Abfragen.
 
-<details>
-<summary>CMakeLists.txt</summary>
-Hier kommt ein Beispiel für die Einbindung der Bibliothek in ein CMake-Projekt. Die Pfade müssen an die eigenen Gegebenheiten angepasst werden.
-</details>
-
 ## Integration
 
 ### Installation der Bibliothek
@@ -26,7 +21,7 @@ c:/Program Files/MariaDB/MariaDB C++ Connector 64-bit
 <details>
 <summary>CMakeLists.txt</summary>
 
-
+~~~
 cmake_minimum_required(VERSION 4.1)
 project(maria)
 
@@ -79,7 +74,7 @@ add_custom_command(TARGET maria POST_BUILD
           "$<TARGET_FILE_DIR:maria>/mariadbcpp.dll"
   VERBATIM
 )
-
+~~~
 </details>
 
 ## In C++ inkludieren
