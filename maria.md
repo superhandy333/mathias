@@ -18,8 +18,8 @@ c:/Program Files/MariaDB/MariaDB C++ Connector 64-bit
 
 ### Einbindung in cmake
 
-<details>
-<summary>CMakeLists.txt</summary>
+<!-- <details>
+<summary>CMakeLists.txt</summary> -->
 
 ~~~
 cmake_minimum_required(VERSION 4.1)
@@ -75,7 +75,8 @@ add_custom_command(TARGET maria POST_BUILD
   VERBATIM
 )
 ~~~
-</details>
+<!-- </details> --> 
+<!-- Dieses Tag wird vom Konverter nicht korrekt umgesetzt. Daher ist es hier auskommentiert. Schade.-->
 
 ## In C++ inkludieren
 
