@@ -21,7 +21,7 @@ c:/Program Files/MariaDB/MariaDB C++ Connector 64-bit
 <details>
 <summary>CMakeLists.txt</summary>
 
-~~~txt
+
 cmake_minimum_required(VERSION 4.1)
 project(maria)
 
@@ -74,8 +74,6 @@ add_custom_command(TARGET maria POST_BUILD
           "$<TARGET_FILE_DIR:maria>/mariadbcpp.dll"
   VERBATIM
 )
-
-~~~
 
 </details>
 
