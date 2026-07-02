@@ -4,6 +4,21 @@
 
 `MariasDbConnector` ist eine eigene C++-Klasse für die Kapselung von Funktionen der Bibliothek `C++ Connector`. Sie ermöglicht die einfache Anbindung an eine MariaDB-Datenbank und die Durchführung von SQL-Abfragen.
 
+<!-- TOC -->
+
+- [Integration](#integration)
+    - [Installation der Bibliothek](#installation-der-bibliothek)
+    - [Einbindung in cmake](#einbindung-in-cmake)
+- [In C++ inkludieren](#in-c-inkludieren)
+- [Verbindung zur Datenbank](#verbindung-zur-datenbank)
+- [Select](#select)
+- [Select mit Prepared Statement](#select-mit-prepared-statement)
+- [Insert](#insert)
+- [Insert mit Prepared Statement](#insert-mit-prepared-statement)
+- [Autor](#autor)
+
+<!-- /TOC -->
+
 ## Integration
 
 ### Installation der Bibliothek
@@ -99,9 +114,11 @@ config.Password = "abcd1234";
 maria::MariaDbConnector conn(config);
 conn.Connect();
 std::cout << "Verbunden: " << (conn.isConnected() ? "ja" : "nein") << std::endl;
+...
+conn.Disconnect();
 ~~~
 
-## Einfache Abfrage
+## Select
 
 ~~~cpp
 std::string query = "SELECT * FROM personen";
@@ -116,17 +133,26 @@ for (auto const & row : table->Rows) {
 }
 ~~~
 
-## Abfrage mit Prepared Statement
+## Select mit Prepared Statement
 
 ~~~cpp
 std::string query = "SELECT * FROM personen WHERE id > ?";
-auto table = conn.ExecuteQuery(query, 1);
-
+auto table = conn.Select(query, 1);
 ...
 ~~~
+
+~~~cpp
+std::string query = "SELECT * FROM personen WHERE vorname LIKE ?";
+auto table = conn.Select(query, "L%");
+...
+~~~
+
+## Insert
+
+## Insert mit Prepared Statement
 
 ## Autor
 
 Mathias Rentsch<br>
 rentsch@online.de  
-<small>Juni 2026</small>
+<small>Juli 2026</small>
