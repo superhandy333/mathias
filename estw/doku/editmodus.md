@@ -1,0 +1,155 @@
+# Edit-Modus
+
+Im Editmodus können Elemente neu hinzugefügt, bearbeitet, verschoben oder gelöscht werden. Es gibt Unter-Modi innerhalb des Editmodus, die jeweils unterschiedliche Bearbeitungsfunktionen bereitstellen. 
+
+## Element-Eigenchaften
+
+### Elementtyp
+
+Jedes Element ist von einem der folgenden Elementtypen:
+
+- Gleis
+- Weiche
+- Signal
+- Blindziel
+- AuflöseElement
+
+### Unterelementtyp
+
+Jedes Element hat einen Unterelementtyp, der den Elementtyp näher spezifiziert.
+
+- 1
+- 2
+- 3
+
+### Rotation
+
+Die Rotation gibt an, um wie viele Grad das Element im Uhrzeigersinn gedreht ist.
+
+- 0 (0°)
+- 1 (90°)
+- 2 (180°)
+- 3 (270°)
+
+### Mirror
+
+Die Mirror-Eigenschaft gibt an, ob das Element gespiegelt ist.
+
+- N (nicht gespiegelt)
+- J (gespiegelt)
+
+## Untermodi im Editmodus
+
+- Hinzufügen
+- Verschieben
+- Drehen
+- Spiegeln
+- Typ ändern
+- Unterelementtyp ändern
+- Löschen
+
+Der aktuelle Untermodus wird im ToolForm durch ein SeqmentControl angezeigt.
+
+Beim Wechsel des Modus müssen eventuell begonnene, aber noch nicht abgeschlossene Aktionen zurückgesetzt werden. Das betrifft insbesondere ein im Modus „Verschieben“ bereits ausgewähltes Element.
+
+## Untermodus „Hinzufügen“
+
+Wenn dieser Modus aktiv ist, werden im ToolForm 4 Gruppen (SegmentControl) zusätzlicher Optionen für Elementtyp, Unterelementtyp, Rotation und Mirror angezeigt. Mit diesen SegmentControls wird die aktuelle Auswahl der jeweiligen Gruppe getroffen.
+
+Verhalten bei einem Mausklick auf das Gitter:
+
+* Wird auf ein leeres Feld geklickt, wird dort ein Element mit den aktuell ausgewählten Werten der 4 Gruppen eingefügt.
+* Wird auf ein bereits belegtes Feld geklickt, erfolgt keine Änderung.
+
+## Untermodus „Verschieben“
+
+Das Verschieben erfolgt in zwei Schritten:
+
+### Schritt 1: Quelle auswählen
+
+* Wird auf ein belegtes Feld geklickt, wird das dort vorhandene Element als zu verschiebendes Element ausgewählt.
+* Das ausgewählte Quellfeld muss visuell hervorgehoben werden.
+* Wird auf ein leeres Feld geklickt, wird die Aktion abgebrochen beziehungsweise eine bestehende Auswahl aufgehoben.
+
+### Schritt 2: Zielfeld auswählen
+
+* Wird anschließend auf ein leeres Feld geklickt, wird das ausgewählte Element dorthin verschoben.
+* Das ursprüngliche Feld wird danach geleert.
+* Wird auf ein bereits belegtes Feld geklickt, wird der Verschiebevorgang abgebrochen und die Auswahl aufgehoben.
+* Nach einem erfolgreichen oder abgebrochenen Verschiebevorgang befindet sich der Modus wieder im Ausgangszustand und wartet auf die Auswahl eines neuen Quellelements.
+
+## Untermodus „Drehen“
+
+Bei einem Klick auf ein vorhandenes Element wird dessen Rotation zyklisch geändert:
+
+`0° → 90° → 180° → 270° → 0°`
+
+* Jeder Klick schaltet genau zur nächsten Rotation weiter.
+* Wird auf ein leeres Feld geklickt, erfolgt keine Änderung.
+
+## Untermodus „Spiegeln“
+
+Bei einem Klick auf ein vorhandenes Element wird dessen Mirror-Eigenschaft umgeschaltet:
+
+`N (nicht gespiegelt) ↔ J (gespiegelt)`
+
+* Wird auf ein leeres Feld geklickt, erfolgt keine Änderung.
+
+## Untermodus „Typ ändern“
+
+Wenn dieser Modus aktiv ist, müssen im ToolForm zusätzliche Schaltflächen für die vier Elementtypen angezeigt werden:
+
+* Kreis
+* Rechteck
+* Linie
+* Dreieck
+
+Mit diesen Schaltflächen wird der neue Elementtyp ausgewählt. Der aktuell ausgewählte Typ muss eindeutig gekennzeichnet sein.
+
+Verhalten bei einem Mausklick auf das Gitter:
+
+* Wird auf ein vorhandenes Element geklickt, wird dessen Typ durch den aktuell ausgewählten Elementtyp ersetzt.
+* Die bisherige Farbe des Elements bleibt dabei erhalten.
+* Wird auf ein leeres Feld geklickt, erfolgt keine Änderung.
+
+## Untermodus „Löschen“
+
+* Wird auf ein belegtes Feld geklickt, wird das dort vorhandene Element gelöscht.
+* Wird auf ein leeres Feld geklickt, erfolgt keine Änderung.
+
+## Benutzeroberfläche
+
+* Das Gitter nimmt den verfügbaren Bereich links neben dem ToolForm ein.
+* Das ToolForm befindet sich dauerhaft am rechten Fensterrand.
+* Die Schaltflächen müssen übersichtlich angeordnet und eindeutig beschriftet sein.
+* Schaltflächen für Elementtypen dürfen nur in den Modi „Hinzufügen“ und „Typ ändern“ sichtbar sein.
+* Mausklicks außerhalb des Gitters dürfen keine Gitteraktion auslösen.
+* Die Zuordnung einer Mausposition zu einem Gitterfeld muss auch nach einer Änderung der Fenstergröße korrekt funktionieren.
+* Verhindere sichtbares Flackern beim Neuzeichnen, beispielsweise durch Double Buffering.
+
+## Erwartete Projektstruktur
+
+Erstelle mindestens folgende Dateien:
+
+* `CMakeLists.txt`
+* `src/main.cpp`
+* geeignete Header- und Implementierungsdateien für:
+
+  * das Datenmodell des Gitters,
+  * die Elemente,
+  * die Bearbeitungslogik,
+  * das Hauptfenster und die GDI+-Darstellung
+* `README.md` mit Build- und Startanleitung
+
+Passe die genaue Aufteilung an, wenn eine andere Struktur fachlich sinnvoller ist.
+
+## Umsetzungsvorgehen
+
+1. Erstelle zunächst eine kurze technische Planung mit Klassenstruktur, Zuständen und Ereignisabläufen.
+2. Implementiere anschließend die Anwendung vollständig.
+3. Konfiguriere die Verknüpfung der benötigten Windows- und GDI+-Bibliotheken über CMake.
+4. Kompiliere das Projekt und behebe sämtliche Compilerfehler.
+5. Prüfe insbesondere alle fünf Modi, ungültige Mausklicks, Moduswechsel und das Verhalten nach einer Größenänderung des Fensters.
+6. Fasse abschließend die erstellten Dateien, die Architektur und die durchgeführten Prüfungen kurz zusammen.
+
+Die Aufgabe ist erst abgeschlossen, wenn das Projekt mit CMake erfolgreich konfiguriert und kompiliert werden kann und alle beschriebenen Bedienabläufe implementiert sind.
