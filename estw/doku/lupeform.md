@@ -14,7 +14,7 @@ Im Simulationsmodus wird die "normale" ESTW-Logik ausgeführt.
 
 Im Editmodus können Elemente neu hinzugefügt, bearbeitet, verschoben oder gelöscht werden.
 
-Die genauen Vorgaben für diese Modus sind in der Datei [AGENTS1.md](AGENTS1.md) beschrieben. Beachte diese Datei. Du hast lesenden Zugriff auf diese Datei. Änderungen an dieser Datei sind nicht erlaubt.
+Die genauen Vorgaben für diesen Modus sind in der Datei [editmodus.md](editmodus.md) beschrieben. Beachte diese Datei. Du hast lesenden Zugriff auf diese Datei. Änderungen an dieser Datei sind nicht erlaubt.
 
 ## Fahrstrasse
 

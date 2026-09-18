@@ -1,6 +1,6 @@
 <button>ESTW</button>
 
-<small>[Entwicklung](../develop.md) / [ESTW](estw.md) / Files</small>
+<small>[Entwicklung](../develop.md) / [ESTW](main.md) / Files</small>
 
 # Files
 

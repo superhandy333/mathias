@@ -1,6 +1,6 @@
 <button>ESTW</button>
 
-<small>[Entwicklung](../develop.md) / [ESTW](estw.md) / [Files](files.md) / create_database.sql</small>
+<small>[Entwicklung](../develop.md) / [ESTW](main.md) / [Files](files.md) / create_database.sql</small>
 
 # create_database.sql
 

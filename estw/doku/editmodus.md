@@ -52,6 +52,10 @@ Der aktuelle Untermodus wird im ToolForm durch ein SeqmentControl angezeigt.
 
 Beim Wechsel des Modus müssen eventuell begonnene, aber noch nicht abgeschlossene Aktionen zurückgesetzt werden. Das betrifft insbesondere ein im Modus „Verschieben“ bereits ausgewähltes Element.
 
+## Elementauswahl und Bezeichnung
+
+Ein Klick auf ein vorhandenes Element wählt es im Editmodus aus und markiert es. Die Bezeichnung des ausgewählten Elements wird im ToolForm angezeigt und kann dort geändert werden. Die Änderung wird beim Verlassen des Eingabefelds in die Arbeitsdaten übernommen; beim Speichern des Editmodus wird sie zusammen mit den übrigen Elementänderungen persistiert. Ein Klick auf ein leeres Feld hebt die Auswahl auf, sofern der aktive Untermodus dort kein Element anlegt. Auch ein Wechsel des Untermodus hebt die Auswahl auf.
+
 ## Untermodus „Hinzufügen“
 
 Wenn dieser Modus aktiv ist, werden im ToolForm 4 Gruppen (SegmentControl) zusätzlicher Optionen für Elementtyp, Unterelementtyp, Rotation und Mirror angezeigt. Mit diesen SegmentControls wird die aktuelle Auswahl der jeweiligen Gruppe getroffen.
@@ -97,19 +101,19 @@ Bei einem Klick auf ein vorhandenes Element wird dessen Mirror-Eigenschaft umges
 
 ## Untermodus „Typ ändern“
 
-Wenn dieser Modus aktiv ist, müssen im ToolForm zusätzliche Schaltflächen für die vier Elementtypen angezeigt werden:
+Wenn dieser Modus aktiv ist, wird im ToolForm ein SegmentControl für die Auswahl des Elementtyps angezeigt:
 
-* Kreis
-* Rechteck
-* Linie
-* Dreieck
+* Gleis
+* Weiche
+* Signal
+* Blind
+* Auflöse
 
 Mit diesen Schaltflächen wird der neue Elementtyp ausgewählt. Der aktuell ausgewählte Typ muss eindeutig gekennzeichnet sein.
 
 Verhalten bei einem Mausklick auf das Gitter:
 
 * Wird auf ein vorhandenes Element geklickt, wird dessen Typ durch den aktuell ausgewählten Elementtyp ersetzt.
-* Die bisherige Farbe des Elements bleibt dabei erhalten.
 * Wird auf ein leeres Feld geklickt, erfolgt keine Änderung.
 
 ## Untermodus „Löschen“

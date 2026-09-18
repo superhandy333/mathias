@@ -1,6 +1,6 @@
 <button>ESTW</button>
 
-<small>[Entwicklung](../develop.md) / [ESTW](estw.md) / Datenbankserver</small>
+<small>[Entwicklung](../develop.md) / [ESTW](main.md) / Datenbankserver</small>
 
 # Datenbankserver
 

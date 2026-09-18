@@ -1,6 +1,6 @@
 <button>ESTW</button>
 
-<small>[Entwicklung](../develop.md) / [ESTW](estw.md) / [Files](files.md) / export.sql</small>
+<small>[Entwicklung](../develop.md) / [ESTW](main.md) / [Files](files.md) / export.sql</small>
 
 # export.sql
 
