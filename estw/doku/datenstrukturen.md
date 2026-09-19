@@ -36,7 +36,7 @@ Elementtypen im System sind fest definierte Kategorien von Elementen. Ihre Katal
 |id|Eindeutige Identifikationsnummer des Elements. Diese ID wird in der Tabelle [Fahrstrassenelemente](#fahrstrassenelemente) referenziert.|x|
 |projekt_id|Identifikationsnummer des [Projektes](#projekte), dem das Element angehört. Wert aus dem Feld `id` der Tabelle [Projekte](#projekte).|x|
 |typ_id|Identifikationsnummer des Elementtyps. Wert aus dem Feld `id` der Tabelle [Elementtypen](#elementtypen).|x|
-|unterelementart|Bildliche Differenzierung eines Elements innerhalb eines Elementtyps. Werte siehe [Lupenbilder](#lupenbilder).|x|
+|unterelementart|Bildliche und fachliche Differenzierung eines Elements innerhalb eines Elementtyps. Für Signale sind die Werte in [signale.md](signale.md#signalarten-nach-unterelementart) verbindlich festgelegt.|x|
 |bezeichnung|Name des Elements (max. 50 Zeichen)|x|
 |beschreibung|Erläuternder Text als Beschreibung zum Element (max. 254 Zeichen)||
 |lupe1x|Horizontale Position im des Elements im Bildschirmraster|x|
@@ -102,6 +102,8 @@ Elementtypen im System sind fest definierte Kategorien von Elementen. Ihre Katal
 |37|Auflöse|5|1|2|N|
 |38|Auflöse|5|1|3|N|
 
+Die Projektierungen des Elementtyps **Signal** mit den Unterelementarten `1` und `2` entsprechen den in [signale.md](signale.md#signalarten-nach-unterelementart) festgelegten Signalarten.
+
 ## Fahrstrassen
 
 |Feld|Beschreibung|Pflichtfeld|
@@ -143,7 +145,7 @@ Die folgende Zuordnung ist verbindlich. Ein Fahrstrassenelementtyp darf einem El
 |fahrstrasse_id|Identifikationsnummer der Fahrstrasse, zu der das Element gehört. Wert aus dem Feld `id` der Tabelle [Fahrstrassen](#fahrstrassen).|x|
 |element_id|Identifikationsnummer des Elements. Wert aus dem Feld `id` der Tabelle [Elemente](#elemente).|x|
 |fahrstrassenelementtyp_id|Identifikationsnummer des Fahrstrassenelementtyps. Wert aus dem Feld `id` der Tabelle [Fahrstrassenelementtypen](#fahrstrassenelementtypen).|x|
-|sollstellung|Sollstellung, die das Element einnehmen muss, damit die Fahrstrasse eingestellt werden kann.|x|
+|sollstellung|Sollstellung, die das Element einnehmen muss, damit die Fahrstrasse eingestellt werden kann. Bei einem Startsignal wird sie als [Hauptsignalgeschwindigkeit](signale.md#hauptsignalgeschwindigkeit) verwendet.|x|
 
 Die Kombination aus `fahrstrasse_id` und `element_id` ist eindeutig (jedes Element kann einer Fahrstrasse nur einmal zugeordnet werden).
 

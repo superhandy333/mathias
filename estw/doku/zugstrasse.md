@@ -2,6 +2,8 @@
 
 Dieses Dokument beschreibt den ersten fachlichen Entwurf der Zustandsmechanik einer **Zugstrasse** in `estw3`. Die Beschreibung basiert zunächst auf der Mechanik der Rangierstrasse. Für die Zugstrasse ist zusätzlich ein eigener Zustand für den **Flankenschutz** erforderlich. Die genaue fachliche Ausgestaltung dieses Zustands ist noch festzulegen.
 
+Für Signalarten, Halt- und Fahrtstellungen sowie die Ermittlung der Vorsignalgeschwindigkeit gelten die verbindlichen Vorgaben aus [signale.md](signale.md).
+
 ## Struktureller Aufbau und Definition in der Datenstruktur
 
 Im Sinne des Datenmodells verknüpft eine **Fahrstrasse** (`Fahrstrasse`) mehrere **Elemente** (`Element`) eines Projekts über zugeordnete **Fahrstrassenelemente** (`FahrstrassenElement`). Jedes Fahrstrassenelement weist dem referenzierten Element eine spezifische funktionale Rolle (`FahrstrassenElementtyp`) innerhalb der Fahrstrasse zu.

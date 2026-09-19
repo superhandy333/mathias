@@ -17,6 +17,7 @@
 - [Bericht 3: Analyse Edit-Modus LupeForm + MariaDB-Persistierung](bericht3.md)
 - [Bericht 4: Analyse Auslagerung des `SidebarPanel` in ein separates `ToolForm`](bericht4.md)
 - [Bericht 5: Analyse Erweiterung SegmentControls](bericht5.md)
+- [Bericht 6: Analyse Funktionalität Rangierstrassen](bericht6.md)
 
 ## KI / Modelle
 

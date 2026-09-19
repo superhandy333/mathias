@@ -2,6 +2,8 @@
 
 Dieses Dokument beschreibt die für **Rangierstraßen** und **Zugstraßen** gemeinsam gültige Fahrstraßenlogik. Die jeweiligen Besonderheiten und konkreten Statusfolgen sind in [rangierstrasse.md](rangierstrasse.md) und [zugstrasse.md](zugstrasse.md) beschrieben.
 
+Die fachliche Bedeutung der Halt- und Fahrtstellungen eines Signals wird abhängig von der Fahrstraßenart durch die [Hauptsignalgeschwindigkeit](signale.md#hauptsignalgeschwindigkeit) festgelegt.
+
 ## Zustand einer Fahrstraße
 
 Der **Status** einer Fahrstraße ist ein ganzzahliger Ablaufzustand, der den aktuellen Schritt innerhalb der Fahrstraßenmechanik beschreibt.

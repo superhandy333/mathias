@@ -2,6 +2,8 @@
 
 Dieses Dokument beschreibt den ersten fachlichen Entwurf der Zustandsmechanik einer **Rangierstrasse** in `estw3`. Die Beschreibung ist als fachliche Vorgabe für die spätere Implementierung zu verstehen und kann mit weiteren Regeln ergänzt werden.
 
+Für Signalarten sowie die bei Rangierstrassen gültigen Halt- und Fahrtstellungen gelten die verbindlichen Vorgaben aus [signale.md](signale.md), insbesondere der Abschnitt [Hauptsignalgeschwindigkeit](signale.md#hauptsignalgeschwindigkeit).
+
 ## Struktureller Aufbau und Definition in der Datenstruktur
 
 Im Sinne des Datenmodells verknüpft eine **Fahrstrasse** (`Fahrstrasse`) mehrere **Elemente** (`Element`) eines Projekts über zugeordnete **Fahrstrassenelemente** (`FahrstrassenElement`). Jedes Fahrstrassenelement weist dem referenzierten Element eine spezifische funktionale Rolle (`FahrstrassenElementtyp`) innerhalb der Fahrstrasse zu.

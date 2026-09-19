@@ -11,7 +11,7 @@ Kennzeichnung im Text:
 
 `estw3` bildet ein **Elektronisches Stellwerk (ESTW)** ab, also die Steuerung und Sicherung von Gleisanlagen (Fahrstraßen, Weichen, Signale) einer Modell- bzw. Simulationsbahnanlage. Das Programm hat zwei fachliche Ebenen:
 
-1. **Verwaltungsebene (Stammdaten):** Projekte, Elemente, Elementtypen, Fahrstrassen, Fahrstrassenelementtypen und Fahrstrassenelemente werden als Stammdaten verwaltet, wahlweise aus lokalen CSV-Dateien, aus einer MariaDB-Datenbank oder aus fest im Code hinterlegten Testdaten geladen (`generate_estw_data` in [aktionen.cpp](../aktionen.cpp)). Über das `MainForm` lassen sich diese Stammdaten in Listenformularen (`EstwListForm`, `ProjektListForm`) sichten.
+1. **Verwaltungsebene (Stammdaten):** Projekte, Elemente, Elementtypen, Fahrstrassen, Fahrstrassenelementtypen und Fahrstrassenelemente werden als Stammdaten verwaltet, wahlweise aus lokalen CSV-Dateien, aus einer MariaDB-Datenbank, aus mrdb oder aus fest im Code hinterlegten Testdaten geladen (`generate_estw_data` in [aktionen.cpp](../aktionen.cpp)). Über das `MainForm` lassen sich diese Stammdaten in Listenformularen (`EstwListForm`, `ProjektListForm`) sichten.
 2. **Betriebsebene (Simulation/Bearbeitung):** Für ein einzelnes Projekt (`FullProjekt`) kann das `LupeForm` geöffnet werden. Es stellt die Elemente eines Bahnhofs grafisch auf einem Gitterraster dar (Lupenbild). Vorgesehen sind folgende Betriebsarten:
    - **Simulation:** Die eigentliche ESTW-Logik läuft (Belegung, Weichenstellung, Signalstellung, Fahrstraßenbildung, Flankenschutz usw.).
    - **Edit:** Elemente können hinzugefügt, verschoben, gedreht, gespiegelt, im Typ geändert oder gelöscht werden. Änderungen werden zunächst nur im Formular gehalten und erst bei Bestätigung persistiert (siehe Abschnitt 3.7).
@@ -78,7 +78,7 @@ Felder (`struct Element`, [structs.h](../structs.h)):
 - `Bezeichnung` / `Beschreibung` – Name bzw. erläuternder Text.
 - `ProjektId` – Zugehörigkeit zu einem `Projekt`.
 - `TypId` – Referenz auf `Elementtyp`; bestimmt die fachliche Grundart des Elements.
-- `UnterElementArt` – bildliche Differenzierung eines Elements innerhalb seines Elementtyps (laut Dokumentation Werte 1–3, siehe auch [editmodus.md](editmodus.md)). Für den Elementtyp **Gleis** ist `UnterElementArt = 3` als **Prellbock** festgelegt. Ein Prellbock bleibt fachlich ein Gleis und besitzt deshalb wie ein Gleis Strang A und Strang B sowie einen durchgehenden Gleismelder; seine besondere Bedeutung ist in der grafischen Darstellung als Prellbock erkennbar. Die konkrete Bedeutung der übrigen Werte von `UnterElementArt` je Elementtyp ist noch nicht vollständig dokumentiert.
+- `UnterElementArt` – bildliche und fachliche Differenzierung eines Elements innerhalb seines Elementtyps (laut Dokumentation Werte 1–3, siehe auch [editmodus.md](editmodus.md)). Für den Elementtyp **Gleis** ist `UnterElementArt = 3` als **Prellbock** festgelegt. Ein Prellbock bleibt fachlich ein Gleis und besitzt deshalb wie ein Gleis Strang A und Strang B sowie einen durchgehenden Gleismelder; seine besondere Bedeutung ist in der grafischen Darstellung als Prellbock erkennbar. Für den Elementtyp **Signal** legt [signale.md](signale.md#signalarten-nach-unterelementart) `UnterElementArt = 1` als Hauptsignal und `UnterElementArt = 2` als Rangiersignal fest. Die konkrete Bedeutung der Werte von `UnterElementArt` ist für die übrigen Elementtypen noch nicht vollständig dokumentiert.
 - `Lupe1X`, `Lupe1Y` – Position im Bildschirmraster der Lupenansicht.
 - `Rotation` – Drehwinkel (0 = 0°, 1 = 90°, 2 = 180°, 3 = 270°).
 - `Mirror` – Angabe, ob das Element gespiegelt dargestellt wird.
@@ -157,7 +157,7 @@ Felder (`struct FahrstrassenElement`, [structs.h](../structs.h)):
 - `TypId` – Referenz auf `Fahrstrassenelementtyp` (Rolle, siehe 2.5).
 - `SollStellung` – die für das Element in dieser Fahrstrasse projektierte Sollstellung. Die Bedeutung hängt vom Elementtyp ab:
   - **Weichen:** Der Wert entspricht der für die Fahrstrasse benötigten Weichenstellung: `-1` = links, `1` = rechts. Die Weiche muss diese Stellung für die Fahrstrasse einnehmen.
-  - **Signale:** Der Wert wird am **Startsignal** als `hvs` (Hauptsignalgeschwindigkeit) beziehungsweise als Signalstellung gesetzt, sobald das entsprechende Sicherungsniveau der Fahrstrasse erreicht ist.
+  - **Signale:** Der Wert wird am **Startsignal** als `hvs` (Hauptsignalgeschwindigkeit) beziehungsweise als Signalstellung gesetzt, sobald das entsprechende Sicherungsniveau der Fahrstrasse erreicht ist. Wertebereich und fahrstraßenabhängige Bedeutung sind verbindlich in [signale.md](signale.md#hauptsignalgeschwindigkeit) festgelegt.
 
 Invarianten: Die Kombination aus `FahrstrasseId` und `ElementId` ist eindeutig; die `ProjektId` des referenzierten Elements muss mit der `ProjektId` der referenzierten Fahrstrasse übereinstimmen ([rules_isvalid_estwdata.md](rules_isvalid_estwdata.md)).
 
@@ -187,7 +187,7 @@ Für die **Simulation** eines Projekts im `LupeForm` werden die Stammdaten (`Ele
   - **`Gleis`** ([gleis.h](../estw/gleis.h)): Basisverhalten für Gleisabschnitte, u. a. Beanspruchung durch Rangier-/Zugstraße (`BEA_t`).
   - **`Blind`** ([blind.h](../estw/blind.h)) und **`Aufloese`** ([aufloese.h](../estw/aufloese.h)) erben von `Gleis` und ergänzen jeweils eigene Programmfälle bzw. Zustände (z. B. `ZIF_t` Zielfestlegemelder bei `Blind`, Auflösebereichsanzeige `FAUF` bei `Aufloese`).
   - **`Weiche`** ([weiche.h](../estw/weiche.h)): bildet Zungenstellung, Motorlauf, Verschluss, Umstellsperre und Auffahren einer Weiche ab (`WeicheStellung`: `None`/`Links`/`Rechts`).
-  - **`Signal`** ([signal.h](../estw/signal.h)): bildet Signalbegriffe/-zustände ab (Haupt-/Vorsignalgeschwindigkeit, Ersatzsignal `ZS1`, Wiederholungssperre `WSP`, Signalsperre `FSS`, Beanspruchung auf zwei Strängen `BEAA`/`BEAB`, Flankenschutzbeanspruchung `BEAF`, Festlegemelder `FUEM`, Zielfestlegemelder `ZIF`).
+  - **`Signal`** ([signal.h](../estw/signal.h)): bildet Signalbegriffe/-zustände ab (Haupt-/Vorsignalgeschwindigkeit gemäß [signale.md](signale.md), Ersatzsignal `ZS1`, Wiederholungssperre `WSP`, Signalsperre `FSS`, Beanspruchung auf zwei Strängen `BEAA`/`BEAB`, Flankenschutzbeanspruchung `BEAF`, Festlegemelder `FUEM`, Zielfestlegemelder `ZIF`).
 - **`Fs`** ([fs.h](../estw/fs.h)) ist das Laufzeitobjekt einer Fahrstrasse. Es hält eine Kopie der Stammdaten (`Fahrstrasse`) sowie `FsInitData`, welche die beteiligten Elemente nach fachlicher Rolle referenziert: `startSignal` (Typ 2), `zielElement` (Typ 3, als `ZielElement` – kapselt wahlweise `Signal` oder `Blind`), `aufloeseElement` (Typ 4), `vorwegElement` (Typ 6), sowie Listen für normale Fahrwegelemente (Typ 1), Unterwegselemente (Typ 7), flankenschutzbietende Elemente (Typ 5) und Flankenschutztransportelemente (Typ 8). `Fs::work()` prüft laufend, ob die Fahrstrasse fachlich noch gültig ist (`isValid()`), und verwaltet den Zustand `an` (Fahrstrasse eingestellt/aufgeschaltet).
 
 Gemeinsame Basis für Logging: `LogElement` ([logelement.h](../estw/logelement.h)) stellt Name und eine geschützte `log()`-Methode bereit und wird sowohl von `EstwElement` als auch von `Fs` und der Lupe-Elementfamilie genutzt.
@@ -236,7 +236,7 @@ Aus `ProjektForm` heraus öffnet `OnSimulation` ein `LupeForm` im `LupeMode::Sim
 
 ### 3.6 Bearbeiten von Elementen (Editmodus)
 
-Der Editmodus ist laut [main.cpp](../main.cpp) nur verfügbar, wenn `DataSource::MariaDB` aktiv ist. `LupeForm` wird dann mit `LupeMode::Edit` und einem `SaveElementsCallback` erzeugt. Innerhalb des Editmodus gibt es laut [editmodus.md](editmodus.md) folgende Untermodi, gesteuert über ein `ToolForm` (Seitenleiste): Hinzufügen, Verschieben, Drehen, Spiegeln, Typ ändern, Unterelementtyp ändern, Löschen. Jeder Untermodus definiert eigenes Klickverhalten auf dem Gitter (siehe Detailregeln in [editmodus.md](editmodus.md)). Während der Bearbeitung hält `LupeForm` sowohl den ursprünglichen Zustand (`originalElements`) als auch den bearbeiteten Zustand (`workingElements`) vor.
+Der Editmodus ist laut [main.cpp](../main.cpp) nur verfügbar, wenn `DataSource::MariaDB` aktiv ist. `LupeForm` wird dann mit `LupeMode::Edit` und einem `SaveElementsCallback` erzeugt. Innerhalb des Editmodus gibt es laut [editmodus.md](editmodus.md) folgende Untermodi, gesteuert über ein `ToolForm` (Seitenleiste): Auswahl, Hinzufügen, Verschieben, Drehen, Spiegeln, Typ ändern, Unterelementtyp ändern, Löschen. Jeder Untermodus definiert eigenes Klickverhalten auf dem Gitter (siehe Detailregeln in [editmodus.md](editmodus.md)). Der ganz links angeordnete Untermodus **Auswahl** dient der Auswahl eines vorhandenen Elements und ist der einzige Untermodus, in dem die Eingabezeile für dessen Bezeichnung sichtbar ist und eine Bezeichnungsänderung übernommen werden darf. Während der Bearbeitung hält `LupeForm` sowohl den ursprünglichen Zustand (`originalElements`) als auch den bearbeiteten Zustand (`workingElements`) vor.
 
 ### 3.7 Persistieren von Elementänderungen
 
@@ -259,7 +259,7 @@ Der Modus **Fahrstrassen-Edit** dient dazu, Fahrstrassen eines Projekts anzulege
 - **Fahrstrasse löschen** ist nur bei genau einer ausgewählten Fahrstrasse verfügbar. Nach bestätigter Sicherheitsabfrage werden die Fahrstrasse und sämtliche zugehörigen Fahrstrassenelemente gemeinsam aus den Arbeitsdaten entfernt. Liste und Markierungen werden anschließend aktualisiert.
 - Ein `SegmentControl` bietet die acht Rollen **Fahrwegelement**, **Fahrstrassenstart**, **Fahrstrassenziel**, **Auflöseelement**, **Unterwegselement**, **Vorwegelement**, **Flankenschutzelement** und **Flankenschutztransportelement** zur Auswahl.
 - Die Segmente heißen in dieser Reihenfolge **Fahrweg**, **Start**, **Ziel**, **Auflöse**, **Unterwegs**, **Vorweg**, **Flanke** und **Transport**; sie entsprechen den `TypId`-Werten **1, 2, 3, 4, 7, 6, 5, 8**.
-- Das Feld **Sollstellung** wird beim Hinzufügen einer Zuordnung übernommen. Für Weichen ist `-1` (links) oder `1` (rechts) erforderlich; beim Startsignal gibt es die Hauptsignalgeschwindigkeit beziehungsweise Signalstellung an (siehe Abschnitt 2.6). Die Eingabe muss eine ganze Zahl sein.
+- Das Feld **Sollstellung** wird beim Hinzufügen einer Zuordnung übernommen. Für Weichen ist `-1` (links) oder `1` (rechts) erforderlich; beim Startsignal gibt es die [Hauptsignalgeschwindigkeit](signale.md#hauptsignalgeschwindigkeit) beziehungsweise Signalstellung an (siehe Abschnitt 2.6). Die Eingabe muss eine ganze Zahl sein.
 - Sind Fahrstrasse und Rolle ausgewählt, ordnet ein Klick auf ein noch nicht zugeordnetes Element im `LupeForm` dieses der Fahrstrasse mit der gewählten Rolle zu, sofern die Kombination aus Elementtyp und Fahrstrassenelementtyp laut [Zuordnungstabelle](datenstrukturen.md#zulässige-zuordnungen-zu-elementtypen) zulässig ist. Dafür wird ein `FahrstrassenElement` angelegt, das Fahrstrasse und Element verknüpft und über `TypId` die Rolle festlegt. Zugeordnete Elemente werden durch einen **großen ausgefüllten Kreis** markiert.
 - Ein erneuter Klick auf ein bereits zugeordnetes Element entfernt dessen Zuordnung und Markierung, unabhängig von der aktuell ausgewählten Rolle. Zum Wechseln der Rolle wird die Zuordnung zunächst entfernt und das Element anschließend mit der neuen Rolle erneut zugewiesen.
 - Beim Wechsel der ausgewählten Fahrstrasse werden die Markierungen an deren Zuordnungen angepasst, die Rollenauswahl aufgehoben und die Sollstellung auf `0` zurückgesetzt. Beim Verlassen des Modus werden Auswahl und Markierungen verworfen.
@@ -320,7 +320,7 @@ flowchart LR
 
 ## 5. Zusammenfassung offener Punkte
 
-- Bedeutung der noch nicht dokumentierten Werte von `UnterElementArt` je Elementtyp; für **Gleis** ist `UnterElementArt = 3` als **Prellbock** festgelegt.
+- Bedeutung der noch nicht dokumentierten Werte von `UnterElementArt` bei den übrigen Elementtypen; für **Gleis** ist `UnterElementArt = 3` als **Prellbock** und für **Signal** sind `UnterElementArt = 1` und `2` in [signale.md](signale.md#signalarten-nach-unterelementart) festgelegt.
 - Konkrete `Id`-Werte der `Fahrstrassenelementtyp`-Rollen (nur aus Regeltext und Codekommentaren abgeleitet).
 - Fachliche Verwendung des Elementtyps Test (`ElementTypId = 99`); keine eigene Laufzeitklasse gefunden.
 - Build und Laufzeitprüfung des Fahrstrassen-Editmodus einschließlich eines Speicherdurchlaufs gegen einen echten MariaDB-Server (siehe Abschnitt 3.8).
