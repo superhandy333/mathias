@@ -49,7 +49,7 @@ Elementtypen im System sind fest definierte Kategorien von Elementen. Ihre Katal
 
 |Fall|Beschreibung|Gleis|Weiche|Signal|Blindziel|Auflöseelement|
 |-|-|:-:|:-:|:-:|:-:|:-:|
-|PR|Rangierstraße zulässig<br>Gleis darf Element einer Rangierstrasse sein.|x|||||
+|PR|Rangierstraße zulässig<br>Bei der Zulassungsprüfung einer Rangierstrasse muss `PR` an jedem ihr zugeordneten Fahrstrassenelement gesetzt sein, dessen referenziertes Element vom Elementtyp Gleis ist.|x|||||
 |PZ|Zugstraße zulässig<br>Gleis darf Element einer Zugstrasse sein.|x|||||
 |PRS|Rangierstraßenstart zulässig<br>Signal darf Startelement einer Rangierstrasse sein.|||x|||
 |PRZ|Rangierstraßenziel zulässig<br>Signal darf Zielelement einer Rangierstrasse sein.|||x|x||
@@ -57,7 +57,7 @@ Elementtypen im System sind fest definierte Kategorien von Elementen. Ihre Katal
 |PZZ|Zugstraßenziel zulässig<br>Signal darf Zielelement einer Zugstrasse sein.|||x|x||
 |PSSL|Umstellsperre links<br>Weiche ist in Stellung Links verriegelt ||x||||
 |PSSR|Umstellsperre rechts<br>Weiche ist in Stellung Rechts verriegelt||x||||
-|PZSP|Zielsperre<br>Signal kann während es als Flankenschutzelement dient, nicht gleichzeitig Ziel einer Rangierstrasse dienen. Signal kann während es Ziel einer Rangierstrasse, nicht gleichzeitig als Flankenschutzelement dienen.|||x|||
+|PZSP|Zielsperre<br>Bei gesetztem `PZSP` darf ein Signal nicht gleichzeitig Ziel einer Rangierstrasse und Flankenschutzelement einer Zugstrasse sein. Ist das Signal Zielsignal der zu prüfenden Rangierstrasse, verhindert `PZSP` die positive Zulassungsprüfung genau dann, wenn dieses Signal aktuell in einer Zugstrasse als Flankenschutzelement verwendet wird.|||x|||
 
 ### Mögliche Projektierungen
 

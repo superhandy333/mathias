@@ -23,6 +23,8 @@ Neben der Fahrstrassenliste enthält das `ToolForm` folgende Schaltflächen:
 
 Die Schaltfläche **Fahrstrasse löschen** ist nur verfügbar, wenn genau eine Fahrstrasse in der Liste selektiert ist. Das Löschen der zugehörigen FahrstrassenElemente erfolgt gemeinsam mit der Fahrstrasse, damit keine verwaisten Zuordnungen bestehen bleiben.
 
+Am unteren Rand enthält das `ToolForm` im FahrstrassenEdit-Modus nebeneinander die Schaltflächen **Speichern**, **Verwerfen** und **Prüfung**. Die Schaltfläche **Prüfung** ist ausschließlich in diesem Modus vorhanden.
+
 Zusätzlich enthält das `ToolForm` ein `SegmentControl` zur Auswahl des FahrstrassenElementtyps, der aktuell bearbeitet und angezeigt wird. Folgende acht FahrstrassenElementtypen stehen zur Verfügung:
 
 | FahrstrassenElementtyp | Funktion innerhalb der Fahrstrasse |
@@ -78,3 +80,11 @@ Auf diese Weise kann der Benutzer der jeweils in der Liste ausgewählten Fahrstr
 ## Wechsel und Zurücksetzen des Modus
 
 Beim Verlassen des FahrstrassenEdit-Modus müssen nicht abgeschlossene Bedienzustände zurückgesetzt werden. Beim Wechsel der ausgewählten Fahrstrasse bleibt der im `SegmentControl` ausgewählte FahrstrassenElementtyp erhalten. Die Darstellung im `LupeForm` muss stets der Kombination aus aktuell ausgewählter Fahrstrasse und aktuell ausgewähltem FahrstrassenElementtyp entsprechen. Markierungen der zuvor ausgewählten Fahrstrasse oder eines zuvor angezeigten FahrstrassenElementtyps dürfen nicht bestehen bleiben.
+
+## Speichern und fachliche Validierung
+
+Beim Speichern wird der vollständige Arbeitsbestand weiterhin anhand aller vorhandenen fachlichen Gültigkeitsregeln für Fahrstrassen geprüft. Festgestellte Unvollständigkeiten oder fachliche Fehler werden dem Benutzer als Hinweise beziehungsweise Warnungen angezeigt. Ein negatives fachliches Prüfergebnis verhindert die Speicherung jedoch nicht: Alle bearbeiteten Fahrstrassen und ihre Fahrstrassenelemente werden im aktuell erreichten Arbeitsstand gespeichert.
+
+Die Schaltfläche **Prüfung** führt dieselbe fachliche Prüfung für alle Fahrstrassen des aktuell bearbeiteten Projekts aus. Maßgeblich sind die aktuellen Arbeitsdaten einschließlich aller noch nicht gespeicherten Änderungen. Festgestellte Meldungen werden angezeigt; bei fehlerfreiem Ergebnis wird der Erfolg bestätigt. Die Prüfung führt keine Persistenzfunktion aus, verändert weder Arbeitsdaten noch Auswahl oder Markierungen und lässt den FahrstrassenEdit-Modus geöffnet.
+
+Technische Fehler bleiben davon unberührt. Kann die Datenquelle die Änderungen nicht vollständig übernehmen, tritt ein Bearbeitungskonflikt auf oder sind interne Zuordnungsdaten nicht sicher speicherbar, wird der Vorgang weiterhin als Fehler behandelt. In diesem Fall bleibt der Editor mit seinen Arbeitsdaten geöffnet. Die für mrdb vorgesehene Rücksicherung bei einem technischen Schreibfehler bleibt erhalten.
