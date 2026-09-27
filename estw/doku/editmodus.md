@@ -18,11 +18,16 @@ Jedes Element ist von einem der folgenden Elementtypen:
 
 Jedes Element hat einen Unterelementtyp, der den Elementtyp näher spezifiziert.
 
-Für Elemente vom Typ **Signal** ist die fachliche Bedeutung der Unterelementarten in [signale.md](signale.md#signalarten-nach-unterelementart) verbindlich festgelegt.
-
-- 1
-- 2
-- 3
+|Elementtyp|Unterelementtyp|Beschreibung|
+|-|-|-|
+|Gleis|1|gerades Gleis|
+|Gleis|2|Gleis mit Knick|
+|Gleis|3|Prellbock|
+|Weiche|1|Weiche|
+|Signal|1|Hauptsignal|
+|Signal|2|Rangiersignal|
+|Blindziel|1||
+|AuflöseElement|1||
 
 ### Rotation
 
