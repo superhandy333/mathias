@@ -176,7 +176,7 @@ Verwendungszweck: `EstwData` ist der zentrale In-Memory-Datenbestand, mit dem `M
 - `Connection` (`ConnectionData`) – Zugangsdaten für MariaDB (Host, Port, Database, User, Password).
 - `LocalCsv` (`LocalCsvData`) – Pfad zu lokalen CSV-Dateien.
 
-Fachliche Bedeutung: Steuert zur Laufzeit, ob Daten aus CSV-Dateien, aus einer MariaDB-Datenbank oder aus fest hinterlegten Testdaten stammen ([generate_estw_data](../aktionen.cpp)). Die Einstellung wird über das `ConfigForm` bearbeitet und im Key-Value-Store persistiert ([main.cpp](../main.cpp), [lademechanismus_daten.md](lademechanismus_daten.md)). Schreibender Zugriff (Editmodus, Speichern von Elementänderungen) ist laut Code ausschließlich bei `DataSource::MariaDB` möglich ([main.cpp](../main.cpp), [elementpersistence.h](../elementpersistence.h)).
+Fachliche Bedeutung: Steuert zur Laufzeit, ob Daten aus CSV-Dateien, aus MariaDB, aus mrdb oder aus fest hinterlegten Testdaten stammen ([generate_estw_data](../aktionen.cpp)). Die Einstellung wird über das `ConfigForm` bearbeitet und im Key-Value-Store persistiert ([main.cpp](../main.cpp), [lademechanismus_daten.md](lademechanismus_daten.md)). Schreibender Zugriff im Editmodus ist für `DataSource::MariaDB` und `DataSource::Mrdb` möglich ([main.cpp](../main.cpp), [elementpersistence.h](../elementpersistence.h)); CSV- und Testdaten bleiben schreibgeschützt.
 
 ### 2.9 Laufzeitmodell: Estw, EstwElement und Fahrstraßen-Laufzeitobjekt (Fs)
 
@@ -236,16 +236,28 @@ Aus `ProjektForm` heraus öffnet `OnSimulation` ein `LupeForm` im `LupeMode::Sim
 
 ### 3.6 Bearbeiten von Elementen (Editmodus)
 
-Der Editmodus ist laut [main.cpp](../main.cpp) nur verfügbar, wenn `DataSource::MariaDB` aktiv ist. `LupeForm` wird dann mit `LupeMode::Edit` und einem `SaveElementsCallback` erzeugt. Innerhalb des Editmodus gibt es laut [editmodus.md](editmodus.md) folgende Untermodi, gesteuert über ein `ToolForm` (Seitenleiste): Auswahl, Hinzufügen, Verschieben, Drehen, Spiegeln, Typ ändern, Unterelementtyp ändern, Löschen. Jeder Untermodus definiert eigenes Klickverhalten auf dem Gitter (siehe Detailregeln in [editmodus.md](editmodus.md)). Der ganz links angeordnete Untermodus **Auswahl** dient der Auswahl eines vorhandenen Elements und ist der einzige Untermodus, in dem die Eingabezeile für dessen Bezeichnung sichtbar ist und eine Bezeichnungsänderung übernommen werden darf. Während der Bearbeitung hält `LupeForm` sowohl den ursprünglichen Zustand (`originalElements`) als auch den bearbeiteten Zustand (`workingElements`) vor.
+Der Editmodus ist laut [main.cpp](../main.cpp) für `DataSource::MariaDB` und `DataSource::Mrdb` verfügbar. `LupeForm` wird dann mit `LupeMode::Edit` und einem `SaveElementsCallback` erzeugt. Innerhalb des Editmodus gibt es laut [editmodus.md](editmodus.md) folgende Untermodi, gesteuert über ein `ToolForm` (Seitenleiste): Auswahl, Hinzufügen, Verschieben, Drehen, Spiegeln, Typ ändern, Unterelementtyp ändern, Löschen. Jeder Untermodus definiert eigenes Klickverhalten auf dem Gitter (siehe Detailregeln in [editmodus.md](editmodus.md)).
+
+Der ganz links angeordnete Untermodus **Auswahl** zeigt für genau ein ausgewähltes Element ein `PropertyGrid`. Das Label oberhalb des Grids enthält Elementtyp und Bezeichnung, beispielsweise `Signal 35P12`; ohne Auswahl zeigt es `Kein Element ausgewählt`. Bearbeitbar sind die fachlichen Eigenschaften **Bezeichnung**, **Beschreibung**, **Unterelementart**, **Rotation** und **Gespiegelt**. Technische Schlüssel, Projekt-/Typverknüpfungen und Rasterkoordinaten werden nicht angeboten; für Elementtyp und Position bleiben die spezialisierten Untermodi maßgeblich. Unter den allgemeinen Eigenschaften erscheinen einzelne Bool-Properties für die vom Laufzeitmodell über `getProgrammfaelle()` gemeldeten Programmfälle:
+
+|Elementtyp|Programmfälle im PropertyGrid|
+|-|-|
+|Gleis|`PR`, `PZ`|
+|Weiche|`PSSL`, `PSSR`|
+|Signal|`PRS`, `PRZ`, `PZS`, `PZZ`, `PZSP`|
+|Blindziel|`PRZ`, `PZZ`|
+|Auflöseelement|keine|
+
+Jeder angezeigte Programmfall kann unabhängig aktiviert oder deaktiviert werden; nicht unterstützte Fälle werden nicht angezeigt. Bei einem Auswahlwechsel wird das Grid vollständig aus dem neuen Element aufgebaut, bei aufgehobener Auswahl geleert und deaktiviert. Änderungen werden vor der Übernahme auf nichtleere und eindeutige Bezeichnung, zulässige Textlängen, eine nicht nur aus Leerzeichen bestehende optionale Beschreibung sowie die Wertebereiche für Unterelementart und Rotation geprüft. Ungültige Eingaben verändern `workingElements` nicht und das Grid wird auf den letzten gültigen Stand zurückgesetzt. Während der Bearbeitung hält `LupeForm` sowohl den ursprünglichen Zustand (`originalElements`) als auch den bearbeiteten Zustand (`workingElements`) vor.
 
 ### 3.7 Persistieren von Elementänderungen
 
-`elementpersistence.h`/`.cpp` stellt die Funktionen bereit, um Änderungen aus dem Editmodus in die Datenbank zu übernehmen:
+`elementpersistence.h` und die Implementierung in [aktionen.cpp](../aktionen.cpp) stellen die Funktionen bereit, um Änderungen aus dem Editmodus in die Datenbank zu übernehmen:
 - `hasElementChanges` / `calculateElementChanges` ermitteln aus `original` und `edited` die eingefügten, geänderten und gelöschten Elemente (`ElementChangeSet`).
-- `persistElementChanges(ConfigData const &, EstwData const &, int projektId, elemente_t const & original, elemente_t const & edited) -> ElementSaveResult` führt die eigentliche Speicherung durch und liefert Status (`Saved`, `NoChanges`, `UnsupportedDataSource`, `ValidationFailed`, `Conflict`, `DatabaseError`), die persistierten Elemente sowie eine Zuordnung neu erzeugter IDs (`IdRemap`).
+- `persistElementChanges(ConfigData const &, EstwData const &, int projektId, elemente_t const & original, elemente_t const & edited) -> ElementSaveResult` führt die eigentliche Speicherung durch und liefert Status (`Saved`, `NoChanges`, `UnsupportedDataSource`, `ValidationFailed`, `Conflict`, `DatabaseError`), die persistierten Elemente sowie eine Zuordnung neu erzeugter IDs (`IdRemap`). Der Vergleich und beide Speicherwege umfassen den vollständigen `Element`-Datensatz, insbesondere Beschreibung, Programmfall-Flags, Unterelementart, Rotation und Spiegelung.
 - `replaceProjectElements` übernimmt die persistierten Elemente zurück in den zentralen `EstwData`-Bestand.
 
-Der aufrufende Code in [main.cpp](../main.cpp) prüft implizit über `persistElementChanges`, dass nur bei `DataSource::MariaDB` tatsächlich gespeichert wird (`ElementSaveStatus::UnsupportedDataSource` sonst). **Annahme:** Die genaue interne Speicherstrategie (z. B. Transaktionsverhalten) ist nicht Teil der untersuchten Header-Datei und wird hier nicht im Detail beschrieben.
+Für MariaDB werden geänderte Elemente innerhalb einer Transaktion vollständig per `UPDATE elemente` geschrieben; dabei werden alle Programmfallspalten übernommen. Für mrdb ersetzt `estwMrdb::saveProjectElements()` nach Konfliktprüfung die Elemente des Projekts und schreibt sie über das vollständige `Element`-Mapping einschließlich aller Programmfälle. In beiden Fällen wird der Arbeitsbestand vor dem Schreiben mit den vorhandenen Elementregeln validiert und nach erfolgreichem Speichern in den zentralen Datenbestand zurückgeführt.
 
 ### 3.8 Fahrstraßen-Editmodus
 

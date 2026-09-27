@@ -89,6 +89,23 @@ Es gelten folgende Prüfbedingungen:
 - Die Kombination von FahrstrasseId und ElementId muss innerhalb von fahrstrassenelemente_t eindeutig sein
 - Die ProjektId des Elementes, welches über ElementId referenziert ist, muss mit der ProjektId der Fahrstrasse, die über FahrstrassenId referenziert ist, übereinstimmen.
 
+#### Sollstellung nach Elementtyp
+
+Die Zulässigkeit von `SollStellung` richtet sich nach dem Elementtyp des `EstwElement`, das über
+`FahrstrassenElement.ElementId` referenziert wird. Der Elementtyp wird über dessen `TypId` bestimmt.
+Die Prüfung wird nur durchgeführt, wenn sowohl das referenzierte Element als auch dessen Elementtyp
+vorhanden sind; ungültige Referenzen werden durch die vorangehenden Referenzprüfungen gemeldet.
+
+| Elementtyp | Zulässige `SollStellung` |
+|-|-|
+| Gleis | `0` |
+| Weiche | `-1`, `1` |
+| Signal | `-3` bis einschließlich `16` |
+| Auflöseelement | `0` |
+| Blindziel / Blind | `0` |
+
+Für andere Elementtypen führt diese Sollstellungsprüfung keine zusätzliche Einschränkung ein.
+
 ### Zusätzliche Konsistenzprüfungen je Fahrstrasse (bezogen auf ihre Fahrstrassenelemente)
 
 Die Prüfungen müssen für jede Fahrstrasse aus fahrstrassen_t durchgeführt werden, auch wenn ihr kein Fahrstrassenelement zugeordnet ist.

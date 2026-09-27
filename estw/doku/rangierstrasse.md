@@ -109,6 +109,8 @@ Das Setzen einer Beanspruchung ist als Anforderung zu verstehen. Der Übergang z
 
 Status 4 beschreibt damit den Zustand, in dem Fahrweg und Weichen für die Rangierstrasse beansprucht, die Weichen korrekt gestellt und verschlossen sind. Das entspricht bei Zugstrassen dem Überwachungsniveau FÜM blinkend.
 
+Ab Zustand 4 wird zyklisch überprüft, ob die Voraussetzungen wie in Status 2 bis 4 beschrieben, weiterhin für die Rangierstrasse erfüllt sind. Falls eine der Voraussetzungen nicht mehr erfüllt ist, wird für das Startsignal die Haltstellung angefordert.
+
 ## 3. Auflösung der Rangierstrasse
 
 Die Auflösung der Fahrstrasse wird durch **Anklicken des zugehörigen Auflöseelements** gestartet.

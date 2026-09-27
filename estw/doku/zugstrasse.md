@@ -26,11 +26,12 @@ Für die datentechnische Gültigkeit und Konsistenz einer Zugstrasse gelten hins
   - Eine Zugstrasse kann 0 oder eine beliebige Anzahl von Flankenschutzelementen besitzen.
   - Sofern Flankenschutzelemente vorhanden sind, müssen die darüber referenzierten Elemente vom Elementtyp **Weiche** (`ElementTypId = 2`) oder **Signal** (`ElementTypId = 3`) sein.
 - **Vorwegelement (`TypId = 6`):**
-  - Eine Zugstrasse darf **höchstens ein** Vorwegelement besitzen.
+  - Eine Zugstrasse kann 0 oder 1 Vorwegelement besitzen.
   - Sofern ein Vorwegelement vorhanden ist, muss das darüber referenzierte Element vom Elementtyp **Signal** (`ElementTypId = 3`) sein.
 - **Unterwegselement (`TypId = 7`):**
   - Eine Zugstrasse kann 0 oder eine beliebige Anzahl von Unterwegselementen besitzen.
   - Sofern ein Unterwegselement vorhanden ist, müssen die darüber referenzierten Elemente vom Elementtyp **Signal** (`ElementTypId = 3`) sein.
+  - Ein als Unterwegselement projektiertes Signal (Fahrwegsignal) soll beim Einstellen der Fahrstrasse die für dieses Fahrstrassenelement projektierte `SollStellung` einnehmen.
 - **Flankenschutztransportelement (`TypId = 8`):**
   - Eine Zugstrasse darf 0 oder eine beliebige Anzahl von Flankenschutztransportelementen besitzen.
   - Das über ein Flankenschutztransportelement referenzierte Element muss vom Elementtyp **Gleis** (`ElementTypId = 1`), **Weiche** (`ElementTypId = 2`), **Signal** (`ElementTypId = 3`), **Blindziel** (`ElementTypId = 4`) oder **Auflöseelement** (`ElementTypId = 5`) sein.
@@ -97,7 +98,10 @@ Die genaue Position dieses Zustands innerhalb der Zustandsfolge, seine Vorausset
 - Zusätzlich sind alle zur Fahrstrasse gehörenden **Weichen** tatsächlich verschlossen.
 - Für die Zugstrasse muss zusätzlich der erforderliche **Flankenschutz vollständig hergestellt** sein. Die Detailregeln hierfür werden noch ergänzt.
 
-**Aktion:** Das **Startsignal** wird in die für die Fahrstrasse projektierte Sollstellung, also die **Fahrtstellung**, gebracht.
+**Aktionen:**
+
+- Das **Startsignal** wird in die für die Fahrstrasse projektierte Sollstellung, also die **Fahrtstellung**, gebracht.
+- Alle als **Unterwegselemente** projektierten Signale (Fahrwegsignale) werden in ihre jeweils für das Fahrstrassenelement projektierte `SollStellung` gebracht. Sie werden nicht automatisch weiß- oder dunkelgeschaltet.
 
 ## 3. Auflösung der Zugstrasse
 
