@@ -57,6 +57,49 @@ Es gelten folgende Prüfbedingungen:
 - Die Kombination von bezeichnung, ProjektId und TypId muss innerhalb elemente eindeutig sein
 - Die Kombination von ProjektId, lupe1x und lupe1y muss innerhalb elemente eindeutig sein
 
+#### Programmfall-Validierung
+
+Verbindliche Quelle ist die Tabelle **„Programmfälle“** in
+[Projektierung](https://superhandy333.github.io/mathias/estw/projektierung.html#programmf%C3%A4lle)
+(abgeglichen am 9. Oktober 2026). Die dortigen Kürzel bedeuten G = Gleis,
+W = Weiche, S = Signal, B = Blindziel und A = Auflöseelement.
+Die Zuordnungen stimmen mit der Tabelle in [datenstrukturen.md](datenstrukturen.md#programmfälle) überein.
+
+| Programmfall | Zulässige Elementtypen | Stabile `ElementTypId` |
+|---|---|---|
+| PR | Gleis (G) | 1 |
+| PZ | Gleis (G) | 1 |
+| PRS | Signal (S) | 3 |
+| PRZ | Signal (S), Blindziel (B) | 3, 4 |
+| PZS | Signal (S) | 3 |
+| PZZ | Signal (S), Blindziel (B) | 3, 4 |
+| PZSP | Signal (S) | 3 |
+| PSSL | Weiche (W) | 2 |
+| PSSR | Weiche (W) | 2 |
+
+- Geprüft werden alle neun Bool-Felder aus `Element` in `structs.h`.
+- Ausschließlich `true` gilt als gesetzt. `false` löst unabhängig vom Typ keinen Programmfallfehler aus.
+- Ein gesetzter Programmfall an einem nicht in seiner Tabellenzeile zugelassenen Typ ist ein harter Fehler.
+  Auflöseelemente, Testelemente und andere Typen ohne Zuordnung dürfen keinen dieser Fälle setzen.
+- `PSSL` und `PSSR` sind ausschließlich an Weichen zulässig. An einer Weiche dürfen beide nicht
+  gleichzeitig `true` sein. Beide `false` oder genau eine gesetzte Sperre sind zulässig.
+  Der Ausschluss wird unabhängig von anderen Programmfällen geprüft.
+- Ein Prellbock bleibt ein Gleis (`ElementTypId::Gleis`, `UnterElementArt = 3`);
+  für ihn gelten dieselben Programmfall-Zuordnungen wie für andere Gleise.
+- Die Typprüfung erfolgt erst nach erfolgreicher Auflösung der Referenz `Element.TypId`.
+  Bei fehlender Referenz bleibt der vorhandene Referenzfehler maßgeblich.
+- Fachliche Entscheidungen verwenden ausschließlich `ElementTypId`, keine Bezeichnungen.
+  Fehler nennen Element-ID, Elementtyp samt stabiler Typ-ID und den betroffenen Programmfall.
+- `isvalid_element_data` verwendet dieselben Prüfungen; sie greifen somit auch vor Elementänderungen
+  und der Speicherung im Element-Editmodus.
+
+Regressionen stehen in `tests/validate_tests.cpp` (CTest: `estw_data_validation`).
+Sie prüfen jeden der neun Fälle gegen alle sechs vorhandenen Elementtypen,
+alle vier Kombinationen der Weichensperren, nicht gesetzte Fälle, Prellböcke,
+die Prüfung erst nach gültiger Typreferenz und die Fehlerkonventionen.
+Die MRDB-Roundtrip-Daten setzen die Fälle an den jeweils zulässigen Elementtypen;
+`PSSL` und `PSSR` werden an zwei getrennten Weichen gespeichert.
+
 ### In FahrstrassenElementtyp
 
 - id darf nicht 0 sein
@@ -88,6 +131,32 @@ Es gelten folgende Prüfbedingungen:
 - TypId muss einen Wert aus fahrstrassenelementtypen_t.id enthalten
 - Die Kombination von FahrstrasseId und ElementId muss innerhalb von fahrstrassenelemente_t eindeutig sein
 - Die ProjektId des Elementes, welches über ElementId referenziert ist, muss mit der ProjektId der Fahrstrasse, die über FahrstrassenId referenziert ist, übereinstimmen.
+
+#### Doppelte Fahrstrassenelemente
+
+Die bereits vorhandene Schlüsselprüfung verwendet `(FahrstrasseId, ElementId)`.
+Zwei Zuordnungen mit diesem Schlüssel sind unabhängig von ihrer `TypId` ein harter Fehler.
+Die Meldung nennt die konkrete Fahrstrassen-ID, doppelte Element-ID, betroffene
+Fahrstrassenelement-ID und die konfliktverursachende Fahrstrassenelement-ID;
+der Elementtyp wird nur bei gültiger Element- und Typreferenz ergänzt.
+Dieselbe Element-ID darf in unterschiedlichen Fahrstrassen vorkommen.
+
+Maßgeblich ist die flache Tabelle `EstwData.Fahrstrassenelemente`. Der
+Fahrstrassen-Speicherpfad überführt die verschachtelten Arbeitszuordnungen mit
+`replaceFahrstrassenTables` in genau diese Tabelle, bevor `isvalid_estwdata`
+aufgerufen wird. `FullProjekte` und die verschachtelten Anzeige-/Arbeitskopien
+werden nicht zusätzlich als eigenständige Datensätze gezählt.
+
+Regressionen prüfen doppelte Zuordnungen bei gleicher und unterschiedlicher
+Rolle, zulässige Wiederverwendung eines Elements in verschiedenen Fahrstrassen,
+die Überführung verschachtelter Arbeitsdaten über `replaceFahrstrassenTables`
+sowie fehlende Element-/Typreferenzen ohne unsichere Zugriffe.
+
+Prüfstand am 9. Oktober 2026: Build mit dem vorhandenen Clang-/Ninja-Setup und
+`ESTW_BUILD_TESTS=ON` erfolgreich; sämtliche fünf CTest-Prüfreihen bestanden.
+Die zuletzt ergänzten Überführungs-/Referenztests in `estw_data_validation`
+wurden anschließend erneut erfolgreich ausgeführt. Der Build erfolgte aufgrund
+der ausdrücklichen Anforderung in dieser Validierungsaufgabe.
 
 #### Sollstellung nach Elementtyp
 

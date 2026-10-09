@@ -14,7 +14,7 @@ Im FahrstrassenEdit-Modus zeigt das `ToolForm` eine Liste aller im aktuellen Pro
 | Bezeichnung | Bezeichnung der Fahrstrasse |
 | Typ | Typ der Fahrstrasse `Rangier` oder `Zug` |
 
-Es muss genau eine Fahrstrasse in der Liste ausgewählt sein, damit ihr Elemente zugewiesen oder entzogen werden können. Bei einem Wechsel der ausgewählten Fahrstrasse wird die Markierung der Elemente im `LupeForm` anhand der Zuordnungen der neu ausgewählten Fahrstrasse und des weiterhin ausgewählten FahrstrassenElementtyps neu aufgebaut.
+Es muss genau eine Fahrstrasse in der Liste ausgewählt sein, damit ihre FahrstrassenElemente bearbeitet werden können. Die ausgewählte Fahrstrasse ist die allein maßgebliche Fahrstrasse; alle Zuordnungen werden über die stabilen IDs der Fahrstrasse, der Elemente und der FahrstrassenElemente ermittelt. Bei einem Wechsel der ausgewählten Fahrstrasse werden eine eventuell vorhandene FahrstrassenElement-Selektion und die Typauswahl zurückgesetzt und die Markierungen im `LupeForm` anhand der Zuordnungen der neu ausgewählten Fahrstrasse neu aufgebaut.
 
 Neben der Fahrstrassenliste enthält das `ToolForm` folgende Schaltflächen:
 
@@ -25,7 +25,9 @@ Die Schaltfläche **Fahrstrasse löschen** ist nur verfügbar, wenn genau eine F
 
 Am unteren Rand enthält das `ToolForm` im FahrstrassenEdit-Modus nebeneinander die Schaltflächen **Speichern**, **Verwerfen** und **Prüfung**. Die Schaltfläche **Prüfung** ist ausschließlich in diesem Modus vorhanden.
 
-Zusätzlich enthält das `ToolForm` ein `SegmentControl` zur Auswahl des FahrstrassenElementtyps, der aktuell bearbeitet und angezeigt wird. Folgende acht FahrstrassenElementtypen stehen zur Verfügung:
+Unterhalb der Fahrstrassenliste enthält das `ToolForm` ein `SegmentControl` zur Auswahl der Bearbeitungsart mit den Segmenten **Neu**, **Edit** und **Löschen**. Darunter befindet sich das `SegmentControl` zur Auswahl des FahrstrassenElementtyps. Beide SegmentControls einschließlich ihrer Beschriftungen sind nur sichtbar und bedienbar, wenn genau eine Fahrstrasse ausgewählt ist.
+
+Folgende acht FahrstrassenElementtypen stehen zur Verfügung:
 
 | FahrstrassenElementtyp | Funktion innerhalb der Fahrstrasse |
 |---|---|
@@ -40,11 +42,11 @@ Zusätzlich enthält das `ToolForm` ein `SegmentControl` zur Auswahl des Fahrstr
 
 Damit sind alle im Projekt vorgesehenen FahrstrassenElementtypen enthalten.
 
-Im `LupeForm` werden ausschließlich diejenigen Elemente markiert, die der aktuell ausgewählten Fahrstrasse mit genau dem im `SegmentControl` ausgewählten FahrstrassenElementtyp zugeordnet sind. Die Filterung erfolgt anhand der ID des FahrstrassenElementtyps. Beim Wechsel des Segments werden zunächst die bisherigen fahrstrassenbezogenen Markierungen entfernt und anschließend die Zuordnungen des neu ausgewählten FahrstrassenElementtyps markiert. Existieren für die ausgewählte Kombination keine Zuordnungen, bleibt die fahrstrassenbezogene Markierung leer. Ist keine Fahrstrasse oder kein FahrstrassenElementtyp ausgewählt, wird keine fahrstrassenbezogene Elementmarkierung angezeigt.
+Im `LupeForm` bleiben alle zur aktuell ausgewählten Fahrstrasse gehörenden FahrstrassenElemente als nicht ausgefüllte Kreise sichtbar. Diejenigen Zuordnungen, deren Typ der aktuellen Auswahl im Typ-SegmentControl entspricht, werden als ausgefüllte Kreise dargestellt. Die Filterung erfolgt anhand der stabilen ID des FahrstrassenElementtyps. Ist keine Fahrstrasse ausgewählt, wird keine fahrstrassenbezogene Elementmarkierung angezeigt.
 
 Die zulässigen Kombinationen aus Elementtyp und FahrstrassenElementtyp sind verbindlich in [datenstrukturen.md](datenstrukturen.md#zulässige-zuordnungen-zu-elementtypen) festgelegt.
 
-## Zuweisen eines FahrstrassenElements
+## Bearbeitungsart „Neu“
 
 Für eine Zuweisung müssen im `ToolForm`
 
@@ -53,7 +55,7 @@ Für eine Zuweisung müssen im `ToolForm`
 
 ausgewählt sein.
 
-Anschließend klickt der Benutzer im `LupeForm` auf das gewünschte Element. Ist dieses Element der ausgewählten Fahrstrasse noch nicht zugeordnet und ist die Kombination aus seinem Elementtyp und dem ausgewählten FahrstrassenElementtyp zulässig, wird die Zuordnung angelegt. Nicht zulässige Kombinationen dürfen nicht zugewiesen werden.
+Anschließend klickt der Benutzer im `LupeForm` auf das gewünschte Element. Ist dieses Element der ausgewählten Fahrstrasse noch nicht zugeordnet und ist die Kombination aus seinem Elementtyp und dem ausgewählten FahrstrassenElementtyp zulässig, wird die Zuordnung mit der im Eingabefeld angegebenen Sollstellung angelegt. Das Eingabefeld für die Sollstellung ist nur in dieser Bearbeitungsart sichtbar. Nicht zulässige Kombinationen dürfen nicht zugewiesen werden. Ein Klick auf ein leeres Feld oder ein bereits zugeordnetes Element hat keine Wirkung. Ohne ausgewählten FahrstrassenElementtyp wird keine Zuordnung angelegt und der Benutzer zur Typauswahl aufgefordert.
 
 Dabei wird
 
@@ -63,23 +65,27 @@ Dabei wird
 
 Die Markierung wird als ausgefüllter Kreis dargestellt.
 
-## Entziehen einer Zuweisung
+## Bearbeitungsart „Edit“
 
-Ist das angeklickte Element der ausgewählten Fahrstrasse bereits als FahrstrassenElement zugeordnet, wird die vorhandene Zuweisung entfernt. Die aktuell im `SegmentControl` ausgewählte Rolle ist für das Entfernen ohne Bedeutung. Das Element ist vor dem Entfernen nur dann fahrstrassenbezogen markiert, wenn seine vorhandene Zuordnung dem ausgewählten FahrstrassenElementtyp entspricht.
+Ein Klick auf ein bereits zugeordnetes Element selektiert genau dessen FahrstrassenElement-Datensatz anhand seiner ID. Ein Klick auf ein nicht zugeordnetes Element oder ein leeres Feld hat keine Wirkung. Nach der Selektion wird das Typ-SegmentControl auf den Typ des FahrstrassenElements eingestellt. Eine anschließende Typauswahl ändert den Typ dieses Datensatzes unmittelbar in den Arbeitsdaten.
 
-Dabei wird
+Für das selektierte FahrstrassenElement wird ein PropertyGrid angezeigt. Es enthält mindestens:
 
-- das FahrstrassenElement aus den Arbeitsdaten der ausgewählten Fahrstrasse entfernt,
-- beim Speichern der zugehörige Datensatz aus der Tabelle `FahrstrassenElemente` gelöscht und
-- die fahrstrassenbezogene Markierung im `LupeForm` anhand der verbleibenden Zuordnungen des ausgewählten FahrstrassenElementtyps aktualisiert.
+| Eigenschaft | Verhalten |
+|---|---|
+| Name des Elements | wird angezeigt und kann im Grid nicht geändert werden |
+| FahrstrassenElementtyp | wird angezeigt; Änderungen erfolgen ausschließlich über das Typ-SegmentControl |
+| Sollstellung | wird angezeigt und kann im PropertyGrid geändert werden |
 
-Soll einem bereits zugeordneten Element ein anderer FahrstrassenElementtyp gegeben werden, wird die bestehende Zuweisung zunächst durch einen Klick entfernt. Danach wird im `SegmentControl` der neue FahrstrassenElementtyp ausgewählt und das Element erneut angeklickt.
+Eine geänderte Sollstellung wird sofort validiert und in die Arbeitsdaten übernommen. Danach wird die zentrale Aktualisierung der `LupeForm` ausgelöst, sodass insbesondere eine Weiche unmittelbar in ihrer neuen Sollstellung dargestellt wird. Ohne selektiertes FahrstrassenElement ist das PropertyGrid leer beziehungsweise ausgeblendet.
 
-Auf diese Weise kann der Benutzer der jeweils in der Liste ausgewählten Fahrstrasse nach und nach die zugehörigen Elemente der Topologie zuweisen oder vorhandene Zuordnungen wieder entfernen.
+## Bearbeitungsart „Löschen“
+
+Ein Klick auf ein bereits zur ausgewählten Fahrstrasse gehörendes FahrstrassenElement entfernt ausschließlich diesen Zuordnungsdatensatz aus den Arbeitsdaten. Das zugrunde liegende Element und die Fahrstrasse bleiben erhalten. Ein Klick auf ein nicht zugeordnetes Element oder ein leeres Feld hat keine Wirkung. Anschließend werden Selektion, PropertyGrid, Typauswahl und Markierungen konsistent aktualisiert.
 
 ## Wechsel und Zurücksetzen des Modus
 
-Beim Verlassen des FahrstrassenEdit-Modus müssen nicht abgeschlossene Bedienzustände zurückgesetzt werden. Beim Wechsel der ausgewählten Fahrstrasse bleibt der im `SegmentControl` ausgewählte FahrstrassenElementtyp erhalten. Die Darstellung im `LupeForm` muss stets der Kombination aus aktuell ausgewählter Fahrstrasse und aktuell ausgewähltem FahrstrassenElementtyp entsprechen. Markierungen der zuvor ausgewählten Fahrstrasse oder eines zuvor angezeigten FahrstrassenElementtyps dürfen nicht bestehen bleiben.
+Beim Verlassen des FahrstrassenEdit-Modus müssen nicht abgeschlossene Bedienzustände zurückgesetzt werden. Beim Wechsel der ausgewählten Fahrstrasse, der Bearbeitungsart oder beim Entfernen des selektierten FahrstrassenElements wird dessen Selektion zurückgesetzt und das PropertyGrid geleert beziehungsweise ausgeblendet. Die Darstellung im `LupeForm` muss stets der aktuell ausgewählten Fahrstrasse und der aktuellen Typauswahl entsprechen. Markierungen der zuvor ausgewählten Fahrstrasse oder eines zuvor angezeigten FahrstrassenElementtyps dürfen nicht bestehen bleiben.
 
 ## Speichern und fachliche Validierung
 

@@ -1,6 +1,6 @@
 <button>ESTW</button>
 
-<small>[Entwicklung](../develop.md) / [ESTW](estw.md) / [Projektierung](projektierung.md) / Steller</small>
+<small>[Entwicklung](../develop.md) / [ESTW](main.md) / [Projektierung](projektierung.md) / Steller</small>
 
 # Stellerprojektierung
 

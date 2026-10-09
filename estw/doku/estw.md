@@ -228,7 +228,7 @@ Gefundene Fehler werden mit Typangabe und Id in den `ec_t`/`MessageCollector` ge
 
 ### 3.4 Projekt- und Stammdatenverwaltung
 
-`MainForm` bietet Buttons für Projekte, Elemente, Elementtypen, Fahrstrassen, Fahrstrassenelemente und Fahrstrassenelementtypen sowie Setup und Info ([mainform.cpp](../mainform.cpp)). Die zugehörigen Klickbehandlungen in [main.cpp](../main.cpp) wandeln die jeweiligen Stammdaten über `convert_*_to_listviewdata` ([converts.h](../converts.h)) in Listenansichten um und zeigen sie über `EstwListForm` an. `ProjektListForm` listet Projekte und öffnet per Doppelklick ein `ProjektForm`, das Kennzahlen zum Projekt anzeigt und Zugriff auf Simulation, Edit-Modus sowie die projektbezogenen Elemente-/Fahrstrassen-Listen bietet.
+`MainForm` bietet Buttons für Projekte, Elemente, Elementtypen, Fahrstrassen, Fahrstrassenelemente und Fahrstrassenelementtypen sowie Setup und Info ([mainform.cpp](../mainform.cpp)). Die zugehörigen Klickbehandlungen in [main.cpp](../main.cpp) wandeln die jeweiligen Stammdaten über `convert_*_to_listviewdata` ([converts.h](../converts.h)) in Listenansichten um und zeigen sie über `EstwListForm` an. In allen sechs Datensatzlisten öffnet ein Doppelklick auf eine belegte Zeile ein `DetailForm` mit PropertyGrid. Die Zuordnung erfolgt über die stabile `rowID`, auch bei gefilterten Listen. `ProjektListForm` erlaubt bei MariaDB/MRDB die sofort gespeicherte Bearbeitung von Projektbezeichnung und -beschreibung bei geschützter Projekt-ID; **Projekt öffnen** führt von dort zum bisherigen `ProjektForm` mit Kennzahlen, Simulation und spezialisierten Editoren. Die projektbezogenen Elemente-/Fahrstrassen-Listen unterstützen dieselbe Detailbearbeitung. Bedienung, Schreibschutz und Prüfung sind in [DETAILBEARBEITUNG.md](../DETAILBEARBEITUNG.md) beschrieben.
 
 ### 3.5 Simulation
 
@@ -261,7 +261,7 @@ Für MariaDB werden geänderte Elemente innerhalb einer Transaktion vollständig
 
 ### 3.8 Fahrstraßen-Editmodus
 
-Der Modus **Fahrstrassen-Edit** dient dazu, Fahrstrassen eines Projekts anzulegen, zu ändern und zu löschen sowie ihnen Elemente der Topologie mit einer bestimmten Rolle zuzuordnen. Der Einstieg erfolgt über **Projekte → Projekt per Doppelklick öffnen → FS-Edit**. Die Schaltfläche ist bei den Datenquellen **MariaDB** und **mrdb** aktiv. Die detaillierten Bedienvorgaben stehen in [fahrstrasseneditmodus.md](fahrstrasseneditmodus.md).
+Der Modus **Fahrstrassen-Edit** dient dazu, Fahrstrassen eines Projekts anzulegen, zu ändern und zu löschen sowie ihnen Elemente der Topologie mit einer bestimmten Rolle zuzuordnen. Der Einstieg erfolgt über **Projekte → Doppelklick → Projekt öffnen → FS-Edit**. Die Schaltfläche ist bei den Datenquellen **MariaDB** und **mrdb** aktiv. Die detaillierten Bedienvorgaben stehen in [fahrstrasseneditmodus.md](fahrstrasseneditmodus.md).
 
 **Bedienung:**
 

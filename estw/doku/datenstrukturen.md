@@ -47,6 +47,13 @@ Elementtypen im System sind fest definierte Kategorien von Elementen. Ihre Katal
 
 ### Programmfälle
 
+Die Typzuordnung folgt der verbindlichen Tabelle
+[„Programmfälle“ der Projektierungsdokumentation](https://superhandy333.github.io/mathias/estw/projektierung.html#programmf%C3%A4lle).
+Nur `true` gilt als gesetzt. Ein gesetzter Fall an einem nicht zugelassenen
+Elementtyp ist ein harter Validierungsfehler. `PSSL` und `PSSR` dürfen an einer
+Weiche nicht gleichzeitig gesetzt sein. Einzelheiten stehen in
+[rules_isvalid_estwdata.md](rules_isvalid_estwdata.md#programmfall-validierung).
+
 |Fall|Beschreibung|Gleis|Weiche|Signal|Blindziel|Auflöseelement|
 |-|-|:-:|:-:|:-:|:-:|:-:|
 |PR|Rangierstraße zulässig<br>Bei der Zulassungsprüfung einer Rangierstrasse muss `PR` an jedem ihr zugeordneten Fahrstrassenelement gesetzt sein, dessen referenziertes Element vom Elementtyp Gleis ist.|x|||||
