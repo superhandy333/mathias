@@ -1,51 +1,129 @@
-# mrdb – ausführliche Dokumentation
+# mrdb – Anwenderhandbuch und API-Referenz
 
-<small>[Entwicklung](develop.md) / [mrdb-Startseite](mrdb.md) / Dokumentation</small>
+<small>[Entwicklung](develop.md) / [mrdb-Startseite](mrdb.md) / Anwenderhandbuch</small>
 
-Diese Referenz beschreibt den am 11. Oktober 2026 untersuchten lokalen Stand von `CPP/tools/mrdb.h`, einschließlich der für `Select` benötigten Typen aus `wherevector.h`. Maßgeblich sind die Deklarationen und Funktionskörper dieser Dateien; ältere Beispiele können andere Bibliotheksstände beschreiben.
+Dieses Handbuch erklärt die Einbindung und Verwendung von mrdb in eigenen C++-Programmen. Die API liegt im Namespace `mrdb` und wird über `mrdb.h` eingebunden.
 
 <!-- TOC -->
 
+- [Funktionsverzeichnis](#funktionsverzeichnis)
 - [Überblick](#ueberblick)
+- [Einbindung in ein eigenes Projekt](#lifecycle)
 - [Schnelleinstieg](#schnelleinstieg)
-- [Grundbegriffe und Datenmodell](#datenmodell)
-- [Einbindung, Voraussetzungen und Lifecycle](#lifecycle)
-- [Vollständige Referenz der öffentlichen API](#api)
-  - [Regeln für die API-Einträge und Beispiele](#api-regeln)
-  - [Namespace, Typen und Konstanten](#typen)
+- [Grundbegriffe](#datenmodell)
+- [Referenz der öffentlichen API](#api)
+  - [Hinweise zu den Beispielen](#api-regeln)
+  - [Öffentliche Typen](#typen)
   - [Initialisierung und Tabellen](#tabellen)
   - [Schreiben und Lesen von Datensätzen](#datensaetze)
   - [Record](#record)
-  - [Filtertypen aus wherevector.h](#filter)
-- [Fehlerbehandlung und Garantien](#fehler)
-- [Thread-Sicherheit und Nebenläufigkeit](#threads)
-- [Performance und Ressourcen](#performance)
-- [Praxisbeispiele](#praxisbeispiele)
-- [Quellen und Prüfstand](#quellen)
+  - [Filter und WhereVector](#filter)
+- [Typische Anwendungsfälle](#praxisbeispiele)
+- [Fehlerbehandlung](#fehler)
 
 <!-- /TOC -->
+
+<a id="funktionsverzeichnis"></a>
+
+## Funktionsverzeichnis der öffentlichen API
+
+Die Links führen direkt zu den Detailbeschreibungen. Überladungen sind einzeln aufgeführt; ihre Parametertypen unterscheiden die Signaturen. Das Verzeichnis umfasst die aufrufbaren öffentlichen Funktionen einschließlich Konstruktoren, Destruktoren und Operatoren. Nicht aufrufbare Kopier- und Verschiebeoperationen werden bei den betreffenden Typen erläutert.
+
+### Initialisierung und Tabellen
+
+- [`Init(data)`](#funktion-init)
+- [`CreateTable(table)`](#funktion-createtable)
+- [`GetTable(tablename)`](#funktion-gettable)
+- [`GetTableNames()`](#funktion-gettablenames)
+- [`GetTables()`](#funktion-gettables)
+- [`IsTableExist(tablename)`](#funktion-istableexist)
+- [`GetRecordIDs(tablename)`](#funktion-getrecordids)
+- [`SetTableReadOnly(tablename, readonly)`](#funktion-settablereadonly)
+
+### Datensätze
+
+- [`Insert(tablename, values)`](#funktion-insert)
+- [`Update(std::string const & tablename, unsigned int recordID, std::map<std::string, std::string> const & values)`](#funktion-update-werte)
+- [`Update(Record const & record)`](#funktion-update-record)
+- [`Delete(tablename, recordID)`](#funktion-delete)
+- [`SelectSingle(tablename, recordID)`](#funktion-selectsingle)
+- [`SelectAll(tablename)`](#funktion-selectall)
+- [`Select(tablename, whereVector)`](#funktion-select)
+- [`isValidRecord(record)`](#funktion-isvalidrecord)
+
+### KeyValue
+
+- [`KeyValue::KeyValue(k, v)`](#keyvalue-konstruktor)
+
+### Methoden von Record
+
+- [`Record::Record(unsigned int rowID, std::vector<std::string> const & values, TablePtr tablePtr)`](#record-konstruktor)
+- [`Record::Record(Record&&)`](#record-move-konstruktor)
+- [`Record::~Record()`](#record-destruktor)
+- [`Record::operator=(Record&&)`](#record-move-zuweisung)
+- [`Record::GetRowID()`](#record-getrowid)
+- [`Record::GetRowIDAsString()`](#record-getrowidasstring)
+- [`Record::GetValue(int index) const`](#record-getvalue-index)
+- [`Record::GetValue(std::string const & columnName) const`](#record-getvalue-name)
+- [`Record::GetTable()`](#record-gettable)
+- [`Record::GetValueSize()`](#record-getvaluesize)
+- [`Record::GetValuesAsMap()`](#record-getvaluesasmap)
+- [`Record::GetValuesAsKeyValues()`](#record-getvaluesaskeyvalues)
+- [`Record::SetValue(columnName, value)`](#record-setvalue)
+- [`Record::begin()`](#record-begin)
+- [`Record::end()`](#record-end)
+
+### WhereItem
+
+- [`WhereItem::operator==(rhs)`](#whereitem-gleichheit)
+
+### WhereVector
+
+- [`WhereVector::WhereVector()`](#wherevector-konstruktor)
+- [`WhereVector::~WhereVector()`](#wherevector-destruktor)
+- [`WhereVector::Add(std::string const & fieldname, WhereOperator const whereOperator, std::string const & value)`](#wherevector-add-operator)
+- [`WhereVector::Add(std::string const & fieldname, std::string const & value)`](#wherevector-add-gleichheit)
+- [`WhereVector::begin()`](#wherevector-begin)
+- [`WhereVector::end()`](#wherevector-end)
 
 <a id="ueberblick"></a>
 
 ## Überblick
 
-mrdb (Mathias-Rentsch-Daten-Bank) verwaltet Tabellen mit benannten Spalten und Datensätzen. Alle Feldwerte sind `std::string`. Die Daten werden über die freie API im Namespace `mrdb` in Textdateien gespeichert und wieder eingelesen. Es gibt kein Datenbankobjekt und keine Verbindungsklasse: Der gemeinsame Basispfad wird mit `Init` gesetzt.
+mrdb (Mathias-Rentsch-Daten-Bank) speichert Tabellen mit benannten Spalten und Datensätzen in Textdateien. Es eignet sich beispielsweise für kleine Projektlisten, Inventare oder Werkzeugverwaltungen. Alle Feldwerte sind `std::string`; Zahlen und andere fachliche Datentypen wandelt das eigene Programm bei Bedarf um.
 
-`mrdb.h` ist Header-only; seine freien Implementierungen sind `inline`. Die gesamte Einbindung ist dennoch nicht allein mit diesem Header abgeschlossen: Die mitgelieferten Hilfsfunktionen aus `tools.cpp` müssen mitgelinkt werden. Externe Datenbankserver oder Datenbankbibliotheken werden von dieser API nicht benötigt.
+Die Bibliothek bietet Funktionen zum Anlegen und Auflisten von Tabellen sowie zum Einfügen, Ändern, Löschen und Abfragen von Datensätzen. Filter unterstützen Gleichheit, Ungleichheit und die Suche nach einem Teiltext. Ein externer Datenbankserver ist nicht erforderlich.
 
-Ein typischer Einsatz ist eine kleine Werkzeugverwaltung mit den Spalten `NAME` und `ORT`: Eine Tabelle wird einmal angelegt, Werkzeuge werden als Textwerte eingefügt, nach ihrem Standort gefiltert und bei einer Umlagerung aktualisiert. SQL, Transaktionen, Datentypprüfungen und eine Schemaänderungs-API werden nicht angeboten.
+<a id="lifecycle"></a>
 
-> Angaben zur beobachteten Persistenz, Reihenfolge, ID-Vergabe, Prüfung und Laufzeit beschreiben die aktuelle Implementierung. Sie sind nicht ausdrücklich als dauerhafter Vertrag garantiert. Die folgenden Einschränkungen sind bei der Verwendung dieses Standes zu beachten.
+## Einbindung in ein eigenes Projekt
+
+Binde den öffentlichen Header ein:
+
+```cpp
+#include "mrdb.h"
+```
+
+`mrdb.h` ist Header-only: Eine zusätzliche `mrdb.cpp` muss weder kompiliert noch gelinkt werden. Die mitgelieferten Dateien `wherevector.h` und `tools.h` müssen ebenfalls verfügbar sein; sie werden vom Header eingebunden. Zusätzlich muss **`tools.cpp`** mit dem eigenen Programm kompiliert und gelinkt werden, da es die benötigten Hilfsfunktionen bereitstellt. Behalte die mitgelieferte Verzeichnisanordnung der Header bei und ergänze das Verzeichnis von `mrdb.h` im Include-Suchpfad.
+
+Die Beispiele verwenden C++20 und die C++-Standardbibliothek einschließlich `std::filesystem`. Die API verwendet unter anderem Sprachmittel aus C++17. Weitere externe Bibliotheken sind für die hier beschriebene Nutzung nicht erforderlich.
+
+Lege vor der Verwendung ein eigenes Datenverzeichnis an und rufe `mrdb::Init` auf. Der Pfad muss nicht leer sein und mit `/` enden. `Init` legt kein Verzeichnis an und prüft den Pfad nicht:
+
+```cpp
+std::filesystem::create_directories("./projektdaten");
+mrdb::Init({"./projektdaten/"});
+```
+
+Die Initialisierung gilt für alle folgenden Datenzugriffe im Programm. Ein erneuter Aufruf von `Init` wechselt die verwendete Datenbasis. Speichere zuvor gelesene Records deshalb vor einem solchen Wechsel: `Update(record)` verwendet die dann aktive Datenbasis.
 
 <a id="schnelleinstieg"></a>
 
-## Schnelleinstieg
+## Schnelleinstieg: Projekte schreiben und lesen
 
-Verwende C++20 entsprechend `CPP/tools/mrdbtest/CMakeLists.txt`, die Standardbibliothek mit `std::filesystem` und die Dateien `mrdb.h`, `wherevector.h`, `tools.h`, `tools.cpp` aus `CPP/tools/`. Eine separate `mrdb.cpp` gehört nicht zur hier dokumentierten Variante. Die in diesem Header sichtbaren Sprachmittel setzen mindestens C++17 voraus (unter anderem Inline-Variablen und `std::filesystem`); daraus folgt keine Prüfung aller Abhängigkeiten für C++17. C++20 ist die Projektvorgabe und die Grundlage der Beispiele.
+Dieses vollständige Programm legt bei Bedarf eine Projekttabelle an, schreibt ein Projekt, ändert dessen Status und liest die Daten wieder. Bei wiederholtem Start wird ein weiteres Projekt eingefügt. Eine bereits vorhandene Tabelle muss das gezeigte Schema besitzen und schreibbar sein.
 
-Das vollständige Programm verwendet ein eigenes Beispielverzeichnis. Bei wiederholtem Start wird ein weiterer Datensatz eingefügt. Bei einer vorhandenen Tabelle setzt es das gezeigte Schema und Schreibbarkeit voraus.
-
-~~~cpp
+```cpp
 #include "mrdb.h"
 
 #include <exception>
@@ -55,25 +133,32 @@ Das vollständige Programm verwendet ein eigenes Beispielverzeichnis. Bei wieder
 auto main() -> int
 {
     try {
-        std::filesystem::create_directories("./mrdb-beispiel");
-        mrdb::Init({"./mrdb-beispiel/"});
+        std::filesystem::create_directories("./projektdaten");
+        mrdb::Init({"./projektdaten/"});
 
-        if (!mrdb::IsTableExist("WERKZEUGE")) {
+        if (!mrdb::IsTableExist("PROJEKTE")) {
             auto table = mrdb::Table{};
-            table.Name = "WERKZEUGE";
-            table.Columns = {{"01", "NAME", false}, {"02", "ORT", true}};
+            table.Name = "PROJEKTE";
+            table.Columns = {{"01", "NAME", false}, {"02", "STATUS", true}};
             mrdb::CreateTable(table);
         }
 
-        mrdb::Insert("WERKZEUGE", {{"NAME", "Messschieber"}, {"ORT", "Werkstatt"}});
+        mrdb::Insert("PROJEKTE", {{"NAME", "Werkstattumbau"}, {"STATUS", "Geplant"}});
 
         auto filter = mrdb::WhereVector{};
-        filter.Add("NAME", "Messschieber");
-        auto const records = mrdb::Select("WERKZEUGE", filter);
-        for (auto const & record : records) {
-            std::cout << record.GetRowID() << ": "
-                      << record.GetValue("NAME") << " – "
-                      << record.GetValue("ORT") << '\n';
+        filter.Add("NAME", "Werkstattumbau");
+        filter.Add("STATUS", "Geplant");
+        auto projects = mrdb::Select("PROJEKTE", filter);
+        for (auto & project : projects) {
+            project.SetValue("STATUS", "In Arbeit");
+            mrdb::Update(project);
+        }
+
+        auto const allProjects = mrdb::SelectAll("PROJEKTE");
+        for (auto const & project : allProjects) {
+            std::cout << project.GetRowID() << ": "
+                      << project.GetValue("NAME") << " – "
+                      << project.GetValue("STATUS") << '\n';
         }
         return 0;
     }
@@ -82,186 +167,118 @@ auto main() -> int
         return 1;
     }
 }
-~~~
+```
 
-`Insert` liefert keine ID zurück. Das Beispiel liest passende Datensätze deshalb über `Select`; ihre Identifikation erfolgt mit `GetRowID()`. Mehrere Datensätze mit demselben `NAME` sind zulässig.
+`Insert` gibt keine neue ID zurück. Mit `Select` erhältst du passende Datensätze und kannst deren IDs über `GetRowID()` lesen. Ein Name wie `Werkstattumbau` ist kein eindeutiger Schlüssel: Der Filter kann mehrere Projekte liefern und das Beispiel ändert alle passenden Projekte.
 
 <a id="datenmodell"></a>
 
-## Grundbegriffe und Datenmodell
+## Grundbegriffe
 
-| Begriff | Bedeutung im aktuellen Stand |
+| Begriff | Bedeutung für die Verwendung |
 | --- | --- |
-| Datenbank | Basisverzeichnis, dessen Pfad durch `InitData::NAME_DATABASE_DIRECTORY` gesetzt wird; prozessweit gemeinsam. |
-| `Table` | Kopierbare Beschreibung mit `ID`, `Name`, `ReadOnly`, `Columns`. Änderungen an diesem Wert werden nicht automatisch gespeichert. |
-| `Column` | Spaltenbeschreibung mit `SortIndex`, `Name`, `Nullable`. Es gibt kein Spaltentyp-Enum. |
-| `Record` | Beweglicher, nicht kopierbarer Wert mit Zeilen-ID, eigenen Feldwerten und geteilter Tabellenbeschreibung. Ein gelesener Record ist keine offene Datei und kein Live-Zugriff auf gespeicherte Felder. |
-| Zeilen-ID | `unsigned int`, unabhängig von `Table::ID` und von einer gegebenenfalls vorhandenen benannten Spalte `ID`. |
-| Feldwert | `std::string`; keine eigene NULL-Repräsentation, kein `optional`, keine automatische Zahlen- oder Bool-Konvertierung. |
-| `Nullable` | Bei Schreibaufrufen dürfen leere Werte für diese Spalte vorkommen. Pflichtspalten müssen bei `Insert` angegeben werden. |
-| `ReadOnly` | Gespeichertes Tabellenflag, das `Insert`, beide `Update`-Varianten und `Delete` prüfen. Es ist kein Dateisystem-Zugriffsschutz. |
-| `WhereVector` | Sammlung von Bedingungen, die `Select` mit logischem UND auswertet. |
+| Datenbasis | Das mit `Init` gewählte Datenverzeichnis. |
+| Tabelle (`Table`) | Beschreibung eines Tabellennamens, der Spalten und des Schreibschutzes. |
+| Spalte (`Column`) | Ein benanntes Feld mit Sortierindex und Angabe, ob leere Werte erlaubt sind. |
+| Datensatz (`Record`) | Eine Zeile mit numerischer ID, Feldwerten und Tabellenbeschreibung. |
+| Feldwert | Ein Textwert vom Typ `std::string`. Es gibt keinen eigenen NULL-Typ. |
+| Zeilen-ID | Die von mrdb verwendete `unsigned int`-Kennung einer Zeile; unabhängig von `Table::ID`. |
+| Filter (`WhereVector`) | Eine Liste von Bedingungen, die eine ausgewählte Zeile alle erfüllen muss. |
 
-### Namen, Werte und Reihenfolge
+### Namen und Werte
 
-Tabellen- und Spaltennamen werden für Dateizugriffe mit den mitgelieferten `tools`-Funktionen in Großbuchstaben umgesetzt. Bei `CreateTable` sind Spaltennamen auch nach dieser Umsetzung eindeutig erforderlich. Das ist keine allgemeine Unicode- oder sprachabhängige Vergleichsgarantie. ASCII-Namen wie `WERKZEUGE` und `NAME` vermeiden diese Unsicherheit.
+Verwende eindeutige Tabellen- und Spaltennamen wie `PROJEKTE`, `NAME` und `STATUS`. Namen dürfen keine Pfade sein. Unzulässig sind insbesondere leere Namen, `.` und `..`, reservierte Windows-Namen wie `CON`, Steuerzeichen und die Zeichen `<>:"/\|?*`. Führende Leerzeichen, abschließende Punkte oder Leerzeichen und Namen über 255 Bytes werden ebenfalls abgewiesen; das Dateisystem kann weitere Grenzen setzen.
 
-Die aktuelle Namensprüfung akzeptiert 1 bis 255 Bytes, untersagt `<>:"/\|?*`, Steuerbytes unter 32, ausschließlich Punkte/Leerzeichen, führende Leerzeichen, abschließende Punkte/Leerzeichen sowie die exakt geprüften reservierten Namen `CON`, `PRN`, `AUX`, `NUL`, `COM1` bis `COM9`, `LPT1` bis `LPT9`. Namen müssen einzelne Pfadkomponenten sein; `.` und `..` sind unzulässig. Diese Prüfung ist keine vollständige Zusage, dass ein Name auf jedem Dateisystem angelegt werden kann. Längenbeschränkungen für den gesamten Pfad und weitere Plattformregeln können zusätzlich wirken.
+Beim Anlegen werden Spaltennamen in Großbuchstaben gespeichert. `Insert` und `Update(tablename, recordID, values)` akzeptieren Spaltenschlüssel unabhängig von ihrer Groß-/Kleinschreibung. Verwende in einer Map dennoch nur einen Schlüssel pro Spalte. `Record::GetValue`, `Record::SetValue` und Filter benötigen dagegen den **exakten** Spaltennamen aus der gelesenen Tabellenbeschreibung.
 
-`Insert` und das tabellenbezogene `Update` normalisieren Schlüssel. `Record::GetValue(columnName)`, `Record::SetValue` und die Filterauswertung vergleichen dagegen exakt mit `Column::Name`. Für gelesene Tabellen deshalb die tatsächlich zurückgegebenen Spaltennamen verwenden, normalerweise Großbuchstaben. `GetTable("werkzeuge").Name` enthält aktuell die übergebene Schreibweise, nicht zwingend eine normalisierte Form.
+Für `Nullable == false` muss `Insert` einen Wert angeben, der weder leer ist noch ausschließlich aus Leerzeichen besteht. Nullable-Spalten dürfen bei `Insert` fehlen; sie sind dann leer. Leere oder nur aus Leerzeichen bestehende Feldinhalte werden als leerer String gelesen. Tabs und Zeilenumbrüche zählen bei dieser Leerprüfung nicht als Leerzeichen.
 
-`SortIndex` wird als String lexikographisch sortiert: `"10"` liegt vor `"2"`. Gleich lange Indizes wie `"01"`, `"02"`, `"10"` sind für eine numerisch gedachte Ordnung geeignet. Bei gleichen Indizes ist keine stabile Reihenfolge zugesagt. Der Index von `Record::GetValue(int)` und die Wertiteration beziehen sich auf diese gelesene Spaltenreihenfolge, nicht zwingend auf die Reihenfolge in `CreateTable`.
+### Spaltenreihenfolge und IDs
 
-„Leer oder Whitespace“ bedeutet in den verwendeten `tools`-Funktionen derzeit ausschließlich: leer oder nur ASCII-Leerzeichen (`' '`). Tabs und Zeilenumbrüche werden damit nicht als leer erkannt. Beim Lesen werden solche leeren bzw. nur aus Leerzeichen bestehenden Inhalte zu `""` normalisiert. Andere Werte werden im Textmodus gelesen/geschrieben; eine plattformübergreifend byteidentische Behandlung von Zeilenenden oder eine festgelegte Zeichenkodierung wird nicht zugesagt.
+`SortIndex` ist ein String und bestimmt die Spaltenreihenfolge lexikographisch: `"10"` steht vor `"2"`. Verwende beispielsweise `"01"`, `"02"`, `"10"` für eine numerisch gedachte Reihenfolge. Bei gleichen Sortierindizes solltest du dich nicht auf eine bestimmte Reihenfolge verlassen. `GetValue(int)` und die Wertiteration folgen der Spaltenreihenfolge der gelesenen Tabelle.
 
-Tabellen- und Zeilenlisten folgen der Dateisystemiteration. Eine sortierte Reihenfolge ist nicht garantiert. Die aktuelle automatische Zeilen-ID ist die höchste vorhandene ID plus eins, beginnend mit eins. Nach Löschen der höchsten ID ist Wiederverwendung möglich; ein Überlauf wird nicht abgefangen. Die API sichert daher weder dauerhaft eindeutige IDs noch lückenlose oder global monotone Nummerierung zu.
+Tabellen- und Datensatzlisten sind nicht nach Namen oder IDs sortiert. Eine neue Zeilen-ID beginnt bei eins beziehungsweise folgt auf die höchste vorhandene ID. Nach dem Löschen können IDs wiederverwendet werden; verwende sie daher nicht als dauerhaft eindeutige Kennungen über die Lebensdauer gelöschter Zeilen hinaus.
 
-<a id="lifecycle"></a>
+### Gelesene Werte und Änderungen
 
-## Einbindung, Voraussetzungen und Lifecycle
+`Table` und `Record` sind gelesene Werte. Spätere Datenbankänderungen aktualisieren sie nicht automatisch. `Record::SetValue` ändert nur den lokalen Datensatz; erst `Update(record)` speichert ihn. Die Zerstörung eines Records speichert keine Änderungen und löscht keine Zeile.
 
-### Header und CMake
-
-Die Header schließen `wherevector.h` und `tools.h` relativ zu ihrer Lage ein. Behalte die Lage der Dateien unter `tools/` bei und füge dieses Verzeichnis als Include-Verzeichnis hinzu. Der Namespace der Bibliothek ist `mrdb`; `tools` gehört zur mitgelieferten Abhängigkeit und wird hier nicht als mrdb-API dokumentiert.
-
-Beispiel für `CPP/tools/meinprojekt/CMakeLists.txt` mit obigem Programm in `main.cpp`:
-
-~~~cmake
-cmake_minimum_required(VERSION 3.28)
-project(mrdbBeispiel LANGUAGES CXX)
-
-add_executable(mrdbBeispiel main.cpp ../tools.cpp)
-target_compile_features(mrdbBeispiel PRIVATE cxx_std_20)
-target_include_directories(mrdbBeispiel PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/..")
-set_target_properties(mrdbBeispiel PROPERTIES CXX_EXTENSIONS OFF)
-~~~
-
-Der Compiler wird nicht in der `CMakeLists.txt` festgelegt. CMake 3.28 entspricht dem untersuchten Testprojekt; mrdb selbst hat keine CMake-Abhängigkeit zur Laufzeit. Für andere Projektverzeichnisse sind die relativen Quellen- und Include-Pfade entsprechend anzupassen.
-
-### Reihenfolge der Operationen
-
-1. Basisverzeichnis außerhalb der mrdb-API anlegen oder ein vorhandenes verwenden.
-2. `Init` mit einem nicht leeren Pfad und abschließendem `/` aufrufen. `Init` prüft weder Pfad noch Verzeichnis und korrigiert keinen fehlenden Separator.
-3. `CreateTable` aufrufen oder mit `GetTable` ein bestehendes Schema lesen. `IsTableExist` prüft lediglich ein Verzeichnis und ist kein Integritätstest.
-4. `Insert`, `SelectSingle`, `SelectAll`, `Select`, `Update` oder `Delete` aufrufen.
-5. Nach `Record::SetValue` explizit `Update(record)` zum Speichern aufrufen. Ohne diesen Aufruf bleibt die Änderung lokal.
-6. Ergebnisse durch ihre normalen C++-Lebensdauern freigeben. Es gibt keine öffentliche `Open`-, `Close`-, `Save`-, `Flush`- oder Commit-Funktion und keinen Schreib-/Lesemodus pro Objekt.
-
-`Init` kann erneut aufgerufen werden; nachfolgende Dateizugriffe verwenden dann den neuen gemeinsamen Pfad. Bereits gelesene `Record`- und `Table`-Werte bleiben im Speicher erhalten. Ein späteres `Update(record)` verwendet jedoch den *aktuellen* Pfad und den gespeicherten Tabellennamen: Es kann eine gleichnamige Tabelle in einer anderen Datenbasis treffen. Records binden die Datenbasis nicht an sich.
-
-### Lebensdauer und Ownership
-
-Alle Strings, Maps, Vektoren, `Table`- und `Record`-Ergebnisse werden als Werte zurückgegeben. Der Aufrufer besitzt diese Ergebnisse; die Standardtypen geben ihren Speicher automatisch frei. Kein API-Ergebnis muss mit `delete`, `delete[]` oder `free` freigegeben werden.
-
-`Record` kopiert beim expliziten Konstruktor die übergebene Wertliste und teilt den Besitz der übergebenen Tabelle über `TablePtr` (`std::shared_ptr<Table>`). `GetTable()` liefert eine Kopie dieses Smartpointers. Die Tabelle bleibt bis zum letzten Besitzer erhalten; der Smartpointer kann bei manuell konstruierten oder verschobenen Records leer sein. Ein gelesener Record besitzt zunächst eine nicht leere Tabellenbeschreibung. Bei `SelectAll`/`Select` wird derzeit für jede gelesene Zeile eine eigene Tabellenbeschreibung erzeugt.
-
-Die Tabelle hinter `TablePtr` ist veränderbar, auch wenn der Record `const` ist. Änderung, Umordnung oder Verkleinerung ihrer `Columns` kann die Zuordnung zu den gespeicherten Feldwerten zerstören. `GetValuesAsMap` und `GetValuesAsKeyValues` prüfen diese Konsistenz nicht vollständig; zu wenige Werte können zu undefiniertem Verhalten führen. Die Tabellenbeschreibung eines Records daher nicht strukturell verändern.
-
-`Record::begin/end` und `WhereVector::begin/end` liefern konstante Vektoriteratoren. Sie besitzen keinen Speicher. Details zur Invalidierung stehen bei den betreffenden Einträgen. Die Felditeration eines Records bleibt von späteren Datenbankänderungen unabhängig; gespeicherte Änderungen aktualisieren ältere Ergebnisse nicht automatisch. Move-Ziele können weiterverwendet werden; für Move-Quellen sind weder eine weiterhin gültige Tabelle noch unveränderte Werte zugesagt.
+Strings, Maps und Vektoren werden als eigene Werte zurückgegeben und automatisch freigegeben. `Record::GetTable()` gibt einen `std::shared_ptr<Table>` zurück: Die Beschreibung bleibt erhalten, solange mindestens ein solcher Besitzer existiert. Verändere die Spalten dieser Beschreibung nicht, da sonst ihre Zuordnung zu den Record-Werten verloren geht.
 
 <a id="api"></a>
 
-## Vollständige Referenz der öffentlichen API
+## Referenz der öffentlichen API
 
 <a id="api-regeln"></a>
 
-### Regeln für die API-Einträge und Beispiele
+### Hinweise zu den Beispielen
 
-Die Referenz umfasst die freien API-Deklarationen vor dem Implementierungsabschnitt von `mrdb.h`, alle öffentlichen Member von `Record`, die öffentlichen Datentypen und die Filtertypen aus `wherevector.h`. Das ausdrücklich dort deklarierte, als „Temporär“ kommentierte `isValidRecord` gehört dazu. Namespaceweite Hilfsfunktionen, der gemeinsame interne Zustand und Metadaten-Schlüssel des Implementierungsabschnitts sind zwar technisch vom Header sichtbar, werden aber nicht als eigenständige öffentliche Schnittstelle oder stabiles Dateiformat angeboten.
+Alle Signaturen stehen im Namespace `mrdb`; Member-Signaturen stehen im Abschnitt ihres Typs. Bei `begin()` und `end()` wird der deduzierte Rückgabetyp zur besseren Lesbarkeit ausgeschrieben. C++-Referenzparameter benötigen ein gültiges Objekt und können nicht `nullptr` sein. Die einzige Zeigereingabe ist `TablePtr` im Record-Konstruktor; ihre Verwendung wird dort erklärt.
 
-Signaturen sind aus den Deklarationen übernommen; Klassenmember stehen ohne qualifizierenden Klassenpräfix im jeweiligen Klassenabschnitt. Parameterbezeichnungen im Text entsprechen gegebenenfalls der Definition, wenn die Deklaration keinen Namen enthält. `inline` der freien Definitionen ändert die Signaturen nicht. Es wird kein im Header nicht geschriebenes `noexcept` ergänzt.
+Die kurzen Beispiele sind eigenständige Ausschnitte innerhalb einer Funktion. Für Datenzugriffe setzen sie eine initialisierte Datenbasis sowie die schreibbare Tabelle `PROJEKTE` mit den Spalten `NAME` und `STATUS` aus dem Schnelleinstieg voraus. Für Zugriffe auf eine einzelne Zeile dient folgende Vorbereitung:
 
-Für **jeden** Eintrag gelten ergänzend diese gemeinsamen Regeln:
-
-- **Parameter:** Alle referenzierten Eingaben sind `in`, sofern nicht `in/out` angegeben. C++-Referenzen sind nicht nullable; ein ungültig erzeugter Referenzwert ist keine unterstützte Eingabe. Für Funktionen ohne Parameter ist Nullability nicht zutreffend. Nullability von `TablePtr` wird gesondert beschrieben.
-- **Ownership:** Eingabereferenzen werden nicht vom Aufrufer übernommen. Wertresultate gehören dem Aufrufer; automatische Freigabe, keine manuelle Speicherfreigabe. Bei `void` sind Rückgabewert und Ergebnis-Ownership nicht zutreffend. Ausnahmen sind die ausdrücklich geteilte Tabelle und geliehene Iteratoren.
-- **Zustand:** „Unverändert“ meint den Zustand von mrdb bzw. den betrachteten Objekten, ohne die Zuweisung an eine lokale Ergebnisvariable. Nach `throw` existiert kein reguläres Funktionsergebnis.
-- **Dateizugriffe (Regel D):** Gemeinsamer Pfad muss initialisiert sein; Basisverzeichnis muss zugänglich sein. Die ausdrücklich genannten Prüfungen können `std::runtime_error` auslösen. Außerdem können `std::filesystem::filesystem_error`, Allokationsfehler und bei numerischem Einlesen von Metadaten/IDs `std::invalid_argument`/`std::out_of_range` weitergegeben werden. Die API fängt diese Fehler nur bei `IsTableExist` ab. Keine Synchronisation, keine Snapshot-Isolation; siehe [Nebenläufigkeit](#threads).
-- **Nur Speicher (Regel S):** Keine Initialisierung und keine Datei erforderlich. Gleichzeitige Änderungen des betreffenden Objekts oder seiner geteilten Tabelle müssen extern ausgeschlossen werden. Lesender Zugriff auf unveränderte Objekte erscheint möglich; nicht ausdrücklich garantiert. Kopierende Ergebnisse können wegen Speicherbedarf werfen; keine allgemeine No-Throw-Zusage.
-- **Garantien:** Kategorien beziehen sich auf den beobachteten Zustand bei erfüllten Vorbedingungen. „Stark (abgeleitet)“ bedeutet: Bei einer Exception bleibt der betrachtete Zustand unverändert. „Keine für Persistenz“ bedeutet: Auch eine basale Zusage konsistenter gespeicherter Daten ist bei einem Teilfehler nicht ableitbar. Dies ist keine Aussage über fehlendes RAII der lokalen Standardtypen. [Fehlerbehandlung](#fehler) erläutert die Abgrenzung.
-
-Die kurzen Beispiele sind unabhängige Ausschnitte innerhalb einer Funktion; sie dürfen denselben Setup-Code verwenden. Für Dateiaufrufe sei die Datenbasis initialisiert, die Tabelle vorhanden und schreibbar und `recordId` die ID einer vorhandenen Zeile. Benötigte Includes: `mrdb.h` sowie für die Beispielausgabe/-prüfungen `<iostream>`, `<utility>`, `<type_traits>`, `<exception>`, `<filesystem>`, `<stdexcept>`, `<string>`, `<vector>`.
-
-Gemeinsame Variablen für die Ausschnitte (an das vollständige Praxisbeispiel anschließbar):
-
-~~~cpp
-auto const tablename = std::string{"WERKZEUGE"};
-auto ids = mrdb::GetRecordIDs(tablename);
+```cpp
+auto const tableName = std::string{"PROJEKTE"};
+auto const ids = mrdb::GetRecordIDs(tableName);
 if (ids.empty()) {
-    throw std::runtime_error("Beispiel benötigt einen Datensatz");
+    throw std::runtime_error("Das Beispiel benötigt ein vorhandenes Projekt");
 }
 auto const recordId = ids.front();
-auto table = mrdb::GetTable(tablename);
-auto record = mrdb::SelectSingle(tablename, recordId);
-~~~
+auto record = mrdb::SelectSingle(tableName, recordId);
+```
+
+Zusätzlich zu `mrdb.h` verwenden die Ausschnitte je nach Beispiel `<iostream>`, `<memory>`, `<stdexcept>`, `<string>`, `<utility>` und `<vector>`. Die vollständigen Programme nennen ihre Includes selbst.
+
+Bei Datenzugriffen werden fehlende Tabellen, fehlende Zeilen, unzulässige Werte und Schreibschutz durch Exceptions gemeldet. Fehler beim Dateizugriff können ebenfalls Exceptions auslösen. Ein `void`-Aufruf liefert keinen Statuscode; normale Rückkehr bedeutet, dass kein Fehler gemeldet wurde. `IsTableExist` fasst auch Fehler als `false` zusammen. Weitere Beispiele stehen unter [Fehlerbehandlung](#fehler).
 
 <a id="typen"></a>
 
-### Namespace, Typen und Konstanten
+### Öffentliche Typen
 
-Alle hier genannten mrdb-Typen und freien API-Funktionen liegen in `namespace mrdb`. `Record` ist `final`; `WhereVector` wird über `wherevector.h` eingebunden. Es gibt in `mrdb.h` selbst keine weiteren öffentlichen Enums. Die einzige für Fehlerberichte verwendete Konstante ist `ERROR_TABLE_NOT_FOUND`; numerische Fehlercodes oder Status-Enums sind nicht vorhanden.
+<a id="typ-initdata"></a>
 
 #### InitData
 
-~~~cpp
+```cpp
 struct InitData
 {
     std::string NAME_DATABASE_DIRECTORY{};
 };
-~~~
+```
 
-Öffentliches Aggregat mit leerem Standardpfad. Der Wert ist kopier- und bewegbar. `NAME_DATABASE_DIRECTORY` ist `in` für `Init`; gültige Nutzereingabe ist ein nicht leerer Basispfad mit abschließendem `/`. Existenz und Zugriffsrechte werden erst bei Dateiaufrufen relevant. Der String gehört dem `InitData`-Objekt. Aggregat-/Standardinitialisierung hat keine mrdb-Fehlermeldung; Stringkopien können allokieren. Regel S. Keine gespeicherte Zustandsänderung durch Änderungen an diesem Wert.
+Konfiguration für `Init`. Der String enthält den eigenen, vorhandenen Datenpfad mit abschließendem `/`; standardmäßig ist er leer.
 
-~~~cpp
+```cpp
 auto data = mrdb::InitData{};
-data.NAME_DATABASE_DIRECTORY = "./mrdb-beispiel/";
+data.NAME_DATABASE_DIRECTORY = "./projektdaten/";
 mrdb::Init(data);
-~~~
+```
 
-#### KeyValue, KeyValues
-
-~~~cpp
-struct KeyValue
-{
-    std::string Key{};
-    std::string Value{};
-    KeyValue(const std::string& k, const std::string& v) : Key(k), Value(v) {}
-};
-using KeyValues = std::vector<KeyValue>;
-~~~
-
-**Konstruktor `KeyValue`:** Kopiert `k` (`std::string const &`, in: Schlüssel, beliebiger String einschließlich leer) und `v` (`std::string const &`, in: Wert, ebenfalls beliebig) in die öffentlichen Felder `Key` und `Value`. Keine Validierung und keine Initialisierung nötig. Rückgabe: nicht zutreffend (Konstruktor). Ownership: eigene Stringkopien; Eingaben müssen nach dem Aufruf nicht weiterleben. Nach Erfolg sind beide Felder gesetzt. Bei Kopier-/Allokationsfehlern wird kein Objekt fertig konstruiert, Eingaben bleiben unverändert (stark, abgeleitet). Regel S; Kosten proportional zu den kopierten Texten, mögliche Heap-Allokationen.
-
-`KeyValue` hat keinen Default-Konstruktor, da dieser Konstruktor benutzerdefiniert ist. Seine Kopier-/Moveoperationen und Destruktion sind implizite Standardoperationen der zwei Strings. `KeyValues` ist genau der Standardvektor, keine eigene Klasse; dessen API wird nicht neu definiert.
-
-~~~cpp
-auto entry = mrdb::KeyValue{std::string{"NAME"}, std::string{"Messschieber"}};
-auto entries = mrdb::KeyValues{};
-entries.push_back(entry);
-std::cout << entries.front().Key << ": " << entries.front().Value << '\n';
-~~~
+<a id="typ-column"></a>
 
 #### Column
 
-~~~cpp
+```cpp
 struct Column
 {
     std::string SortIndex{};
     std::string Name{};
     bool Nullable{true};
 };
-~~~
+```
 
-Öffentliches Aggregat mit zwei leeren Strings und `Nullable == true`. `SortIndex` ist ein beliebiger Ordnungsstring; `Name` muss bei `CreateTable` ein gültiger Spaltenname sein; `Nullable` erlaubt bei `true` leere Werte. Die Struktur allein prüft diese Bedingungen nicht. Öffentliche Felder sind `in/out` für den eigenen Wert und werden bei `CreateTable` als `in` gelesen. Kein Ergebniszeiger; Strings gehören dem Wert. Regel S; Kopieren kann allokieren. Keine persistente Schemaänderung durch Feldzuweisung.
+`SortIndex` bestimmt die Reihenfolge als Text, `Name` benennt die Spalte, `Nullable` erlaubt leere Werte. Die Standardwerte sind leere Strings und `true`.
 
-~~~cpp
-auto column = mrdb::Column{"01", "NAME", false};
-column.SortIndex = "02"; // Ändert nur diesen Wert.
-~~~
+```cpp
+auto const nameColumn = mrdb::Column{"01", "NAME", false};
+auto const statusColumn = mrdb::Column{"02", "STATUS", true};
+```
 
-#### Table, TablePtr
+<a id="typ-table"></a>
 
-~~~cpp
+#### Table und TablePtr
+
+```cpp
 struct Table
 {
     unsigned int ID{0};
@@ -270,676 +287,762 @@ struct Table
     std::vector<Column> Columns{};
 };
 using TablePtr = std::shared_ptr<Table>;
-~~~
+```
 
-Öffentliches Aggregat. `ID` ist zunächst null; `CreateTable` speichert aktuell unabhängig von der übergebenen `ID` null und weist dem Eingabewert keine ID zu. Daraus keine eindeutige Tabellen-ID ableiten. `Name` muss für Dateiaufrufe gültig sein. `ReadOnly` ist das bei Anlage zu speichernde Flag; `Columns` muss für `CreateTable` mindestens eine Spalte mit eindeutigen Namen enthalten. Diese Felder sind am eigenen Objekt `in/out`, für `CreateTable` `in`.
+`Name` und `Columns` beschreiben die Tabelle. `ReadOnly` sperrt das Schreiben von Datensätzen über `Insert`, `Update` und `Delete`; mit `SetTableReadOnly` lässt sich die Sperre setzen und aufheben. `ID` ist nicht die Zeilen-ID und wird von `CreateTable` nicht aus dem Eingabeobjekt übernommen. Änderungen an einem `Table`-Wert werden nicht automatisch gespeichert.
 
-Strings und Spaltenvektor gehören dem `Table`-Wert. `TablePtr` ist ein nullable Smartpointer mit geteiltem Besitz, kein vom Nutzer freizugebender Rohzeiger. Die letzte besitzende Kopie zerstört die Tabelle automatisch. Feldänderungen werden nicht automatisch persistiert; das ReadOnly-Flag wird separat mit `SetTableReadOnly` gesetzt. Regel S, kopierende Operationen proportional zu Beschreibungsdaten und möglicherweise allokierend; keine eigene Fehlervalidierung durch das Aggregat.
+```cpp
+auto table = mrdb::Table{};
+table.Name = "PROJEKTE";
+table.Columns = {{"01", "NAME", false}, {"02", "STATUS", true}};
+auto tablePtr = std::make_shared<mrdb::Table>(table);
+```
 
-~~~cpp
-auto description = mrdb::Table{};
-description.Name = "WERKZEUGE";
-description.Columns = {{"01", "NAME", false}, {"02", "ORT", true}};
-auto sharedDescription = std::make_shared<mrdb::Table>(description);
-~~~
+<a id="typ-keyvalue"></a>
 
-`InitData`, `Column` und `Table` deklarieren keine eigenen Konstruktoren, Destruktoren oder Operatoren. Aggregatinitialisierung, implizite Default-/Kopier-/Moveoperationen und Destruktion verwenden die Standardoperationen der Member. Defaultinitialisierung erzeugt die oben angegebenen Defaults; Kopieren erzeugt eigene Strings/Container; Move lässt die Quelle in einem gültigen, nicht inhaltlich zugesagten Zustand. Rückgabe bei Konstruktion/Destruktion: nicht zutreffend; implizite Zuweisung liefert eine Referenz auf das Ziel, gültig für dessen Lebensdauer und ohne Ownership-Transfer dieser Referenz. Kein Dateizugriff. Bei Kopierzuweisung mehrerer Member kann ein später Fehler nach früheren Memberänderungen eintreten: keine allgemeine starke Garantie für das gesamte Aggregat; Standardmember bleiben gültig (basal, abgeleitet). Selbstdeklarierte zusätzliche Signaturen existieren dafür im Header nicht.
+#### KeyValue und KeyValues
+
+```cpp
+struct KeyValue
+{
+    std::string Key{};
+    std::string Value{};
+    KeyValue(std::string const & k, std::string const & v);
+};
+using KeyValues = std::vector<KeyValue>;
+```
+
+Ein Paar aus Spaltenname (`Key`) und Feldwert (`Value`). `KeyValues` ist eine Liste solcher Paare, etwa das Ergebnis von `Record::GetValuesAsKeyValues()`.
+
+<a id="keyvalue-konstruktor"></a>
+
+#### KeyValue::KeyValue(k, v)
+
+```cpp
+KeyValue(std::string const & k, std::string const & v);
+```
+
+Erzeugt ein Schlüssel/Wert-Paar mit eigenen Kopien der beiden Strings.
+
+- **Parameter:** `k`: Schlüssel; `v`: Wert. Beide dürfen leer sein.
+- **Rückgabe:** Kein Rückgabewert (Konstruktor). Die Felder `Key` und `Value` enthalten die übergebenen Texte.
+- **Voraussetzungen:** Keine Initialisierung oder vorhandene Tabelle erforderlich.
+
+```cpp
+auto const pair = mrdb::KeyValue{"STATUS", "Geplant"};
+std::cout << pair.Key << ": " << pair.Value << '\n';
+```
+
+<a id="typ-records"></a>
 
 #### Records
 
-~~~cpp
+```cpp
 using Records = std::vector<Record>;
-~~~
+```
 
-Besitzender Ergebnisvektor. Leere Auswahl liefert einen leeren Vektor. Wegen der gelöschten Kopieroperationen von `Record` sind seine Elemente durch Referenz oder Move zu verwenden, nicht per Wert zu kopieren. Standardvektor-Referenzen/Iteratoren können bei Reallokation, Löschung oder Zerstörung ungültig werden. Kein eigener mrdb-Lifecycle.
+Ergebnisliste von `SelectAll` und `Select`. Da `Record` nicht kopierbar ist, ist auch das Kopieren einer solchen Liste nicht möglich. Iteriere über Referenzen oder verschiebe die Liste.
 
-~~~cpp
-auto records = mrdb::SelectAll("WERKZEUGE");
-for (auto const & row : records) {
-    std::cout << row.GetRowID() << '\n';
+```cpp
+auto records = mrdb::SelectAll("PROJEKTE");
+auto transferred = std::move(records);
+for (auto const & project : transferred) {
+    std::cout << project.GetRowID() << '\n';
 }
-~~~
+```
 
-#### ERROR_TABLE_NOT_FOUND
-
-~~~cpp
-inline std::string const ERROR_TABLE_NOT_FOUND = "table not found";
-~~~
-
-Konstante Fehlermeldung, als Inhalt einer `std::runtime_error` bei fehlender Tabelle verwendet. Sie ist kein numerischer Fehlercode und deckt nicht alle Dateifehler ab. Keine Parameter, kein Funktionsrückgabewert, keine vom Aufrufer auszuführende Freigabe; der konstante String hat statische Lebensdauer. Seine Initialisierung kann als Stringinitialisierung allokieren; lesende Verwendung verändert ihn nicht. Regeln für statische Initialisierung sind die normalen C++-Regeln.
-
-~~~cpp
-std::cerr << mrdb::ERROR_TABLE_NOT_FOUND << '\n';
-~~~
+`InitData`, `Column`, `Table`, `KeyValue` und `WhereItem` können als Werte kopiert und verschoben werden. Für sie ist keine besondere Speicherfreigabe nötig. `Record` und die Filtertypen werden mit ihren Methoden weiter unten beschrieben.
 
 <a id="tabellen"></a>
 
 ### Initialisierung und Tabellen
 
-#### Init
+<a id="funktion-init"></a>
 
-~~~cpp
-auto Init(InitData const &) -> void;
-~~~
+#### Init(data)
 
-- **Zweck:** Setzt den prozessweit gemeinsamen Basispfad durch Kopieren der Konfiguration.
-- **Parameter:** `InitData const &` (in, in der Definition `data`); für anschließende Dateizugriffe nicht leer, Basisverzeichnis vorhanden, abschließender `/`. Referenz nicht nullable. `Init` selbst akzeptiert auch einen leeren oder ungültigen Pfad.
-- **Rückgabe/Ownership:** `void`, nicht zutreffend; interne Kopie des Strings, Eingabe darf danach zerstört werden.
-- **Vor-/Nachbedingungen:** Keine vorherige Initialisierung nötig. Nach Erfolg verwenden spätere Dateiaufrufe diesen Pfad; keine Verzeichnisanlage oder Dateiprüfung. Bestehende Records behalten ihre Werte. Leerer Pfad führt später zu Initialisierungsfehlern, teils von `IsTableExist` in `false` umgewandelt.
-- **Fehler/Garantie:** Stringzuweisung kann werfen; starke Garantie der Stringzuweisung für den bisherigen Pfad (abgeleitet), kein Statuswert, kein deklariertes `noexcept`.
-- **Nebenläufigkeit/Kosten:** Extern mit sämtlichen Dateiaufrufen synchronisieren. Stringkopie proportional zur Pfadlänge, mögliche Allokation, keine I/O.
+```cpp
+void Init(InitData const & data);
+```
 
-~~~cpp
-mrdb::Init({"./mrdb-beispiel/"});
-~~~
+Wählt die Datenbasis für folgende Datenzugriffe.
 
-#### CreateTable
+- **Parameter:** `data`: Konfiguration mit einem nicht leeren Datenpfad und abschließendem `/`.
+- **Rückgabe:** Keiner. Die Konfiguration wird kopiert; das Eingabeobjekt muss danach nicht weiterleben.
+- **Voraussetzungen:** Für folgende Datenzugriffe muss das Verzeichnis vorhanden und zugänglich sein. `Init` prüft dies nicht und legt kein Verzeichnis an.
 
-~~~cpp
-auto CreateTable(Table const &) -> void;
-~~~
+```cpp
+mrdb::Init({"./projektdaten/"});
+```
 
-- **Zweck:** Legt eine Tabelle mit Schema und ReadOnly-Flag an; gibt zusätzlich eine Meldung über `std::cout` aus.
-- **Parameter:** `Table const &` (in, Definition `table`): gültiger `Name`, nicht leere `Columns`, gültige und nach Großschreibung eindeutige `Column::Name`. `SortIndex` beliebiger String, `Nullable`/`ReadOnly` bool. Übergebene `ID` wird aktuell ignoriert.
-- **Rückgabe/Ownership:** `void`, nicht zutreffend. Keine Referenz auf die Eingabe gespeichert; Beschreibungswerte werden geschrieben.
-- **Vor-/Nachbedingungen:** Regel D; Tabelle darf noch nicht existieren. Nach Erfolg ist das Schema lesbar, zunächst ohne Datensätze; der Eingabewert bleibt unverändert. Bei Validierungsfehlern vor Anlage keine neue Tabelle; bei I/O- oder Ausgabefehlern kann eine teilweise oder bereits vollständig angelegte Tabelle zurückbleiben.
-- **Fehler/Garantie:** `std::runtime_error`, unter anderem `"table already exist"`, `"table has no columns"`, ungültige bzw. doppelte Namen; weitere Fehler nach Regel D, gegebenenfalls Ausgabestream-Ausnahmen. Keine starke oder basale Garantie für persistente Konsistenz nach Beginn der Anlage, kein Rollback.
-- **Nebenläufigkeit/Kosten:** Regel D; Existenzprüfung und Anlage sind nicht atomar. Prüfung der Eindeutigkeit über einen Set, Kopien und Allokationen, Dateizugriffe für jede Spaltenbeschreibung und Konsolenausgabe.
+<a id="funktion-createtable"></a>
 
-~~~cpp
-auto description = mrdb::Table{};
-description.Name = "NEUE_WERKZEUGE";
-description.Columns = {{"01", "NAME", false}, {"02", "ORT", true}};
-mrdb::CreateTable(description); // Eigenständiges Beispiel: Name muss noch frei sein.
-~~~
+#### CreateTable(table)
 
-#### GetTable
+```cpp
+void CreateTable(Table const & table);
+```
 
-~~~cpp
+Legt eine neue Tabelle mit den angegebenen Spalten und dem Schreibschutz an.
+
+- **Parameter:** `table`: gültiger `Name`, mindestens eine Spalte, gültige und auch nach Großschreibung eindeutige Spaltennamen. `SortIndex` bestimmt die Spaltenordnung, `Nullable` die Zulässigkeit leerer Werte. `ReadOnly` setzt den Schreibschutz. `ID` wird nicht übernommen.
+- **Rückgabe:** Keiner. Das Eingabeobjekt bleibt unverändert. Bei Erfolg wird außerdem eine Meldung ausgegeben.
+- **Voraussetzungen:** Initialisierte Datenbasis mit Schreibzugriff; der Tabellenname darf noch nicht vorhanden sein.
+- **Fehler:** `std::runtime_error` beispielsweise bei vorhandenem Namen, fehlenden Spalten oder unzulässigen Namen; außerdem Dateizugriffsfehler.
+
+```cpp
+auto table = mrdb::Table{};
+table.Name = "ARCHIVPROJEKTE";
+table.Columns = {{"01", "NAME", false}, {"02", "STATUS", true}};
+mrdb::CreateTable(table);
+```
+
+<a id="funktion-gettable"></a>
+
+#### GetTable(tablename)
+
+```cpp
 auto GetTable(std::string const & tablename) -> Table;
-~~~
+```
 
-- **Zweck:** Liest die Tabellenbeschreibung einschließlich sortierter Spalten neu ein.
-- **Parameter:** `tablename` (`std::string const &`, in): gültiger Name einer vorhandenen, vollständig angelegten Tabelle; Dateizugriff normalisiert Großschreibung.
-- **Rückgabe/Ownership:** `Table` als eigener Wert mit ID, Name, ReadOnly und Columns; niemals ein nullable Zeiger. Name entspricht aktuell der Eingabe, Spaltennamen der gespeicherten Schreibweise.
-- **Vor-/Nachbedingungen:** Regel D; lesbare Metadaten. Keine Zustandsänderung, auch nicht bei Fehler. Nach Erfolg lexikographisch nach `SortIndex` sortierte Spalten; Gleichstände nicht stabil zugesagt.
-- **Fehler/Garantie:** Fehlende Tabelle `std::runtime_error(ERROR_TABLE_NOT_FOUND)`; fehlende/beschädigte Metadaten und Regel D. Stark hinsichtlich unveränderter Datenbasis (abgeleitet), keine Konsistenzgarantie gegenüber parallelen Änderungen.
-- **Nebenläufigkeit/Kosten:** Regel D; Metadaten-I/O, String-/Vektorallokationen, Spaltensortierung mit `O(c log c)` Vergleichen für `c` Spalten, jeder Stringvergleich zusätzlich längenabhängig.
+Liest die Beschreibung einer Tabelle.
 
-~~~cpp
-auto description = mrdb::GetTable(tablename);
-std::cout << description.Name << ": " << description.Columns.size() << '\n';
-~~~
+- **Parameter:** `tablename`: gültiger Name einer vorhandenen Tabelle.
+- **Rückgabe:** Ein eigener `Table`-Wert mit Spalten, ID und Schreibschutz. Die Spalten sind nach `SortIndex` geordnet. Änderungen am Ergebnis speichern nichts.
+- **Voraussetzungen:** Initialisierte Datenbasis und lesbare Tabelle.
+- **Fehler:** Eine fehlende oder nicht lesbare Tabelle löst eine Exception aus; es gibt keinen leeren Ersatzwert.
 
-#### GetTableNames
+```cpp
+auto const table = mrdb::GetTable(tableName);
+std::cout << table.Name << ": " << table.Columns.size() << '\n';
+```
 
-~~~cpp
+<a id="funktion-gettablenames"></a>
+
+#### GetTableNames()
+
+```cpp
 auto GetTableNames() -> std::vector<std::string>;
-~~~
+```
 
-- **Zweck:** Listet die Namen der Unterverzeichnisse im Basisverzeichnis auf.
-- **Parameter:** Nicht zutreffend.
-- **Rückgabe/Ownership:** Eigener `std::vector<std::string>`, leer bei keinem Unterverzeichnis. Keine nullable Ergebnisse.
-- **Vor-/Nachbedingungen:** Regel D. Keine Änderung. Jeder gefundene Verzeichnisname wird aufgenommen, ohne Prüfung eines Tabellenschemas; keine Sortierzusage. Fremde Unterverzeichnisse können also als Namen erscheinen.
-- **Fehler/Garantie:** Nicht initialisiert: `std::runtime_error("mrdb is not init")`; Verzeichniszugriff/Allokation nach Regel D. Stark hinsichtlich unveränderter Datenbasis (abgeleitet).
-- **Nebenläufigkeit/Kosten:** Regel D; ein Durchlauf über die Basiseinträge, Ergebnisallokationen proportional zu den Namen; keine Metadatenprüfung.
+Listet die Tabellennamen in der Datenbasis auf.
 
-~~~cpp
+- **Parameter:** Keine.
+- **Rückgabe:** Eigener Vektor von Namen, ohne zugesicherte Sortierung; leer, wenn keine vorhanden sind.
+- **Voraussetzungen:** Initialisierte, zugängliche Datenbasis. Verwende ein eigenes Datenverzeichnis: Fremde Unterverzeichnisse können ebenfalls als Namen erscheinen; die Auflistung prüft kein Schema.
+
+```cpp
 auto const names = mrdb::GetTableNames();
 for (auto const & name : names) {
     std::cout << name << '\n';
 }
-~~~
+```
 
-#### GetTables
+<a id="funktion-gettables"></a>
 
-~~~cpp
+#### GetTables()
+
+```cpp
 auto GetTables() -> std::vector<Table>;
-~~~
+```
 
-- **Zweck:** Liest die Beschreibungen aller von `GetTableNames` gemeldeten Verzeichnisse.
-- **Parameter:** Nicht zutreffend.
-- **Rückgabe/Ownership:** Eigener `std::vector<Table>`, leer ohne Tabellen; kein Teilergebnis bei `throw`.
-- **Vor-/Nachbedingungen:** Regel D; jeder gemeldete Verzeichnisname muss ein lesbares Schema haben. Keine Änderung. Reihenfolge wie Namensauflistung, nicht sortiert zugesagt. Ein fremdes Unterverzeichnis kann den gesamten Aufruf scheitern lassen.
-- **Fehler/Garantie:** Wie `GetTableNames` und `GetTable`, Regel D. Stark hinsichtlich Datenbasis (abgeleitet), keine Snapshot-Garantie.
-- **Nebenläufigkeit/Kosten:** Regel D; Basisscan plus Metadatenlesung und Sortierung für jede Tabelle, Vektorreservierung und Beschreibungsallokationen.
+Liest die Beschreibungen aller aufgelisteten Tabellen.
 
-~~~cpp
-auto const descriptions = mrdb::GetTables();
-for (auto const & description : descriptions) {
-    std::cout << description.Name << '\n';
+- **Parameter:** Keine.
+- **Rückgabe:** Eigener Vektor von `Table`-Werten; leer ohne Tabellen und ohne zugesicherte Reihenfolge.
+- **Voraussetzungen:** Initialisierte Datenbasis; alle aufgelisteten Tabellen müssen lesbar sein. Fremde Unterverzeichnisse können den Aufruf scheitern lassen.
+- **Fehler:** Ist eine Tabelle nicht lesbar, wird eine Exception ausgelöst und kein Teilergebnis zurückgegeben.
+
+```cpp
+auto const tables = mrdb::GetTables();
+for (auto const & table : tables) {
+    std::cout << table.Name << ": " << table.Columns.size() << '\n';
 }
-~~~
+```
 
-#### IsTableExist
+<a id="funktion-istableexist"></a>
 
-~~~cpp
+#### IsTableExist(tablename)
+
+```cpp
 auto IsTableExist(std::string const & tablename) -> bool;
-~~~
+```
 
-- **Zweck:** Prüft, ob unter dem normalisierten Tabellennamen ein Verzeichnis existiert.
-- **Parameter:** `tablename` (`std::string const &`, in), gewünschter Tabellenname. Ungültige Namen werden intern geprüft und führen hier zu `false`.
-- **Rückgabe/Ownership:** `bool`; `true` bei einem Verzeichnis, `false` bei fehlendem Verzeichnis **oder jedem intern abgefangenen Fehler**, auch fehlender Initialisierung/Zugriffsproblemen. Kein Ergebnisbesitz, keine Lebensdauerfrage.
-- **Vor-/Nachbedingungen:** Für aussagekräftige Verwendung Regel D; technisch wird auch uninitialisierter Zustand abgefangen. Kein Schema-/Lesbarkeitstest, keine Änderung.
-- **Fehler/Garantie:** Im Funktionskörper `catch (...)`, daher No-Throw-Verhalten des Körpers aus der Implementierung abgeleitet; **kein deklariertes `noexcept`**. Fehler beim Erzeugen eines Arguments vor Eintritt werden davon nicht erfasst.
-- **Nebenläufigkeit/Kosten:** Regel D; Pfad-/Namenskopien und eine Dateisystemprüfung, mögliche Allokation trotz bool-Ergebnis. Nach Rückgabe kann sich der Bestand geändert haben.
+Prüft, ob eine Tabelle unter dem angegebenen Namen vorhanden ist.
 
-~~~cpp
-auto const exists = mrdb::IsTableExist(tablename);
-std::cout << exists << '\n';
-~~~
+- **Parameter:** `tablename`: der gesuchte Tabellenname.
+- **Rückgabe:** `true`, wenn ein entsprechendes Verzeichnis vorhanden ist; `false` bei Nichtvorhandensein, ungültigem Namen, fehlender Initialisierung oder Zugriffsfehlern. `true` bestätigt nicht die Lesbarkeit oder Vollständigkeit einer Tabelle.
+- **Voraussetzungen:** Für eine aussagekräftige Prüfung zuerst die Datenbasis initialisieren.
 
-#### GetRecordIDs
+```cpp
+if (mrdb::IsTableExist("PROJEKTE")) {
+    auto const table = mrdb::GetTable("PROJEKTE");
+    std::cout << table.Name << '\n';
+}
+```
 
-~~~cpp
+<a id="funktion-getrecordids"></a>
+
+#### GetRecordIDs(tablename)
+
+```cpp
 auto GetRecordIDs(std::string const & tablename) -> std::vector<unsigned int>;
-~~~
+```
 
-- **Zweck:** Ermittelt die IDs der Datensatz-Unterverzeichnisse einer Tabelle.
-- **Parameter:** `tablename` (`std::string const &`, in), gültige vorhandene Tabelle.
-- **Rückgabe/Ownership:** Eigener `std::vector<unsigned int>`, leer ohne Datensätze. Unsortierte Reihenfolge möglich; keine nullable Ergebnisse.
-- **Vor-/Nachbedingungen:** Regel D; vom Bestand erwartete ID-Verzeichnisse müssen numerisch lesbar sein. Keine Änderung; vorhandene Zeilen-IDs, kein Integritätstest der Feldwerte.
-- **Fehler/Garantie:** Fehlende Tabelle: `ERROR_TABLE_NOT_FOUND` als Runtime-Fehler. Andere Verzeichnisnamen können bei `std::stoul` `std::invalid_argument`/`std::out_of_range` auslösen. Präfixkonvertierung und anschließende Konvertierung auf `unsigned int` sind kein strikter Format-/Bereichstest. Regel D; stark hinsichtlich Datenbasis (abgeleitet).
-- **Nebenläufigkeit/Kosten:** Regel D; Tabellenscan, ID-Konvertierungen, Ergebnisallokationen proportional zur Zeilenzahl, kein Lesen der Feldinhalte.
+Liefert die IDs der vorhandenen Datensätze einer Tabelle.
 
-~~~cpp
-auto const recordIds = mrdb::GetRecordIDs(tablename);
+- **Parameter:** `tablename`: Name einer vorhandenen Tabelle.
+- **Rückgabe:** Eigener Vektor von IDs; leer ohne Datensätze. Die IDs sind nicht zwingend sortiert.
+- **Voraussetzungen:** Initialisierte Datenbasis und zugängliche Tabelle.
+
+```cpp
+auto const recordIds = mrdb::GetRecordIDs(tableName);
 for (auto const id : recordIds) {
     std::cout << id << '\n';
 }
-~~~
+```
 
-#### SetTableReadOnly
+<a id="funktion-settablereadonly"></a>
 
-~~~cpp
+#### SetTableReadOnly(tablename, readonly)
+
+```cpp
 void SetTableReadOnly(std::string const & tablename, bool readonly);
-~~~
+```
 
-- **Zweck:** Schreibt das persistente ReadOnly-Flag einer Tabelle.
-- **Parameter:** `tablename` (`std::string const &`, in): gültige vorhandene Tabelle; `readonly` (`bool`, in): `true` sperrt die mrdb-Datensatzschreibaufrufe, `false` hebt das Flag auf.
-- **Rückgabe/Ownership:** `void`, nicht zutreffend; keine Übernahme der Eingabe.
-- **Vor-/Nachbedingungen:** Regel D, beschreibbare Tabellenmetadaten. Auch bei bereits schreibgeschützter Tabelle zulässig. Nach Erfolg lesen spätere Schreibprüfungen den neuen Wert; ältere `Table`-/Record-Beschreibungen werden nicht aktualisiert. Bei I/O-Fehlern kann das Flag beschädigt oder bereits geändert sein.
-- **Fehler/Garantie:** Fehlende Tabelle: Runtime-Fehler mit `ERROR_TABLE_NOT_FOUND`; weitere Fehler nach Regel D. Keine Garantie persistenter Konsistenz bei Teilfehlern.
-- **Nebenläufigkeit/Kosten:** Regel D; Pfadbildung, eine Metadatenschreiboperation, kein atomarer Wechsel und keine Betriebssystem-Sperre.
+Setzt oder entfernt den Schreibschutz für Datensatzänderungen.
 
-~~~cpp
-mrdb::SetTableReadOnly(tablename, true);
-mrdb::SetTableReadOnly(tablename, false);
-~~~
+- **Parameter:** `tablename`: vorhandene Tabelle; `readonly`: `true` sperrt `Insert`, `Update` und `Delete`, `false` erlaubt sie wieder.
+- **Rückgabe:** Keiner. Bereits gelesene Tabellenbeschreibungen werden nicht automatisch aktualisiert.
+- **Voraussetzungen:** Initialisierte Datenbasis und Schreibzugriff auf die Tabellenbeschreibung. Der Aufruf ist auch bei bereits gesetztem Schreibschutz zulässig.
+
+```cpp
+mrdb::SetTableReadOnly(tableName, true);
+auto const projects = mrdb::SelectAll(tableName); // Lesen bleibt möglich.
+mrdb::SetTableReadOnly(tableName, false);
+```
 
 <a id="datensaetze"></a>
 
 ### Schreiben und Lesen von Datensätzen
 
-#### Insert
+<a id="funktion-insert"></a>
 
-~~~cpp
-void Insert(std::string const & tablename, std::map<std::string, std::string> const &);
-~~~
+#### Insert(tablename, values)
 
-- **Zweck:** Legt einen Datensatz an und schreibt die übergebenen Spaltenwerte.
-- **Parameter:** `tablename` (`std::string const &`, in), gültige vorhandene Tabelle. Map (`std::map<std::string, std::string> const &`, in, Definition `values`): nicht leer, Schlüssel vorhandene gültige Spaltennamen, Werte Strings; alle Pflichtspalten angeben, deren Werte weder leer noch nur ASCII-Leerzeichen sein dürfen. Nullable-Spalten dürfen fehlen. Keine zwei Schlüssel verwenden, die auf dieselbe Großschreibung fallen; dies wird nicht eigens zurückgewiesen und kann mehrfaches Überschreiben bewirken.
-- **Rückgabe/Ownership:** `void`, insbesondere **keine neue ID** und kein affected-row count. Eingaben werden nicht gehalten, Feldwerte werden gespeichert.
-- **Vor-/Nachbedingungen:** Regel D; Tabelle nicht ReadOnly, neue ID muss im Wertebereich verfügbar sein. Nach Erfolg neue Zeile; ausgelassene Nullable-Spalten werden zunächst leer angelegt. Aktuelle ID-Vergabe: vorhandenes Maximum plus eins. Bei I/O-Fehlern kann eine unvollständige Zeile mit bereits geschriebenen Feldern zurückbleiben.
-- **Fehler/Garantie:** Runtime-Fehler für fehlende Tabelle, ReadOnly, leere Map, unbekannte Spalte, leeren Pflichtwert, fehlende Pflichtspalte oder ungültigen Schlüssel; Regel D. Validierung vor Anlage, danach kein Rollback. Die anfängliche Anlage leerer Felddateien prüft derzeit nicht jeden Streamfehler; kein zusätzlicher erfolgreicher Vollständigkeits-/Durabilitätstest. Keine basale Garantie konsistenter Persistenz bei Teilfehlern.
-- **Nebenläufigkeit/Kosten:** Regel D; ID-Ermittlung nicht atomar. Wiederholte Metadatenlesung, kompletter ID-Scan, Anlage aller Felder und Schreiben der übergebenen Werte; lineare Spaltensuchen je Schlüssel, zusätzliche Suche der Pflichtspalten in der Map, String-/Containerallokationen.
+```cpp
+void Insert(std::string const & tablename,
+            std::map<std::string, std::string> const & values);
+```
 
-~~~cpp
-mrdb::Insert(tablename, {{"NAME", "Zange"}, {"ORT", "Werkstatt"}});
-~~~
+Fügt einen Datensatz ein.
 
-#### Update mit Tabellenname und ID
+- **Parameter:** `tablename`: vorhandene Tabelle. `values`: nicht leere Zuordnung bekannter Spaltennamen zu Textwerten. Alle Pflichtspalten müssen angegeben und weder leer noch ausschließlich Leerzeichen sein. Nullable-Spalten dürfen fehlen.
+- **Rückgabe:** Keiner; insbesondere keine ID und kein Zeilenzähler. Ausgelassene Nullable-Spalten sind leer.
+- **Voraussetzungen:** Initialisierte Datenbasis, vorhandene schreibbare Tabelle und Schreibzugriff.
+- **Fehler:** `std::runtime_error` bei unbekannten Spalten, leeren Eingaben, fehlenden Pflichtwerten oder Schreibschutz; außerdem Dateizugriffsfehler.
 
-~~~cpp
-void Update(std::string const & tablename, unsigned int recordID, std::map<std::string, std::string> const & values);
-~~~
+```cpp
+mrdb::Insert(tableName, {{"NAME", "Dachsanierung"}, {"STATUS", "Geplant"}});
+```
 
-- **Zweck:** Schreibt die angegebenen Felder einer vorhandenen Zeile; andere Felder bleiben erhalten.
-- **Parameter:** `tablename` (`std::string const &`, in): vorhandene Tabelle; `recordID` (`unsigned int`, in): ID einer vorhandenen Zeile, regulär positiv; `values` (Map const-Referenz, in): nicht leer, bekannte Spalten, gültige Schlüssel, Pflichtwerte nicht leer/nur Leerzeichen. Ausgelassene Pflichtspalten sind hier zulässig. Großschreibungskollisionen der Schlüssel vermeiden.
-- **Rückgabe/Ownership:** `void`, nicht zutreffend; keine Eingabereferenz gespeichert.
-- **Vor-/Nachbedingungen:** Regel D; vorhandene Zeile, Tabelle nicht ReadOnly. Null-ID wird in dieser Variante nicht separat zurückgewiesen, sondern nach Existenz behandelt; nicht als reguläre ID verwenden. Nach Erfolg angegebene Felder ersetzt, ältere gelesene Records bleiben unverändert. Fehler können nach einigen ersetzten Feldern eintreten.
-- **Fehler/Garantie:** `"record not found"`, ReadOnly, fehlende Tabelle, leere/ungültige Werte, Regel D. Prüfung vor Schreiben; beim sequenziellen Schreiben kein Rollback, keine Garantie persistenter Konsistenz.
-- **Nebenläufigkeit/Kosten:** Regel D; keine Konflikterkennung. Metadaten-I/O, lineare Spaltensuche pro Map-Eintrag und Schreibzugriff je angegebenem Feld; keine Suche über alle Datensätze zur ID-Vergabe.
+<a id="funktion-update-werte"></a>
 
-~~~cpp
-mrdb::Update(tablename, recordId, {{"ORT", "Lager"}});
-~~~
+#### Update(std::string const & tablename, unsigned int recordID, std::map<std::string, std::string> const & values)
 
-#### Update mit Record
+```cpp
+void Update(std::string const & tablename, unsigned int recordID,
+            std::map<std::string, std::string> const & values);
+```
 
-~~~cpp
-void Update(Record const &);
-~~~
+Ändert ausgewählte Felder eines vorhandenen Datensatzes.
 
-- **Zweck:** Validiert einen Record und schreibt alle über seine Spaltenbeschreibung abgebildeten Werte mit der vorigen Überladung.
-- **Parameter:** `Record const &` (in, Definition `record`): muss die Bedingungen von `isValidRecord` erfüllen; `GetTable()->Name` und `GetRowID()` müssen eine schreibbare vorhandene Zeile in der *aktuell initialisierten* Datenbasis benennen.
-- **Rückgabe/Ownership:** `void`, nicht zutreffend; Record und geteilte Tabellenbeschreibung bleiben beim bisherigen Besitzer.
-- **Vor-/Nachbedingungen:** Regel D plus gültiger Record. Nach Erfolg gespeicherte Feldwerte entsprechend der erzeugten Map; Record bleibt unverändert. Kein Abgleich mit dem ursprünglich gelesenen Schema oder Versionsstand; spätere Änderungen anderer Schreiber können überschrieben werden.
-- **Fehler/Garantie:** `isValidRecord`, Map-Erzeugung und tabellenbezogenes `Update` können werfen; Regel D. Vor Schreibbeginn unveränderte Persistenz, danach keine Garantie persistenter Konsistenz. Keine Transaktion über alle Felder.
-- **Nebenläufigkeit/Kosten:** Regel D; erstellt eine eigene Map mit Stringkopien/Allokationen und schreibt deren Felder. `ReadOnly` der geteilten Momentaufnahme allein entscheidet nicht: Das gespeicherte Schema wird erneut gelesen.
+- **Parameter:** `tablename`: Tabelle; `recordID`: vorhandene positive Zeilen-ID; `values`: nicht leere Map mit bekannten Spalten und zulässigen Werten. Pflichtspalten dürfen ausgelassen werden, angegebene Pflichtwerte dürfen jedoch nicht leer oder nur Leerzeichen sein.
+- **Rückgabe:** Keiner. Nur angegebene Felder werden ersetzt, alle anderen bleiben erhalten.
+- **Voraussetzungen:** Initialisierte Datenbasis, vorhandene Zeile und schreibbare Tabelle.
+- **Fehler:** Fehlende Zeile, unzulässige Werte oder Schreibschutz führen zu `std::runtime_error`; außerdem Dateizugriffsfehler.
 
-~~~cpp
-record.SetValue("ORT", "Lager");
+```cpp
+mrdb::Update(tableName, recordId, {{"STATUS", "Abgeschlossen"}});
+```
+
+<a id="funktion-update-record"></a>
+
+#### Update(Record const & record)
+
+```cpp
+void Update(Record const & record);
+```
+
+Speichert die Werte eines Records in seiner Tabelle und Zeile.
+
+- **Parameter:** `record`: gültiger Datensatz mit Tabellenname, positiver ID und passender Anzahl von Spalten und Werten.
+- **Rückgabe:** Keiner. Der Record selbst bleibt unverändert.
+- **Voraussetzungen:** Initialisierte Datenbasis, vorhandene schreibbare Zielzeile und gültige Tabellenbeschreibung. Ziel sind Name und ID des Records in der aktuell gewählten Datenbasis.
+- **Fehler:** Ungültiger Record, fehlende Zielzeile, unzulässige Feldwerte oder Schreibschutz lösen Exceptions aus.
+
+```cpp
+record.SetValue("STATUS", "In Arbeit");
 mrdb::Update(record);
-~~~
+```
 
-#### Delete
+<a id="funktion-delete"></a>
 
-~~~cpp
+#### Delete(tablename, recordID)
+
+```cpp
 void Delete(std::string const & tablename, unsigned int recordID);
-~~~
+```
 
-- **Zweck:** Entfernt eine vorhandene Zeile mitsamt ihrem gespeicherten Inhalt.
-- **Parameter:** `tablename` (`std::string const &`, in): gültige vorhandene Tabelle; `recordID` (`unsigned int`, in): vorhandene reguläre positive ID. Null-ID wird hier wie bei `Update` nur über Existenz behandelt.
-- **Rückgabe/Ownership:** `void`, kein Löschzähler. Vorhandene Record-Werte des Aufrufers werden nicht freigegeben oder verändert.
-- **Vor-/Nachbedingungen:** Regel D, Tabelle nicht ReadOnly. Nach regulärem Abschluss ist die Zeile bei unverändertem Dateisystem entfernt; gelesene Momentaufnahmen bleiben im Speicher. Teilfehler können teilweise entfernte Inhalte hinterlassen. Ein späteres Insert kann die höchste entfernte ID wiederverwenden.
-- **Fehler/Garantie:** Fehlende Zeile `"record not found"`, fehlende Tabelle, ReadOnly, Regel D. Kein Rollback, keine Garantie konsistenter Persistenz bei teilweiser Löschung; Rückgabewert der internen Dateisystemlöschung wird nicht als Status ausgegeben.
-- **Nebenläufigkeit/Kosten:** Regel D; Metadatenlesung, rekursives Entfernen der Zeileninhalte. Kosten hängen von Dateien/Verzeichnissen und Dateisystem ab.
+Löscht einen vorhandenen Datensatz.
 
-~~~cpp
-mrdb::Delete(tablename, recordId); // Diesen Ausschnitt unabhängig verwenden.
-~~~
+- **Parameter:** `tablename`: Tabelle; `recordID`: positive ID der zu löschenden Zeile.
+- **Rückgabe:** Keiner. Bereits gelesene Records bleiben als lokale Werte erhalten.
+- **Voraussetzungen:** Initialisierte Datenbasis, vorhandene Zeile, schreibbare Tabelle und Schreibzugriff.
+- **Fehler:** Eine fehlende Zeile oder Schreibschutz wird durch `std::runtime_error` gemeldet; außerdem Dateizugriffsfehler.
 
-#### SelectSingle
+```cpp
+mrdb::Delete(tableName, recordId); // Eigenständiges Beispiel: entfernt diese Zeile.
+```
 
-~~~cpp
+<a id="funktion-selectsingle"></a>
+
+#### SelectSingle(tablename, recordID)
+
+```cpp
 auto SelectSingle(std::string const & tablename, unsigned int recordID) -> Record;
-~~~
+```
 
-- **Zweck:** Liest eine vorhandene Zeile mit Tabellenbeschreibung und allen Feldwerten ein.
-- **Parameter:** `tablename` (`std::string const &`, in): vorhandene gültige Tabelle; `recordID` (`unsigned int`, in): ID vorhandener Zeile. Null-ID nicht separat geprüft, regulär positive IDs verwenden.
-- **Rückgabe/Ownership:** `Record` als beweglicher eigener Wert; eigene kopierte Feldwerte und eigener geteilter Tabellenbesitz. Kein `nullptr`-/Optional-Signal für fehlende Zeile.
-- **Vor-/Nachbedingungen:** Regel D, Metadaten und alle erwarteten Felder lesbar. Nach Erfolg Werte in sortierter Spaltenreihenfolge. Datenbasis bleibt auch bei Fehler unverändert; kein konsistenter Zeitpunkt über mehrere Dateien zugesagt.
-- **Fehler/Garantie:** Fehlende Zeile `"record not found"`; fehlende Tabelle, fehlende/fehlerhafte Feldlesung, Regel D. Stark hinsichtlich Datenbasis (abgeleitet).
-- **Nebenläufigkeit/Kosten:** Regel D; Metadatenlesen/-sortieren, Zugriff auf jedes Feld, `make_shared<Table>`, Wertvektor und Strings. Der Record-Konstruktor kopiert den Wertvektor trotz des intern übergebenen `std::move`; zusätzliche Kopie der gelesenen Werte.
+Liest einen Datensatz anhand seiner ID.
 
-~~~cpp
-auto row = mrdb::SelectSingle(tablename, recordId);
-std::cout << row.GetValue("NAME") << '\n';
-~~~
+- **Parameter:** `tablename`: Tabelle; `recordID`: vorhandene positive Zeilen-ID.
+- **Rückgabe:** Eigener, bewegbarer `Record` mit allen Feldwerten und Tabellenbeschreibung. Ein fehlender Datensatz wird nicht als `nullptr` oder leerer Record zurückgegeben.
+- **Voraussetzungen:** Initialisierte Datenbasis und lesbare Zielzeile. Die Tabelle darf schreibgeschützt sein.
+- **Fehler:** Fehlende Tabelle, fehlende Zeile oder nicht lesbare Inhalte lösen Exceptions aus.
 
-#### SelectAll
+```cpp
+auto project = mrdb::SelectSingle(tableName, recordId);
+std::cout << project.GetValue("NAME") << '\n';
+```
 
-~~~cpp
+<a id="funktion-selectall"></a>
+
+#### SelectAll(tablename)
+
+```cpp
 auto SelectAll(std::string const & tablename) -> Records;
-~~~
+```
 
-- **Zweck:** Liest alle ermittelten Zeilen vollständig ein.
-- **Parameter:** `tablename` (`std::string const &`, in): gültige vorhandene Tabelle.
-- **Rückgabe/Ownership:** Besitzender `Records`-Vektor, leer ohne Zeilen, nicht nullable; kein Teilergebnis bei Exception.
-- **Vor-/Nachbedingungen:** Regel D, alle ermittelten Zeilen lesbar. Reihenfolge wie ID-Auflistung, nicht sortiert zugesagt; keine Zustandsänderung und keine Snapshot-Isolation.
-- **Fehler/Garantie:** Wie `GetRecordIDs` und `SelectSingle`; Regel D. Bereits lokal erzeugte Ergebnisse werden bei Fehler automatisch freigegeben. Stark hinsichtlich Datenbasis (abgeleitet).
-- **Nebenläufigkeit/Kosten:** Regel D; ID-Scan plus `SelectSingle` für jede Zeile. Derzeit wiederholte Schema-I/O und eigene Tabellenbeschreibung pro Zeile; gesamter Bestand im Speicher, Ergebnisvektor kann wachsen/reallokieren.
+Liest alle Datensätze einer Tabelle.
 
-~~~cpp
-auto const rows = mrdb::SelectAll(tablename);
-for (auto const & row : rows) {
-    std::cout << row.GetRowID() << '\n';
+- **Parameter:** `tablename`: vorhandene Tabelle.
+- **Rückgabe:** Eigener `Records`-Vektor, leer bei einer Tabelle ohne Zeilen. Keine zugesicherte Sortierung.
+- **Voraussetzungen:** Initialisierte Datenbasis und lesbare Datensätze.
+- **Fehler:** Kann eine Zeile nicht gelesen werden, wird eine Exception ausgelöst; kein Teilergebnis.
+
+```cpp
+auto const projects = mrdb::SelectAll(tableName);
+for (auto const & project : projects) {
+    std::cout << project.GetRowID() << ": " << project.GetValue("NAME") << '\n';
 }
-~~~
+```
 
-#### Select
+<a id="funktion-select"></a>
 
-~~~cpp
-auto Select(std::string const & tablename, WhereVector const &) -> Records;
-~~~
+#### Select(tablename, whereVector)
 
-- **Zweck:** Liest Zeilen und behält diejenigen, die alle Bedingungen erfüllen (UND).
-- **Parameter:** `tablename` (`std::string const &`, in): vorhandene Tabelle; `WhereVector const &` (in, Definition `whereVector`): Bedingungen für vorhandene, exakt geschriebene Feldnamen. Ein leerer Filter akzeptiert alle Zeilen. Filterwert ist beliebiger String; Operator `Equal`, `NonEqual` oder `Like`.
-- **Rückgabe/Ownership:** Eigener `Records`-Vektor, leer ohne Treffer; keine nullable Rückgabe, kein Teilergebnis bei Fehler.
-- **Vor-/Nachbedingungen:** Regel D. Stringvergleich exakt und case-sensitive; `Like` bedeutet Teilstring, keine SQL-Wildcards, keine regulären Ausdrücke. `Like` mit leerem Suchwert oder leerem Feldwert liefert aktuell `false`. Keine Änderung. Alle Bedingungen werden aktuell für jede Zeile ausgewertet, auch nach einem bereits falschen Ergebnis. Ein Feldfehler in einer späteren Bedingung wird also nicht dadurch unterdrückt. Ohne Zeilen werden Bedingungen nicht geprüft; ein ungültiger Feldname kann dann unbemerkt bleiben. Nicht vorgesehene gecastete Enumwerte ergeben derzeit `false`, keine Exception-Zusage.
-- **Fehler/Garantie:** `"field not found in record"` für nicht gefundenes Filterfeld, möglicher Größenfehler; außerdem Lesefehler nach Regel D. Stark hinsichtlich Datenbasis (abgeleitet), keine Zusage konsistent zusammengehöriger gelesener Felder.
-- **Nebenläufigkeit/Kosten:** Regel D; Vollscan und vollständiges Einlesen auch nicht passender Zeilen, keine Filterindizes. Je Zeile und Bedingung lineare Spaltensuchen, Wertkopie und Stringvergleich/-suche; Speicher für Treffer plus vorübergehend eine gelesene Zeile und alle IDs.
+```cpp
+auto Select(std::string const & tablename, WhereVector const & whereVector) -> Records;
+```
 
-~~~cpp
-auto where = mrdb::WhereVector{};
-where.Add("ORT", mrdb::WhereOperator::Like, "Werk");
-auto const matches = mrdb::Select(tablename, where);
-std::cout << matches.size() << '\n';
-~~~
+Wählt die Datensätze aus, die alle Filterbedingungen erfüllen (logisches UND).
 
-#### isValidRecord
+- **Parameter:** `tablename`: vorhandene Tabelle. `whereVector`: Bedingungen mit exakten vorhandenen Spaltennamen, den Operatoren `Equal`, `NonEqual` oder `Like` und Textwerten. Ein leerer Filter wählt alle Zeilen aus.
+- **Rückgabe:** Eigener `Records`-Vektor, leer ohne Treffer. Keine zugesicherte Sortierung.
+- **Voraussetzungen:** Initialisierte Datenbasis, lesbare Datensätze und passende Filterspalten. Vergleiche beachten Groß-/Kleinschreibung. `Like` sucht einen Teiltext, ohne Platzhalter; bei leerem Suchtext oder leerem Feld gibt es keinen Treffer.
+- **Fehler:** Ein unbekannter Filterfeldname kann beim Prüfen einer Zeile `std::runtime_error` auslösen. Bei einer leeren Tabelle werden Filterfelder nicht geprüft. Lesefehler lösen ebenfalls Exceptions aus.
 
-~~~cpp
+```cpp
+auto filter = mrdb::WhereVector{};
+filter.Add("STATUS", "Geplant");
+filter.Add("NAME", mrdb::WhereOperator::Like, "Dach");
+auto const projects = mrdb::Select(tableName, filter);
+std::cout << projects.size() << '\n';
+```
+
+<a id="funktion-isvalidrecord"></a>
+
+#### isValidRecord(record)
+
+```cpp
 void isValidRecord(Record const & record);
-~~~
+```
 
-- **Zweck:** Prüft die strukturellen Mindestbedingungen eines Records; öffentlich deklariert, im Header als „Temporär“ kommentiert.
-- **Parameter:** `record` (`Record const &`, in): auch ein manuell konstruierter Record mit leerem `TablePtr` darf zur Prüfung übergeben werden. Referenz selbst nicht nullable.
-- **Rückgabe/Ownership:** `void`, **kein bool**; reguläre Rückkehr bedeutet bestandene Prüfung. Keine Ownership-Änderung.
-- **Vor-/Nachbedingungen:** Regel S. Prüft der Reihe nach: nicht leere Tabelle, nicht leerer Tabellenname (nicht vollständige Namensprüfung), mindestens eine Spalte, Zeilen-ID ungleich null, mindestens ein Wert, gleiche Anzahl von Spalten und Werten. Keine Zustandsänderung. Prüft weder persistente Existenz noch `ReadOnly`, Spaltennamen, Pflichtwerte oder Tabellen-ID.
-- **Fehler/Garantie:** `std::runtime_error` mit `"table not valid"`, `"table name not valid"`, `"table has no columns"`, `"recordID not valid"`, `"record has no values"` oder `"size of fields and columns not equal"`. Fehlerobjektkonstruktion kann zusätzlich allokieren. Stark hinsichtlich unverändertem Record (abgeleitet), kein `noexcept`.
-- **Nebenläufigkeit/Kosten:** Regel S; konstante Zahl von Zustands-/Größenprüfungen, keine Feldkopien oder I/O, temporäre Smartpointerkopien.
+Prüft, ob ein Record die grundlegenden Voraussetzungen für seine Verwendung erfüllt.
 
-~~~cpp
+- **Parameter:** `record`: zu prüfender Record; auch ein manuell erzeugter Record mit leerem `TablePtr` darf geprüft werden.
+- **Rückgabe:** Keiner und kein `bool`. Normale Rückkehr bedeutet: Tabelle vorhanden, Tabellenname nicht leer, mindestens eine Spalte, ID ungleich null, mindestens ein Wert und gleiche Anzahl von Werten und Spalten.
+- **Voraussetzungen:** Keine Initialisierung erforderlich. Die Prüfung bestätigt weder eine gespeicherte Zielzeile noch die Zulässigkeit der Feldwerte für einen Schreibaufruf.
+- **Fehler:** Eine verletzte Voraussetzung löst `std::runtime_error` aus.
+
+```cpp
 mrdb::isValidRecord(record);
-~~~
+std::cout << "Record kann weiterverwendet werden" << '\n';
+```
 
 <a id="record"></a>
 
-### Record
+### Record: Datensätze bearbeiten
 
-Keine Standardkonstruktion; nicht kopierbar, bewegbar, `final`. Die folgenden Member sind alle öffentlich. Regeln S und die [Lebensdauerregeln](#lifecycle) gelten ergänzend.
+`Record` ist ein nicht kopierbarer, bewegbarer Datensatz. Es gibt keinen Standardkonstruktor. Verwende zum Lesen normalerweise `SelectSingle`, `SelectAll` oder `Select`. Für eine zweite unabhängige Kopie gespeicherter Daten kannst du erneut lesen.
 
-#### Expliziter Konstruktor
+Nach dem Verschieben darf die Quelle zerstört oder mit einem gültigen Record neu belegt werden. Verwende ihre tabellenbezogenen Methoden erst wieder nach einer solchen Zuweisung. Beschaffe Iteratoren nach einer Verschiebung oder Ersetzung eines Records neu.
 
-~~~cpp
-Record(unsigned int _rowID, std::vector<std::string> const & _values, TablePtr _tablePtr);
-~~~
+<a id="record-konstruktor"></a>
 
-- **Zweck:** Erstellt einen Record aus ID, Wertliste und geteilter Tabelle.
-- **Parameter:** `_rowID` (`unsigned int`, in), beliebige darstellbare ID beim Konstruktor, für gültigen Record positiv; `_values` (Vektor const-Referenz, in), wird kopiert, in Spaltenreihenfolge; `_tablePtr` (`TablePtr`, in), wird per Wert kopiert und geteilt. `nullptr` ist beim Konstruktor akzeptiert, aber für tabellenbezogene Member ungeeignet. Gültiger Record benötigt eine benannte Tabelle mit Spalten, mindestens einen Wert und gleich viele Werte wie Spalten.
-- **Rückgabe/Ownership:** Konstruktor, Rückgabe nicht zutreffend. Record besitzt eigene Werte und einen mit weiteren Smartpointern geteilten Tabellenbesitz; Quelle darf nach Konstruktion wegfallen.
-- **Vor-/Nachbedingungen:** Keine Initialisierung nötig, keine automatische Validierung. Nach Erfolg übergebene ID/Werte und geteilter Tabellenzeiger. Ungültige Kombinationen werden erst von späteren Prüfungen erkannt oder führen bei ungeprüftem Zugriff zu undefiniertem Verhalten.
-- **Fehler/Garantie:** Wert-/Stringkopien können werfen. Kein vollständig konstruiertes Objekt bei Fehler, Eingaben unverändert (stark, abgeleitet).
-- **Nebenläufigkeit/Kosten:** Regel S; Wertkopien proportional zur Datenmenge, mögliche Heap-Allokationen; keine Dateien. Übergabe eines temporären Vektors oder `std::move` vermeidet diese Kopie nicht, weil der Parameter eine const-Referenz ist.
+#### Record::Record(unsigned int rowID, std::vector<std::string> const & values, TablePtr tablePtr)
 
-~~~cpp
-auto description = std::make_shared<mrdb::Table>(table);
-auto values = std::vector<std::string>{"Messschieber", "Werkstatt"};
-auto local = mrdb::Record{recordId, values, description};
-mrdb::isValidRecord(local);
-~~~
+```cpp
+Record(unsigned int rowID, std::vector<std::string> const & values, TablePtr tablePtr);
+```
 
-#### Destruktor
+Erzeugt einen lokalen Record aus einer ID, einer Wertliste und einer Tabellenbeschreibung.
 
-~~~cpp
+- **Parameter:** `rowID`: für einen gültigen Record positive Zeilen-ID. `values`: Texte in Spaltenreihenfolge, mit genau einem Wert je Spalte. `tablePtr`: geteilter Besitzer einer Tabelle mit Namen und Spalten. Der Konstruktor akzeptiert `nullptr`; vor tabellenbezogenen Zugriffen muss jedoch eine gültige Beschreibung vorhanden sein. `isValidRecord` kann einen Record mit leerem Zeiger prüfen.
+- **Rückgabe:** Kein Rückgabewert (Konstruktor). Der Record besitzt eigene Wertkopien und teilt die Tabellenbeschreibung.
+- **Voraussetzungen:** Keine Initialisierung nötig. Der Konstruktor prüft die Eingaben nicht und speichert keine Zeile. Für tabellenbezogene Methoden muss die Beschreibung gültig sein und zu den Werten passen.
+
+```cpp
+auto table = std::make_shared<mrdb::Table>();
+table->Name = "PROJEKTE";
+table->Columns = {{"01", "NAME", false}, {"02", "STATUS", true}};
+auto const values = std::vector<std::string>{"Werkstattumbau", "Geplant"};
+auto localRecord = mrdb::Record{1, values, table};
+mrdb::isValidRecord(localRecord);
+```
+
+<a id="record-destruktor"></a>
+
+#### Record::~Record()
+
+```cpp
 ~Record() = default;
-~~~
+```
 
-- **Zweck:** Zerstört die eigenen Werte und gibt den geteilten Tabellenbesitz frei.
-- **Parameter/Rückgabe:** Nicht zutreffend; kein Ergebnisbesitz.
-- **Vor-/Nachbedingungen:** Lebendes Objekt, keine gleichzeitige Verwendung. Danach alle darauf bezogenen Wertiteratoren/Referenzen ungültig. Andere Smartpointer halten die Tabelle weiter am Leben. Kein Speichern von `SetValue`-Änderungen und kein Löschen einer Datenbankzeile.
-- **Fehler/Garantie:** Keine explizite `noexcept`-Schreibweise. No-Throw-Destruktion aus den Default-Standardmembern abgeleitet; kein eigener Fehlerpfad.
-- **Nebenläufigkeit/Kosten:** Regel S; Freigabe der Werte, gegebenenfalls zuletzt auch der Tabellenbeschreibung; keine I/O.
+Gibt die lokalen Werte und den eigenen Anteil am Tabellenbesitz automatisch frei.
 
-~~~cpp
+- **Parameter:** Keine.
+- **Rückgabe:** Keiner. Die gespeicherte Zeile bleibt bestehen; lokale Änderungen werden nicht gespeichert.
+- **Voraussetzungen:** Ein lebender Record; nach seiner Zerstörung dürfen seine Wertiteratoren nicht weiterverwendet werden.
+
+```cpp
 {
-    auto local = mrdb::SelectSingle(tablename, recordId);
-    std::cout << local.GetRowID() << '\n';
-} // Automatische Destruktion, Datenbankzeile bleibt bestehen.
-~~~
+    auto project = mrdb::SelectSingle(tableName, recordId);
+    std::cout << project.GetValue("NAME") << '\n';
+} // Der Destruktor wird automatisch aufgerufen.
+```
 
-#### Move-Konstruktor
+<a id="record-move-konstruktor"></a>
 
-~~~cpp
-Record(Record &&) = default;
-~~~
+#### Record::Record(Record&&)
 
-- **Zweck:** Überträgt Werte und Tabellenbesitz in ein neues Objekt; ID wird als skalarer Member übernommen.
-- **Parameter:** `Record &&` (in/out, Quelle), gültiger Record als Rvalue; keine Kopie. Keine Nullable-Frage bei der Referenz.
-- **Rückgabe/Ownership:** Konstruktor, nicht zutreffend; Ziel besitzt die übertragenen Werte/Smartpointer.
-- **Vor-/Nachbedingungen:** Regel S. Nach Erfolg Ziel mit vorherigem Inhalt der Quelle; Quelle ist zerstör-/zuweisbar, ihr tabellenbezogener Zugriff ist ohne neue gültige Zuweisung ungeeignet. Iteratoren vor einem Move für die Beispiele neu beschaffen; keine zusätzliche mrdb-Lebensdauergarantie.
-- **Fehler/Garantie:** Nicht ausdrücklich `noexcept` geschrieben. No-Throw-Verhalten dieser defaulteten Member-Moves (Standardallocator) abgeleitet, nicht durch eine zusätzliche Bibliothekszusage.
-- **Nebenläufigkeit/Kosten:** Regel S; Übernahme von Vektorspeicher/Smartpointer, keine Kopie aller Strings, keine I/O.
+```cpp
+Record(Record && source) = default;
+```
 
-~~~cpp
-auto source = mrdb::SelectSingle(tablename, recordId);
+Überträgt einen Record in ein neues Objekt.
+
+- **Parameter:** `source`: zu verschiebender Record, beispielsweise mit `std::move` übergeben.
+- **Rückgabe:** Kein Rückgabewert (Konstruktor). Das Ziel enthält die übertragenen Werte und Tabellenbeschreibung.
+- **Voraussetzungen:** Keine Datenbankinitialisierung für die Verschiebung. Die Quelle anschließend nur zerstören oder neu zuweisen.
+
+```cpp
+auto source = mrdb::SelectSingle(tableName, recordId);
 auto destination = mrdb::Record{std::move(source)};
 std::cout << destination.GetRowID() << '\n';
-~~~
+```
 
-#### Move-Zuweisung
+<a id="record-move-zuweisung"></a>
 
-~~~cpp
-Record & operator=(Record &&) = default;
-~~~
+#### Record::operator=(Record&&)
 
-- **Zweck:** Ersetzt den Inhalt eines vorhandenen Records durch den Inhalt eines Rvalue-Records.
-- **Parameter:** `Record &&` (in/out, Quelle), gültiges Objekt; Ziel ist ebenfalls `in/out`.
-- **Rückgabe/Ownership:** `Record &` auf das Ziel, nicht nullable, gültig bis zu dessen Zerstörung; geliehene Referenz, keine Freigabe. Der Zielinhalt wird ersetzt, geteilter Besitz übertragen.
-- **Vor-/Nachbedingungen:** Regel S. Nach Erfolg Ziel enthält übertragene Daten; frühere Zieliteratoren nicht weiterverwenden. Quelle besitzt keinen zugesagten nutzbaren Tabellenzustand. Selbst-Move gibt keine Zusage zum Erhalt des Inhalts.
-- **Fehler/Garantie:** Kein ausdrücklich geschriebenes `noexcept`; No-Throw-Verhalten der defaulteten Member-Moves mit Standardallocator abgeleitet.
-- **Nebenläufigkeit/Kosten:** Regel S; Freigabe bisherigen Zielinhalts und Übernahme der Quelle, keine neue Kopie ihrer Feldstrings, keine I/O.
+```cpp
+auto operator=(Record && source) -> Record & = default;
+```
 
-~~~cpp
-auto target = mrdb::SelectSingle(tablename, recordId);
-auto source = mrdb::SelectSingle(tablename, recordId);
+Ersetzt einen vorhandenen Record durch einen anderen mittels Verschiebung.
+
+- **Parameter:** `source`: ein anderer zu verschiebender Record. Der bisherige Zielinhalt wird ersetzt.
+- **Rückgabe:** Referenz auf das Zielobjekt, gültig bis zu dessen Zerstörung.
+- **Voraussetzungen:** Lebende Quell- und Zielobjekte; die Quelle anschließend nur zerstören oder neu zuweisen. Alte Zieliteratoren nicht weiterverwenden.
+
+```cpp
+auto target = mrdb::SelectSingle(tableName, recordId);
+auto source = mrdb::SelectSingle(tableName, recordId);
 auto & assigned = (target = std::move(source));
 std::cout << assigned.GetRowID() << '\n';
-~~~
+```
 
-#### Gelöschte Kopieroperationen
+<a id="record-getrowid"></a>
 
-~~~cpp
-Record(Record const &) = delete;
-Record & operator=(Record const &) = delete;
-~~~
+#### Record::GetRowID()
 
-**Zweck:** Verbietet Kopierkonstruktion und Kopierzuweisung. Parameter wäre jeweils `Record const &` (in), bei Zuweisung wäre das Ziel `in/out`; tatsächlich ist kein Aufruf zulässig. Rückgabe, Ownership, Vor-/Nachbedingungen eines erfolgreichen Aufrufs, Laufzeitfehler, Exception Safety und Nebenläufigkeit: nicht zutreffend, weil die Verwendung schon bei der Kompilierung scheitert. Eine alternative Kopierfunktion wird nicht bereitgestellt. Für eine unabhängige Zeile erneut `SelectSingle` verwenden oder bewusst den expliziten Konstruktor nutzen.
-
-~~~cpp
-static_assert(!std::is_copy_constructible_v<mrdb::Record>);
-static_assert(!std::is_copy_assignable_v<mrdb::Record>);
-// mrdb::Record copy{record}; // Unzulässig: gelöschter Kopierkonstruktor.
-// record = copy;            // Unzulässig: gelöschte Kopierzuweisung.
-~~~
-
-#### GetRowID
-
-~~~cpp
+```cpp
 auto GetRowID() const -> unsigned int;
-~~~
+```
 
-- **Zweck:** Liefert die gespeicherte Zeilen-ID.
-- **Parameter:** Nicht zutreffend.
-- **Rückgabe/Ownership:** `unsigned int`, skalarer Wert, einschließlich null bei entsprechend manuell konstruiertem Record; kein Speicherbesitz/Lebensdauerproblem.
-- **Vor-/Nachbedingungen:** Lebender Record; Tabelle darf leer sein. Keine Änderung.
-- **Fehler/Garantie:** Kein eigener Fehlerpfad, No-Throw-Verhalten des Körpers abgeleitet; kein deklariertes `noexcept`.
-- **Nebenläufigkeit/Kosten:** Regel S; `O(1)`, keine Allokation/I/O.
+Liefert die Zeilen-ID des Records.
 
-~~~cpp
+- **Parameter:** Keine.
+- **Rückgabe:** Die numerische ID; sie ist unabhängig von einer benannten Spalte `ID`. Bei manuell erzeugten Records kann sie null sein.
+- **Voraussetzungen:** Lebender Record. Keine Initialisierung oder Tabellenbeschreibung nötig.
+
+```cpp
 auto const id = record.GetRowID();
 std::cout << id << '\n';
-~~~
+```
 
-#### GetRowIDAsString
+<a id="record-getrowidasstring"></a>
 
-~~~cpp
+#### Record::GetRowIDAsString()
+
+```cpp
 auto GetRowIDAsString() const -> std::string;
-~~~
+```
 
-- **Zweck:** Formatiert die Zeilen-ID mit `std::to_string`.
-- **Parameter:** Nicht zutreffend.
-- **Rückgabe/Ownership:** Eigener `std::string` mit dezimaler ID, nicht nullable, unabhängig von der Record-Lebensdauer.
-- **Vor-/Nachbedingungen:** Lebender Record; keine Tabelle nötig. Keine Änderung.
-- **Fehler/Garantie:** Stringerzeugung kann allokieren/werfen; stark hinsichtlich Record (abgeleitet).
-- **Nebenläufigkeit/Kosten:** Regel S; Formatierung und mögliche Stringallokation, keine I/O.
+Liefert die Zeilen-ID als Text.
 
-~~~cpp
+- **Parameter:** Keine.
+- **Rückgabe:** Eigener String mit der dezimalen ID.
+- **Voraussetzungen:** Lebender Record; keine Tabellenbeschreibung nötig.
+
+```cpp
 auto const idText = record.GetRowIDAsString();
 std::cout << idText << '\n';
-~~~
+```
 
-#### GetValue mit Index
+<a id="record-getvalue-index"></a>
 
-~~~cpp
+#### Record::GetValue(int index) const
+
+```cpp
 auto GetValue(int index) const -> std::string;
-~~~
+```
 
-- **Zweck:** Kopiert den Wert an einer Position der eigenen Wertliste.
-- **Parameter:** `index` (`int`, in), `0 <= index < GetValueSize()`, zusätzlich durch `int` darstellbar. Negativ oder zu groß wird abgewiesen.
-- **Rückgabe/Ownership:** Eigener `std::string`, auch leer zulässig; keine View, kein nullable Zeiger.
-- **Vor-/Nachbedingungen:** Lebender Record, keine Tabelle nötig. Keine Änderung bei Erfolg/Fehler.
-- **Fehler/Garantie:** `std::out_of_range("Index out of range")` für unzulässigen Index, Stringkopie kann werfen. Stark hinsichtlich Record (abgeleitet).
-- **Nebenläufigkeit/Kosten:** Regel S; `O(1)` Positionszugriff plus längenabhängige Stringkopie und mögliche Allokation, keine I/O.
+Liest einen Feldwert anhand seiner Position.
 
-~~~cpp
-auto const firstValue = record.GetValue(0);
-std::cout << firstValue << '\n';
-~~~
+- **Parameter:** `index`: ab null gezählte Position, kleiner als `GetValueSize()` und als `int` darstellbar.
+- **Rückgabe:** Eigene Kopie des Feldtexts, auch leer möglich; sie bleibt unabhängig vom Record gültig.
+- **Voraussetzungen:** Lebender Record mit einem Wert an dieser Position. Die Position entspricht der Spaltenreihenfolge des Records.
+- **Fehler:** Ein negativer oder zu großer Index löst `std::out_of_range` aus.
 
-#### GetValue mit Spaltenname
+```cpp
+if (record.GetValueSize() > 0) {
+    std::cout << record.GetValue(0) << '\n';
+}
+```
 
-~~~cpp
+<a id="record-getvalue-name"></a>
+
+#### Record::GetValue(std::string const & columnName) const
+
+```cpp
 auto GetValue(std::string const & columnName) const -> std::string;
-~~~
+```
 
-- **Zweck:** Sucht einen Spaltennamen in der geteilten Beschreibung und kopiert den zugeordneten Wert.
-- **Parameter:** `columnName` (`std::string const &`, in), exakt mit `Column::Name` übereinstimmend; keine Großschreibungsnormalisierung.
-- **Rückgabe/Ownership:** Eigene Stringkopie, leer zulässig, kein geliehener Speicher.
-- **Vor-/Nachbedingungen:** Nicht leeres `GetTable()`; vorhandene Spalte mit gültiger Wertposition, Positionsberechnung muss in `int` passen. Keine Änderung. Leere Tabelle wird vor Dereferenzierung nicht geprüft: ungeeigneter Record kann undefiniertes Verhalten auslösen.
-- **Fehler/Garantie:** Unbekannter Name: `std::invalid_argument("Column not found")`; unpassende Wertposition: `std::out_of_range("Index out of range")`; Allokationsfehler möglich. Bei erfüllten Vorbedingungen stark hinsichtlich Record (abgeleitet), keine Garantie für ungültigen Tabellenzeiger.
-- **Nebenläufigkeit/Kosten:** Regel S; lineare Spaltensuche, Stringvergleiche und Wertkopie/Allokation, keine I/O.
+Liest einen Feldwert anhand des Spaltennamens.
 
-~~~cpp
+- **Parameter:** `columnName`: exakter vorhandener Name, beispielsweise `"NAME"`.
+- **Rückgabe:** Eigene Kopie des Textwerts, auch leer möglich; unabhängig von der Lebensdauer des Records.
+- **Voraussetzungen:** Gültige, nicht leere Tabellenbeschreibung mit passender Wertliste. Keine Datenbankinitialisierung für den lokalen Zugriff nötig.
+- **Fehler:** Unbekannter Name: `std::invalid_argument`; fehlende Wertposition: `std::out_of_range`. Ein leerer Tabellenzeiger ist keine zulässige Eingabe für diese Methode.
+
+```cpp
 auto const name = record.GetValue("NAME");
 std::cout << name << '\n';
-~~~
+```
 
-#### GetTable
+<a id="record-gettable"></a>
 
-~~~cpp
+#### Record::GetTable()
+
+```cpp
 auto GetTable() const -> TablePtr;
-~~~
+```
 
-- **Zweck:** Liefert den geteilten Zugriff auf die Tabellenbeschreibung des Records.
-- **Parameter:** Nicht zutreffend.
-- **Rückgabe/Ownership:** `TablePtr` als Smartpointerkopie; nullable bei manuell leer konstruiertem/verschobenem Record. Geteilter Besitzer; Tabelle lebt bis zum letzten Besitzer. Kein `delete`. Die Tabelle ist durch diesen Pointer veränderbar, auch bei `Record const`.
-- **Vor-/Nachbedingungen:** Lebender Record; keine Initialisierung oder nicht leere Tabelle nötig. Record unverändert, temporär weiterer geteilter Besitzer. Keine Aktualisierung aus der Datenbasis.
-- **Fehler/Garantie:** Kopie des Standard-`shared_ptr` erzeugt keinen eigenen Kontrollblock; No-Throw-Verhalten abgeleitet, kein deklariertes `noexcept`.
-- **Nebenläufigkeit/Kosten:** Regel S; `O(1)` Smartpointerkopie/Referenzzählung, keine Heap-Allokation für eine neue Tabelle oder I/O. Referenzzählung macht die veränderbare Tabelle nicht thread-sicher.
+Gibt Zugriff auf die Tabellenbeschreibung des Records.
 
-~~~cpp
-auto description = record.GetTable();
-if (description) {
-    std::cout << description->Name << '\n';
+- **Parameter:** Keine.
+- **Rückgabe:** Kopie des `std::shared_ptr<Table>`. Die Tabelle bleibt gültig, solange ein Besitzer existiert. Bei manuell erzeugten oder verschobenen Records kann der Zeiger leer sein; gelesene Records besitzen eine Beschreibung.
+- **Voraussetzungen:** Lebender Record. Spalten der Beschreibung nicht verändern oder umordnen, da sonst die Wertzuordnung nicht mehr passt.
+
+```cpp
+auto table = record.GetTable();
+if (table) {
+    std::cout << table->Name << '\n';
 }
-~~~
+```
 
-#### GetValueSize
+<a id="record-getvaluesize"></a>
 
-~~~cpp
-auto GetValueSize() const -> size_t;
-~~~
+#### Record::GetValueSize()
 
-- **Zweck:** Liefert die Anzahl eigener Feldwerte.
-- **Parameter:** Nicht zutreffend.
-- **Rückgabe/Ownership:** `size_t`, skalar, null bei leerer Wertliste; kein Besitz/Lebensdauerproblem.
-- **Vor-/Nachbedingungen:** Lebender Record, keine Tabelle nötig. Keine Änderung.
-- **Fehler/Garantie:** Kein Fehlerpfad; No-Throw-Verhalten des Körpers abgeleitet, kein deklariertes `noexcept`.
-- **Nebenläufigkeit/Kosten:** Regel S; `O(1)`, keine Allokation/I/O.
+```cpp
+auto GetValueSize() const -> std::size_t;
+```
 
-~~~cpp
+Liefert die Anzahl der Feldwerte.
+
+- **Parameter:** Keine.
+- **Rückgabe:** Anzahl als Wert; null bei leerer Wertliste.
+- **Voraussetzungen:** Lebender Record; keine Tabellenbeschreibung nötig.
+
+```cpp
 auto const count = record.GetValueSize();
 std::cout << count << '\n';
-~~~
+```
 
-#### GetValuesAsMap
+<a id="record-getvaluesasmap"></a>
 
-~~~cpp
+#### Record::GetValuesAsMap()
+
+```cpp
 auto GetValuesAsMap() const -> std::map<std::string, std::string>;
-~~~
+```
 
-- **Zweck:** Erstellt eine Zuordnung von Spaltennamen zu Feldwerten.
-- **Parameter:** Nicht zutreffend.
-- **Rückgabe/Ownership:** Eigene Map mit eigenen Stringkopien, unabhängig vom Record; Reihenfolge nach dem Standard-Map-Schlüsselvergleich. Keine nullable Rückgabe.
-- **Vor-/Nachbedingungen:** Nicht leere Tabelle; für jede Spalte muss ein Wert existieren. Konsistenz am besten vorher durch `isValidRecord` prüfen. Keine Änderung. Zu wenige Werte oder leerer Tabellenzeiger: ungeprüfter Zugriff kann undefiniertes Verhalten auslösen. Zusätzliche Werte ohne Spalte werden ignoriert, doppelte manuell erzeugte Spaltennamen überschreiben einen Map-Eintrag.
-- **Fehler/Garantie:** Map-/Stringallokationen können werfen, keine eigene Validierungs-Exception. Bei erfüllten Vorbedingungen stark hinsichtlich Record (abgeleitet).
-- **Nebenläufigkeit/Kosten:** Regel S; `O(c log c)` Map-Vergleiche bei `c` Spalten plus Textkopien, Map-Knoten und mögliche Stringallokationen; keine I/O.
+Erstellt eine Zuordnung von Spaltennamen zu Feldwerten.
 
-~~~cpp
+- **Parameter:** Keine.
+- **Rückgabe:** Eigene Map mit kopierten Namen und Werten, unabhängig vom Record. Die Map ordnet ihre Einträge nach Schlüsseln.
+- **Voraussetzungen:** Nicht leere Tabellenbeschreibung und passende Anzahl von Werten. Bei selbst erzeugten Records zuerst `isValidRecord` aufrufen.
+
+```cpp
 mrdb::isValidRecord(record);
 auto const values = record.GetValuesAsMap();
 std::cout << values.at("NAME") << '\n';
-~~~
+```
 
-#### GetValuesAsKeyValues
+<a id="record-getvaluesaskeyvalues"></a>
 
-~~~cpp
+#### Record::GetValuesAsKeyValues()
+
+```cpp
 auto GetValuesAsKeyValues() const -> KeyValues;
-~~~
+```
 
-- **Zweck:** Erstellt eine Liste von Spaltenname/Wert-Paaren in der Reihenfolge der Tabellenbeschreibung.
-- **Parameter:** Nicht zutreffend.
-- **Rückgabe/Ownership:** Eigener `KeyValues`-Vektor mit eigenen Stringkopien; unabhängig vom Record, nicht nullable.
-- **Vor-/Nachbedingungen:** Nicht leere Tabelle und mindestens so viele Werte wie Spalten; `isValidRecord` prüft strenger auf Gleichheit. Keine Änderung. Fehlende Werte führen zu ungeprüftem Iteratordereferenzieren; leerer Tabellenzeiger zu ungeprüftem Pointerzugriff. Zusätzliche Werte werden ignoriert, doppelte Namen bleiben als separate Paare erhalten.
-- **Fehler/Garantie:** Vektor-/Stringallokationen können werfen, keine eigene Konsistenzprüfung. Bei erfüllten Vorbedingungen stark hinsichtlich Record (abgeleitet).
-- **Nebenläufigkeit/Kosten:** Regel S; `O(c)` Paarerzeugung plus Textkopien, Vektor reserviert für alle Spalten, Stringallokationen möglich; keine I/O.
+Erstellt eine Liste aus Spaltenname/Wert-Paaren.
 
-~~~cpp
+- **Parameter:** Keine.
+- **Rückgabe:** Eigener `KeyValues`-Vektor mit kopierten Texten in der Spaltenreihenfolge des Records; unabhängig von dessen Lebensdauer.
+- **Voraussetzungen:** Nicht leere Tabellenbeschreibung und passende Anzahl von Werten. Bei selbst erzeugten Records zuerst `isValidRecord` aufrufen.
+
+```cpp
 mrdb::isValidRecord(record);
 auto const pairs = record.GetValuesAsKeyValues();
 for (auto const & pair : pairs) {
     std::cout << pair.Key << ": " << pair.Value << '\n';
 }
-~~~
+```
 
-#### SetValue
+<a id="record-setvalue"></a>
 
-~~~cpp
-void SetValue(std::string const & columnName,std::string const & value);
-~~~
+#### Record::SetValue(columnName, value)
 
-- **Zweck:** Ändert einen Feldwert im Record-Speicher; speichert ihn nicht in die Datenbasis.
-- **Parameter:** `columnName` (`std::string const &`, in), exakter vorhandener Name; `value` (`std::string const &`, in), beliebiger String einschließlich leer. Record ist `in/out`. Hier keine Prüfung von `Nullable` oder `ReadOnly`.
-- **Rückgabe/Ownership:** `void`, nicht zutreffend; Wert wird in den eigenen String kopiert, Eingabe nicht gehalten.
-- **Vor-/Nachbedingungen:** Nicht leere Tabellenbeschreibung, vorhandene Wertposition, Index in `int` darstellbar. Nach Erfolg lokaler Wert ersetzt, gespeicherte Dateien unverändert. Wertvektor wird nicht vergrößert; dessen konstante Elementiteratoren bleiben für diesen Aufruf gültig, Zeiger/Views in den geänderten Stringinhalt können ungültig werden.
-- **Fehler/Garantie:** Unbekannte Spalte: `std::invalid_argument("Column not found")`; fehlende Position: `std::out_of_range("Index out of range")`; Stringzuweisung kann werfen. Starke Garantie der Stringzuweisung für den Record (abgeleitet, gültige Vorbedingungen). Leerer Tabellenzeiger ungeprüft, kein garantierter Fehlerpfad dafür.
-- **Nebenläufigkeit/Kosten:** Regel S; lineare Spaltensuche, Textzuweisung mit möglicher Allokation, keine I/O. Gleichzeitiger Zugriff auf denselben Wert muss ausgeschlossen werden.
+```cpp
+void SetValue(std::string const & columnName, std::string const & value);
+```
 
-~~~cpp
-record.SetValue("ORT", "Lager");
-std::cout << record.GetValue("ORT") << '\n';
-mrdb::Update(record); // Erst dieser gesonderte Aufruf persistiert.
-~~~
+Ändert einen Feldwert im lokalen Record. Zum Speichern anschließend `Update(record)` verwenden.
 
-#### begin und end
+- **Parameter:** `columnName`: exakter vorhandener Spaltenname. `value`: neuer Text, auch leer möglich. Die Zulässigkeit eines Pflichtwerts und der Schreibschutz werden erst beim Speichern geprüft.
+- **Rückgabe:** Keiner. Der neue Text wird kopiert; die gespeicherte Zeile bleibt bis zu `Update` unverändert.
+- **Voraussetzungen:** Nicht leere Tabellenbeschreibung und vorhandene Wertposition.
+- **Fehler:** Unbekannter Name: `std::invalid_argument`; fehlende Wertposition: `std::out_of_range`. Ein leerer Tabellenzeiger ist keine zulässige Eingabe für diese Methode.
 
-~~~cpp
-auto begin() const;
-auto end() const;
-~~~
+```cpp
+record.SetValue("STATUS", "Abgeschlossen");
+std::cout << record.GetValue("STATUS") << '\n';
+mrdb::Update(record);
+```
 
-- **Zweck:** `begin()` liefert den Anfang der eigenen Werte, `end()` den End-Sentinel. Auch auf einem nicht konstanten Record nur konstante Iteration.
-- **Parameter:** Jeweils nicht zutreffend.
-- **Rückgabe/Ownership:** Deduziert jeweils `std::vector<std::string>::const_iterator`; geliehen, nicht nullable als Pointerkonzept. `end()` nie dereferenzieren; bei leerer Liste sind beide gleich. Keine Speicherfreigabe durch den Aufrufer.
-- **Vor-/Nachbedingungen:** Lebender Record, keine Tabelle nötig. Keine Änderung. Iteration gültig bis zu Zerstörung/Ersetzung des zugrunde liegenden Vektors; bei Move-/Zuweisungsoperationen die Vektorregeln beachten und für weiterführende Nutzung neu beschaffen. `SetValue` verändert keine Vektorgröße; Iteratoren bleiben dabei bestehen, der beobachtete Text kann wechseln.
-- **Fehler/Garantie:** Kein eigener Fehlerpfad; No-Throw-Verhalten der Vektorzugriffe abgeleitet, kein deklariertes `noexcept`.
-- **Nebenläufigkeit/Kosten:** Regel S; je `O(1)`, keine Allokation/I/O; gleichzeitige Wertänderung nicht ungesichert lesen.
+<a id="record-begin"></a>
 
-~~~cpp
+#### Record::begin()
+
+```cpp
+auto begin() const -> std::vector<std::string>::const_iterator;
+```
+
+Liefert den Anfang der schreibgeschützten Wertiteration.
+
+- **Parameter:** Keine.
+- **Rückgabe:** Konstanter Iterator auf den ersten Wert; bei leerer Liste gleich `end()`. Er besitzt die Werte nicht.
+- **Voraussetzungen:** Lebender Record. Nur dereferenzieren, wenn ungleich `end()`. Iteratoren nach Zerstörung oder Ersetzung des Records nicht verwenden.
+
+```cpp
 auto const first = record.begin();
-auto const last = record.end();
-for (auto it = first; it != last; ++it) {
+if (first != record.end()) {
+    std::cout << *first << '\n';
+}
+```
+
+<a id="record-end"></a>
+
+#### Record::end()
+
+```cpp
+auto end() const -> std::vector<std::string>::const_iterator;
+```
+
+Liefert das Ende der schreibgeschützten Wertiteration.
+
+- **Parameter:** Keine.
+- **Rückgabe:** Konstanter Iterator hinter dem letzten Wert; niemals dereferenzieren. Bei leerer Liste gleich `begin()`.
+- **Voraussetzungen:** Lebender Record. Iteratoren nach Zerstörung oder Ersetzung des Records nicht verwenden. Die Iteration folgt der Spaltenreihenfolge.
+
+```cpp
+for (auto it = record.begin(); it != record.end(); ++it) {
     std::cout << *it << '\n';
 }
-~~~
+```
 
 <a id="filter"></a>
 
-### Filtertypen aus wherevector.h
+### Filter und WhereVector
 
-Diese Typen sind Teil der von `Select` verwendeten öffentlichen Schnittstelle, obwohl ihre Definitionen im eingebundenen Header stehen. Private Prüfmethoden und der private Bedingungsvektor sind keine API-Einträge.
+Die folgenden Typen stehen durch `mrdb.h` zur Verfügung; ein zusätzlicher Include im Anwenderprogramm ist nicht erforderlich.
+
+<a id="typ-whereoperator"></a>
 
 #### WhereOperator
 
-~~~cpp
+```cpp
 enum class WhereOperator
 {
     Equal,
     NonEqual,
     Like
 };
-~~~
+```
 
-| Enumerator | Bedeutung bei `Select` |
+| Wert | Bedeutung bei `Select` |
 | --- | --- |
-| `Equal` | Feldwert und Filterwert sind exakt gleich. |
-| `NonEqual` | Feldwert und Filterwert sind exakt ungleich. |
-| `Like` | Nicht leerer Filterwert ist Teilstring eines nicht leeren Feldwerts. Groß-/Kleinschreibung wird unterschieden. |
+| `Equal` | Feldtext und Suchtext sind exakt gleich. |
+| `NonEqual` | Feldtext und Suchtext sind ungleich. |
+| `Like` | Ein nicht leerer Suchtext ist Teil eines nicht leeren Feldtexts. |
 
-Keine weiteren öffentlichen Vergleichsoperatoren. Enumwerte sind keine Fehlercodes. Ein künstlich erzeugter anderer Wert wird von `Add` derzeit nicht validiert und von der aktuellen Auswahl als nicht erfüllt behandelt; keine zugesicherte Erweiterungssemantik.
+Alle Vergleiche beachten Groß-/Kleinschreibung. `Like` verwendet keine SQL-Platzhalter und keine regulären Ausdrücke.
 
-~~~cpp
-auto const operation = mrdb::WhereOperator::NonEqual;
-auto where = mrdb::WhereVector{};
-where.Add("ORT", operation, "Lager");
-~~~
+```cpp
+auto filter = mrdb::WhereVector{};
+filter.Add("STATUS", mrdb::WhereOperator::NonEqual, "Abgeschlossen");
+```
 
-#### WhereItem und operator==
+<a id="typ-whereitem"></a>
 
-~~~cpp
+#### WhereItem
+
+```cpp
 struct WhereItem
 {
     std::string Fieldname;
@@ -948,350 +1051,291 @@ struct WhereItem
 
     auto operator==(WhereItem const & rhs) const -> bool;
 };
-~~~
+```
 
-`WhereItem` ist ein öffentliches Aggregat: Defaultinitialisierung ergibt leere Strings und `Equal`. Feldname/Operator/Wert sind öffentliche `in/out`-Felder am eigenen Objekt. Es ist implizit kopier-/bewegbar; Strings gehören dem Wert. Konstruktion/Zuweisung prüfen weder Spaltenexistenz noch Enumwert; keine Dateizugriffe. Für implizite Lebenszyklusoperationen gelten die oben erläuterten Standardmemberregeln wie bei `Column`; keine zusätzlich selbstdeklarierte Lifecycle-Signatur im Header.
+Beschreibt eine Bedingung durch exakten Spaltennamen, Vergleichsoperator und Suchtext. Die Standardinitialisierung ergibt leere Strings und `Equal`. Verwende `WhereVector::Add`, um Bedingungen für `Select` zusammenzustellen; ein `WhereItem` allein wird nicht an `Select` übergeben.
 
-- **Zweck des Operators:** Vergleicht **nur `Fieldname` und `Operator`**, nicht `Value`. Diese Gleichheit wird für die Duplikatprüfung in `WhereVector::Add` benutzt.
-- **Parameter:** `rhs` (`WhereItem const &`, in), beliebiger gültiger WhereItem; exakter Stringvergleich des Feldnamens.
-- **Rückgabe/Ownership:** `bool`; `true` bei gleichen Namen und Operatoren, selbst bei unterschiedlichen Werten. Kein Besitz-/Lebensdauerproblem.
-- **Vor-/Nachbedingungen:** Regel S; keine Datenbank erforderlich, keine Zustandsänderung.
-- **Fehler/Garantie:** Kein eigener Fehlerpfad, keine Allokation für den Vergleich; No-Throw-Verhalten der verwendeten Vergleiche abgeleitet, kein deklariertes `noexcept`.
-- **Nebenläufigkeit/Kosten:** Regel S; Stringvergleich bis zur Namenslänge und Enumvergleich, keine I/O.
+```cpp
+auto const condition = mrdb::WhereItem{"STATUS", mrdb::WhereOperator::Equal, "Geplant"};
+std::cout << condition.Fieldname << ": " << condition.Value << '\n';
+```
 
-~~~cpp
-auto const left = mrdb::WhereItem{"ORT", mrdb::WhereOperator::Equal, "Werkstatt"};
-auto const right = mrdb::WhereItem{"ORT", mrdb::WhereOperator::Equal, "Lager"};
-auto const sameConditionKey = (left == right); // true, trotz anderer Value.
-std::cout << sameConditionKey << '\n';
-~~~
+<a id="whereitem-gleichheit"></a>
 
-#### WhereVector: Konstruktor und Destruktor
+#### WhereItem::operator==(rhs)
 
-~~~cpp
+```cpp
+auto operator==(WhereItem const & rhs) const -> bool;
+```
+
+Vergleicht den Bedingungsschlüssel aus Feldname und Operator. Der Suchwert wird nicht verglichen.
+
+- **Parameter:** `rhs`: andere Bedingung.
+- **Rückgabe:** `true` bei gleichem `Fieldname` und gleichem `Operator`, auch wenn die Werte unterschiedlich sind; sonst `false`.
+- **Voraussetzungen:** Zwei gültige `WhereItem`-Werte; keine Initialisierung nötig.
+
+```cpp
+auto const left = mrdb::WhereItem{"STATUS", mrdb::WhereOperator::Equal, "Geplant"};
+auto const right = mrdb::WhereItem{"STATUS", mrdb::WhereOperator::Equal, "In Arbeit"};
+std::cout << (left == right) << '\n'; // true: Value wird nicht verglichen.
+```
+
+<a id="typ-wherevector"></a>
+
+#### WhereVector
+
+`WhereVector` sammelt Filterbedingungen für `Select`. Die Sammlung ist weder kopierbar noch bewegbar: Erzeuge sie am Verwendungsort, ergänze sie mit `Add` und übergib sie als Referenz an `Select`. Alle Bedingungen werden mit UND verknüpft. Eine leere Sammlung wählt alle Zeilen aus.
+
+<a id="wherevector-konstruktor"></a>
+
+#### WhereVector::WhereVector()
+
+```cpp
 WhereVector() = default;
+```
+
+Erzeugt eine leere Filtersammlung.
+
+- **Parameter:** Keine.
+- **Rückgabe:** Kein Rückgabewert (Konstruktor). Anfang und Ende sind zunächst gleich.
+- **Voraussetzungen:** Keine Initialisierung nötig.
+
+```cpp
+auto filter = mrdb::WhereVector{};
+std::cout << (filter.begin() == filter.end()) << '\n'; // true
+```
+
+<a id="wherevector-destruktor"></a>
+
+#### WhereVector::~WhereVector()
+
+```cpp
 ~WhereVector() = default;
-~~~
+```
 
-- **Zweck:** Konstruktor erzeugt eine leere Sammlung; Destruktor gibt deren Strings und Vektorspeicher frei.
-- **Parameter/Rückgabe:** Jeweils nicht zutreffend; Konstruktion/Destruktion liefern kein Ergebnis.
-- **Ownership:** WhereVector besitzt seine Bedingungen selbst. Kein Dateizugriff oder Speichern beim Zerstören, kein manuelles Freigeben.
-- **Vor-/Nachbedingungen:** Regel S; Konstruktion benötigt keine Initialisierung, danach `begin() == end()`. Destruktion benötigt ein lebendes, nicht gleichzeitig benutztes Objekt; danach dessen Iteratoren ungültig.
-- **Fehler/Garantie:** Leere Standardvektorkonstruktion und Memberdestruktion mit Standardallocator ohne eigenen Fehlerpfad; No-Throw-Verhalten abgeleitet, kein explizites `noexcept`.
-- **Nebenläufigkeit/Kosten:** Regel S; Konstruktion ohne Speicherung von Bedingungen, Destruktion proportional zu gespeicherten Bedingungen und ihren Freigaben.
+Gibt die Filtersammlung beim Verlassen ihres Gültigkeitsbereichs automatisch frei.
 
-~~~cpp
+- **Parameter:** Keine.
+- **Rückgabe:** Keiner.
+- **Voraussetzungen:** Lebende Sammlung. Danach sind ihre Iteratoren ungültig.
+
+```cpp
 {
-    auto where = mrdb::WhereVector{};
-    std::cout << (where.begin() == where.end()) << '\n';
-} // Destruktor gibt die Sammlung frei.
-~~~
+    auto filter = mrdb::WhereVector{};
+    filter.Add("STATUS", "Geplant");
+    auto const projects = mrdb::Select(tableName, filter);
+    std::cout << projects.size() << '\n';
+} // Automatischer Aufruf des Destruktors.
+```
 
-#### WhereVector: gelöschte Kopier- und Moveoperationen
+<a id="wherevector-add-operator"></a>
 
-~~~cpp
-WhereVector(WhereVector const &) = delete;
-WhereVector(WhereVector &&) = delete;
-auto operator=(WhereVector const &) -> WhereVector & = delete;
-auto operator=(WhereVector &&) -> WhereVector & = delete;
-~~~
+#### WhereVector::Add(std::string const & fieldname, WhereOperator const whereOperator, std::string const & value)
 
-**Zweck:** Verbietet sowohl Kopier- als auch Moveoperationen. Parameter wären jeweils Referenzen auf Quelle (`in` bei Copy, `in/out` bei Move), bei Zuweisung Ziel `in/out`. Erfolgreiche Rückgabe, Ownership, Vor-/Nachbedingungen zur Laufzeit, Exception Safety, Nebenläufigkeit und Laufzeitkosten: nicht zutreffend. Alle vier Verwendungen sind Kompilierungsfehler. Sammlung lokal konstruieren und per Referenz an `Select` übergeben. Direkte Prvalue-Initialisierung `auto where = mrdb::WhereVector{};` benötigt dank garantierter Copy Elision keinen Move.
+```cpp
+void Add(std::string const & fieldname, WhereOperator const whereOperator,
+         std::string const & value);
+```
 
-~~~cpp
-static_assert(!std::is_copy_constructible_v<mrdb::WhereVector>);
-static_assert(!std::is_move_constructible_v<mrdb::WhereVector>);
-static_assert(!std::is_copy_assignable_v<mrdb::WhereVector>);
-static_assert(!std::is_move_assignable_v<mrdb::WhereVector>);
-// mrdb::WhereVector copy{where};            // Unzulässig.
-// mrdb::WhereVector moved{std::move(where)}; // Unzulässig.
-// where = copy;                            // Unzulässig.
-// where = std::move(moved);                 // Unzulässig.
-~~~
+Ergänzt eine Bedingung mit einem ausdrücklich gewählten Operator.
 
-#### WhereVector::Add mit Operator
+- **Parameter:** `fieldname`: nicht leerer und nicht ausschließlich aus Leerzeichen bestehender Spaltenname, für `Select` exakt wie in der Tabelle. `whereOperator`: `Equal`, `NonEqual` oder `Like`. `value`: Suchtext, auch leer möglich.
+- **Rückgabe:** Keiner. Feldname und Wert werden in die Sammlung kopiert.
+- **Voraussetzungen:** Noch keine Bedingung mit demselben Feldnamen und Operator. Ein anderer Suchwert macht eine solche zweite Bedingung nicht zulässig; ein anderer Operator ist erlaubt. `Add` prüft nicht die Spaltenexistenz. Nach `Add` Iteratoren neu beschaffen.
+- **Fehler:** `std::runtime_error` bei leerem Feldnamen oder bereits vorhandenem Feldname/Operator-Paar.
 
-~~~cpp
-void Add(std::string const & fieldname, WhereOperator const whereOperator, std::string const & value);
-~~~
+```cpp
+auto filter = mrdb::WhereVector{};
+filter.Add("NAME", mrdb::WhereOperator::Like, "Werkstatt");
+```
 
-- **Zweck:** Fügt eine Filterbedingung hinzu.
-- **Parameter:** `fieldname` (`std::string const &`, in): nicht leer und nicht nur ASCII-Leerzeichen; kein Abgleich mit einem Tabellenschema, keine Namens-/Großschreibungsnormalisierung. `whereOperator` (`WhereOperator const`, in): einen der drei genannten Enumeratoren verwenden. `value` (`std::string const &`, in): beliebiger String, leer erlaubt. Sammlung `in/out`.
-- **Rückgabe/Ownership:** `void`, nicht zutreffend. Eigene Kopien von Feldname und Wert in der Sammlung; Eingaben dürfen danach wegfallen.
-- **Vor-/Nachbedingungen:** Regel S; keine Bedingung mit exakt demselben Feldnamen und Operator vorhanden. Nach Erfolg ein neuer Eintrag am Ende. Derselbe Feldname mit anderem Operator ist erlaubt; anderer Wert bei gleichem Operator macht kein neues zulässiges Duplikat. Bei Reallokation alle bisherigen Iteratoren ungültig; ohne Reallokation bleibt der alte Enditerator trotzdem nicht gültig.
-- **Fehler/Garantie:** `std::runtime_error("Fieldname is empty or whitespace")` oder `std::runtime_error("WhereItem already exists")`; String-/Vektorallokationen können werfen. Starke Garantie für Sammlung aus Prüfungen und Standardvektoroperation mit diesem Elementtyp abgeleitet; keine absichtliche partielle Ergänzung.
-- **Nebenläufigkeit/Kosten:** Regel S; lineare Duplikatsuche mit Namensvergleichen, Stringkopien; Vektorwachstum kann bestehende Elemente übertragen und allokieren. Kein Dateizugriff.
+<a id="wherevector-add-gleichheit"></a>
 
-~~~cpp
-auto where = mrdb::WhereVector{};
-where.Add("NAME", mrdb::WhereOperator::Like, "Mess");
-~~~
+#### WhereVector::Add(std::string const & fieldname, std::string const & value)
 
-#### WhereVector::Add ohne Operator
-
-~~~cpp
+```cpp
 void Add(std::string const & fieldname, std::string const & value);
-~~~
+```
 
-- **Zweck:** Fügt die Bedingung mit `WhereOperator::Equal` hinzu.
-- **Parameter:** `fieldname` und `value` (je `std::string const &`, in) wie zuvor; Sammlung `in/out`. Leerwert erlaubt, leerer/Leerzeichen-Feldname nicht.
-- **Rückgabe/Ownership:** `void`, nicht zutreffend; eigene Kopien in der Sammlung.
-- **Vor-/Nachbedingungen:** Regel S; noch kein `Equal` mit exakt diesem Feldnamen. Nach Erfolg am Ende ergänzt, Iteratorinvalidierung wie bei der Operatorüberladung.
-- **Fehler/Garantie:** Delegiert an die vorige Überladung: gleiche Runtime- und Allokationsfehler, starke Garantie für Sammlung (abgeleitet).
-- **Nebenläufigkeit/Kosten:** Regel S; gleiche lineare Duplikatsuche und Allokationskosten, kein Dateizugriff.
+Ergänzt eine Gleichheitsbedingung mit `WhereOperator::Equal`.
 
-~~~cpp
-auto where = mrdb::WhereVector{};
-where.Add("ORT", "Werkstatt");
-~~~
+- **Parameter:** `fieldname`: exakter Spaltenname, weder leer noch nur Leerzeichen. `value`: gesuchter Text, auch leer möglich.
+- **Rückgabe:** Keiner. Die Texte werden kopiert.
+- **Voraussetzungen:** Noch keine `Equal`-Bedingung für diesen Feldnamen. Keine Initialisierung für das Erstellen des Filters nötig. Nach `Add` Iteratoren neu beschaffen.
+- **Fehler:** `std::runtime_error` bei leerem Feldnamen oder doppelter Gleichheitsbedingung für denselben Feldnamen.
 
-#### WhereVector::begin und end
+```cpp
+auto filter = mrdb::WhereVector{};
+filter.Add("STATUS", "Geplant");
+```
 
-~~~cpp
-auto begin() const;
-auto end() const;
-~~~
+<a id="wherevector-begin"></a>
 
-- **Zweck:** `begin()` liefert den Anfang der Bedingungen, `end()` deren End-Sentinel; konstante Iteration in Einfügereihenfolge.
-- **Parameter:** Jeweils nicht zutreffend.
-- **Rückgabe/Ownership:** Jeweils deduzierter `std::vector<WhereItem>::const_iterator`, geliehen, Pointer-Nullability nicht zutreffend. `end()` nie dereferenzieren; bei leerer Sammlung beide gleich.
-- **Vor-/Nachbedingungen:** Lebende Sammlung, keine Initialisierung nötig. Keine Zustandsänderung. Bei `Add` mit Reallokation alle Iteratoren ungültig; ohne Reallokation mindestens bisheriger Enditerator ungültig. Nach Destruktion alle ungültig. Neu beschaffen nach Ergänzung.
-- **Fehler/Garantie:** Kein eigener Fehlerpfad; No-Throw-Verhalten der Vektorzugriffe abgeleitet, kein deklariertes `noexcept`.
-- **Nebenläufigkeit/Kosten:** Regel S; je `O(1)`, keine Allokation/I/O; kein paralleles `Add` während der Iteration.
+#### WhereVector::begin()
 
-~~~cpp
-auto where = mrdb::WhereVector{};
-where.Add("ORT", "Werkstatt");
-auto const first = where.begin();
-auto const last = where.end();
-for (auto it = first; it != last; ++it) {
+```cpp
+auto begin() const -> std::vector<WhereItem>::const_iterator;
+```
+
+Liefert den Anfang der schreibgeschützten Bedingungsiteration in Einfügereihenfolge.
+
+- **Parameter:** Keine.
+- **Rückgabe:** Konstanter Iterator auf die erste Bedingung; bei leerem Filter gleich `end()`. Er besitzt die Sammlung nicht.
+- **Voraussetzungen:** Lebende Sammlung. Nur dereferenzieren, wenn ungleich `end()`. Nach `Add` neu beschaffen; nach Zerstörung nicht verwenden.
+
+```cpp
+auto filter = mrdb::WhereVector{};
+filter.Add("STATUS", "Geplant");
+auto const first = filter.begin();
+if (first != filter.end()) {
+    std::cout << first->Fieldname << '\n';
+}
+```
+
+<a id="wherevector-end"></a>
+
+#### WhereVector::end()
+
+```cpp
+auto end() const -> std::vector<WhereItem>::const_iterator;
+```
+
+Liefert das Ende der schreibgeschützten Bedingungsiteration.
+
+- **Parameter:** Keine.
+- **Rückgabe:** Konstanter Iterator hinter der letzten Bedingung, nicht dereferenzierbar; bei leerem Filter gleich `begin()`.
+- **Voraussetzungen:** Lebende Sammlung. Nach `Add` neu beschaffen; nach Zerstörung nicht verwenden.
+
+```cpp
+auto filter = mrdb::WhereVector{};
+filter.Add("STATUS", "Geplant");
+for (auto it = filter.begin(); it != filter.end(); ++it) {
     std::cout << it->Fieldname << ": " << it->Value << '\n';
 }
-~~~
-
-<a id="fehler"></a>
-
-## Fehlerbehandlung und Garantien
-
-### Signalisierung
-
-Schreibaufrufe und Validierung geben `void` zurück und signalisieren erkannte Fehler durch Exceptions. Leseaufrufe geben Werte zurück oder werfen. Es gibt weder Statusobjekt noch `nullptr`-Fehlerresultat für eine Auswahl. Ein leerer `Records`-/ID-/Tabellenvektor kann ein erfolgreiches leeres Ergebnis sein. Nur `IsTableExist` wandelt intern **alle** Exceptions in `false` um; daraus lässt sich die Fehlerursache nicht ablesen.
-
-`Record::GetTable()` kann bei manuell erzeugten oder verschobenen Records einen leeren Smartpointer liefern; das ist kein Dateizugriffsstatus. `GetValue(int)` meldet Bereichsfehler mit `std::out_of_range`; die Namensvariante und `SetValue` unbekannte Namen mit `std::invalid_argument` und unpassende Wertpositionen mit `std::out_of_range`.
-
-Runtime-Fehlermeldungen des Headers sind in den API-Einträgen aufgeführt. Die I/O-Prüfungen können unter anderem fehlende Verzeichnisse/Elemente, nicht zu öffnende Dateien und Fehler beim Lesen, Schreiben oder Schließen melden. Nicht jeder Streamzustand wird vollständig ausgewertet. Keine Aussage „jede Betriebssystemstörung wird erkannt“ oder „reguläre Rückkehr bedeutet ausfallsicher auf dauerhaftem Medium“ ableiten. Die Metadaten- und ID-Konvertierungen können Standard-Konvertierungsexceptions weiterreichen; Allokationen und Dateisystemoperationen ebenfalls ihre Standardexceptions.
-
-Ein sinnvolles äußeres Auffangnetz ist `catch (std::exception const &)`, wie in den vollständigen Beispielen. Meldungstexte sind kein zugesichertes, versioniertes Fehlercodeprotokoll. Automatische Wiederholung nach einem Schreibfehler kann bei `Insert` zusätzliche Zeilen erzeugen; zuerst den tatsächlichen Bestand prüfen.
-
-### Einordnung der Exception Safety
-
-Im untersuchten mrdb-Header und Filterheader ist kein `noexcept` ausdrücklich geschrieben. Die folgenden Kategorien sind **nicht ausdrücklich garantiert; aus der aktuellen Implementierung und den verwendeten Standardoperationen abgeleitet**:
-
-| Operationen | Ableitbare Kategorie und Grenze |
-| --- | --- |
-| `IsTableExist` | No-Throw-Verhalten des Funktionskörpers durch `catch (...)`; Argumenterzeugung davor kann trotzdem werfen. |
-| Skalare Getter, `GetTable` des Records, Iteratorzugriffe, WhereItem-Vergleich | No-Throw-Verhalten der benutzten Operationen; gültige Objekte und externe Synchronisation vorausgesetzt. Keine ergänzte `noexcept`-Deklaration. |
-| Defaultete Record-Moves/-Destruktion und WhereVector-Defaultkonstruktion/-Destruktion | No-Throw-Verhalten der konkreten Standardmember abgeleitet; keine manuelle Dateiaktion. |
-| Nur lesende Dateiaufrufe und kopierende Record-Getter | Stark bezüglich unveränderter Datenbasis bzw. Record; Ergebnis wird bei Fehler nicht geliefert. Keine Snapshot- oder Vollständigkeitsgarantie für einen parallel geänderten Bestand. |
-| Record-/KeyValue-Konstruktion | Bei Fehler kein fertig konstruiertes Ergebnis, Eingaben unverändert; stark bezüglich Eingaben. |
-| `Init`, `Record::SetValue`, `WhereVector::Add` | Stark für den jeweiligen bisherigen Speicherzustand aus Stringzuweisung bzw. Prüfungen und Standardcontaineroperationen abgeleitet. |
-| Implizite Kopierzuweisungen mehrgliedriger öffentlicher Aggregate | Basal bezüglich gültiger Member; spätere Kopierfehler können nach früheren Memberänderungen eintreten, daher keine allgemeine starke Gesamtgarantie. |
-| `CreateTable`, `SetTableReadOnly`, `Insert`, beide `Update`, `Delete` | Vor einer Dateiveränderung können Prüfungen ohne Änderungen scheitern. Nach Beginn der I/O weder starke noch basale Garantie eines konsistenten gespeicherten Bestands ableitbar. Kein Rollback, keine Transaktion, keine atomare Änderung aller betroffenen Dateien. |
-| Nicht erfüllte Pointer-/Größen-Vorbedingungen bei ungeprüften Record-Zugriffen | Undefiniertes Verhalten möglich, daher keine Garantie; nicht durch `try/catch` zuverlässig behandelbar. |
-
-RAII schließt lokale Streams und gibt Standardcontainer frei. Das sichert die Ressourcenverwaltung der lokalen Objekte, stellt aber keine Datenbanktransaktion dar. Betriebssystempuffer, Stromausfallsicherheit und ein vollständig erkennbarer Schreibabschluss werden nicht vertraglich beschrieben. Die untersuchten ESTW-Aufrufer ergänzen eigene Sicherungen und Sperren; diese Funktionen gehören zur Anwendung, nicht zu mrdb.
-
-<a id="threads"></a>
-
-## Thread-Sicherheit und Nebenläufigkeit
-
-**Thread-Sicherheit ist nicht garantiert.** Die API enthält keine Mutex-Synchronisation und verwendet einen veränderbaren prozessweit gemeinsamen Initialisierungspfad. Es gibt keine getrennten Datenbankinstanzen, deren Konfiguration unabhängig wäre. `Init` gleichzeitig mit anderen `Init`- oder Dateiaufrufen kann einen Datenrennen-Zugriff auf diesen Zustand verursachen; alle solchen Vorgänge extern koordinieren.
-
-Wenn der Pfad feststeht und während der Zugriffe unverändert bleibt, erscheinen parallele ausschließlich lesende Dateiaufrufe ohne eigenen schreibenden mrdb-Zustand möglich. Das ist eine Implementierungsbeobachtung, keine ausdrückliche Zusage. Fremde Prozesse oder Schreibaufrufe können Dateien während einer Auswahl verändern; eine Zeile wird über mehrere Dateizugriffe gelesen und hat keine Snapshot-Isolation.
-
-Für unabhängige Record-/Filterobjekte ohne gemeinsame mutierbare Daten erscheinen parallele Speicherzugriffe möglich. Bei gemeinsamer unveränderter Tabellenbeschreibung erscheint gleichzeitiges Lesen ebenfalls möglich. Gegen gleichzeitiges `SetValue`, Move-Zuweisung, Destruktion, `WhereVector::Add` oder strukturelle Mutation einer geteilten `Table` muss jedoch extern synchronisiert werden. `shared_ptr` schützt die Besitzverwaltung seines Kontrollblocks, nicht die Felder des `Table`-Objekts oder ein gleichzeitig verändertes Record-Objekt.
-
-Gleichzeitiges Einfügen kann dieselbe nächste ID berechnen. Existenzprüfung und Anlage einer Tabelle sind getrennt. Ein ReadOnly-Wechsel sperrt keine bereits laufende Schreiboperation. Updates mehrerer Dateien können sich überlagern, und Lesen während Schreiben/Löschen kann unvollständige oder gemischte Werte liefern bzw. Exceptions auslösen. Für solche Abläufe ist externe Thread-/Prozesskoordination erforderlich; mrdb liefert keine entsprechende Sperr-API. Die `tools`-Namensprüfung verwendet zusätzlich eine statische unveränderbare Menge reservierter Namen; diese ist keine Synchronisation der Datenbasis.
-
-<a id="performance"></a>
-
-## Performance und Ressourcen
-
-Die beobachtete Speicherung verursacht zahlreiche kleine Dateizugriffe. Das Dateiformat und die interne Ablagestruktur sind kein stabil zugesicherter API-Vertrag; Anwendungen sollen die öffentliche API verwenden. Insbesondere wird hier keine direkte Bearbeitung interner Metadaten als unterstützte API beschrieben.
-
-| Ablauf | Belastbar aus der Implementierung ableitbare Kosten |
-| --- | --- |
-| `GetRecordIDs` | Ein Durchlauf durch die Tabelleneinträge; Ergebnis enthält `r` IDs mit entsprechendem Speicherbedarf. |
-| `GetTable` | Liest Spaltenbeschreibungen, sortiert `c` Spalten mit `O(c log c)` Vergleichen. Stringlängen und Dateisystemkosten kommen hinzu. |
-| `Insert` | Liest Schema mehrfach, sucht Spalten/Pflichtfelder, scannt die vorhandenen IDs und legt Felder an; kein konstanter Aufwand unabhängig von Tabellenumfang. |
-| `SelectSingle` | Metadatenlesung und alle `c` Feldlesungen, neue Tabellenbeschreibung und String-/Vektorspeicher; zusätzliche Wertkopie im Konstruktor. |
-| `SelectAll` | ID-Scan und vollständige Zeilenlesung für alle `r` Zeilen, wiederholte Schemainlesung/-sortierung; Ergebnis hält Werte und derzeit je Zeile eine Tabellenbeschreibung. |
-| `Select` | Wie vollständiger Zeilenscan, zusätzlich alle `w` Bedingungen je Zeile; keine Indexsuche. Nur Treffer bleiben als Records im Ergebnis. |
-| `GetValue(name)`, `SetValue` | Lineare Spaltensuche in der Beschreibung plus Textkopie/-zuweisung. |
-| `GetValuesAsMap` | `O(c log c)` Schlüsselvergleiche plus Kopien der Namen/Werte und Map-Knotenallokationen. |
-| `GetValuesAsKeyValues` | `O(c)` Paarerzeugung plus Stringkopien; eine passende Vektorkapazität wird reserviert. |
-| `WhereVector::Add` | Lineare Duplikatsuche, mögliche Vektorreallokation und Stringkopien. |
-
-Diese Angaben sind keine Gesamtzeitgarantien; Dateisystem, Textlängen und Fehlerpfade beeinflussen die Kosten. Es gibt keinen Schema-Cache, keine Abfrageplanung, keine Paging- oder Streaming-Auswahl in der öffentlichen API. Auch kleine Teilupdates müssen das aktuelle Schema lesen. `Record`-Getter für Werte liefern Kopien, keine zero-copy Views.
-
-Tabellenbeschreibungen, Records, Maps und Filter halten Heap-Speicher über Standardcontainer/Smartpointer. `Records`-Vektorwachstum kann Referenzen auf Record-Objekte invalidieren. `Record::SetValue` lässt dagegen den Wertvektor unverändert und kann nur den Stringinhalt umallokieren. Filterergänzungen können alle geliehenen Bedingungsiteratoren invalidieren. Smartpointerkopien erhalten die Tabelle unabhängig vom ursprünglichen Record am Leben, bieten aber keine unveränderliche Momentaufnahme, sobald jemand ihre öffentlichen Felder mutiert.
+```
 
 <a id="praxisbeispiele"></a>
 
-## Praxisbeispiele
+## Typische Anwendungsfälle
 
-### Vollständiger Arbeitsablauf: anlegen, lesen, filtern, ändern, schützen, löschen
+<a id="beispiel-filtern"></a>
 
-Das Programm benötigt ein leeres Verzeichnis `./mrdb-workflow` oder einen noch freien Tabellennamen darin. Eine bereits vorhandene Tabelle führt bewusst zu einem Fehler statt zu Änderungen an einem unbekannten Schema. Die ermittelte ID wird aus der Auswahl gelesen; es wird nicht angenommen, dass sie eins ist. Das Beispiel setzt alleinigen Zugriff voraus.
+### Projekte mit mehreren Bedingungen suchen
 
-~~~cpp
-#include "mrdb.h"
+Die Tabelle `PROJEKTE` aus dem Schnelleinstieg enthält `NAME` und `STATUS`. Dieses Beispiel wählt geplante Projekte aus, deren Name den Teiltext `Werkstatt` enthält. Beide Bedingungen müssen erfüllt sein.
 
-#include <exception>
-#include <filesystem>
-#include <iostream>
-#include <stdexcept>
-#include <string>
-
-auto main() -> int
-{
-    try {
-        std::filesystem::create_directories("./mrdb-workflow");
-        mrdb::Init({"./mrdb-workflow/"});
-
-        auto const tablename = std::string{"WERKZEUGE_WORKFLOW"};
-        if (mrdb::IsTableExist(tablename)) {
-            throw std::runtime_error("Für dieses Beispiel einen freien Tabellennamen verwenden");
-        }
-
-        auto table = mrdb::Table{};
-        table.Name = tablename;
-        table.Columns = {{"01", "NAME", false}, {"02", "ORT", true}};
-        mrdb::CreateTable(table);
-
-        auto const description = mrdb::GetTable(tablename);
-        std::cout << "Spalten: " << description.Columns.size() << '\n';
-
-        mrdb::Insert(tablename, {{"NAME", "Messschieber"}, {"ORT", "Werkstatt"}});
-        auto filter = mrdb::WhereVector{};
-        filter.Add("NAME", "Messschieber");
-        auto records = mrdb::Select(tablename, filter);
-        if (records.size() != 1) {
-            throw std::runtime_error("Genau ein Werkzeug erwartet");
-        }
-
-        auto & record = records.front();
-        mrdb::isValidRecord(record);
-        auto const recordId = record.GetRowID();
-        record.SetValue("ORT", "Lager");
-        mrdb::Update(record);
-
-        mrdb::Update(tablename, recordId, {{"ORT", "Messraum"}});
-        auto const reloaded = mrdb::SelectSingle(tablename, recordId);
-        for (auto const & pair : reloaded.GetValuesAsKeyValues()) {
-            std::cout << pair.Key << ": " << pair.Value << '\n';
-        }
-        // record ist eine ältere lokale Momentaufnahme und enthält noch "Lager".
-
-        mrdb::SetTableReadOnly(tablename, true);
-        if (!mrdb::GetTable(tablename).ReadOnly) {
-            throw std::runtime_error("ReadOnly-Flag nicht gelesen");
-        }
-        mrdb::SetTableReadOnly(tablename, false);
-        mrdb::Delete(tablename, recordId);
-
-        std::cout << "Verbleibende Zeilen: "
-                  << mrdb::SelectAll(tablename).size() << '\n';
-        // Die nun leere Tabelle bleibt erhalten; es gibt keine DropTable-API.
-        return 0;
-    }
-    catch (std::exception const & error) {
-        std::cerr << "Arbeitsablauf fehlgeschlagen: " << error.what() << '\n';
-        // Bereits erfolgreiche Dateiänderungen werden dadurch nicht zurückgerollt.
-        return 1;
-    }
+```cpp
+auto filter = mrdb::WhereVector{};
+filter.Add("STATUS", "Geplant");
+filter.Add("NAME", mrdb::WhereOperator::Like, "Werkstatt");
+auto const projects = mrdb::Select("PROJEKTE", filter);
+for (auto const & project : projects) {
+    std::cout << project.GetRowIDAsString() << ": "
+              << project.GetValue("NAME") << '\n';
 }
-~~~
+```
 
-### Fehlerbehandlung: Pflichtwert ablehnen und gültige Eingabe speichern
+<a id="beispiel-aendern"></a>
 
-Dieses eigenständige Programm legt eine eigene Tabelle an. Der erste `Insert` scheitert bei der Werteprüfung vor der Zeilenanlage, weil `NAME` Pflichtfeld ist. Nach dem erwarteten Fehler wird ein gültiger Datensatz eingefügt. Andere Fehler werden im äußeren Catch behandelt. Voraussetzung ist ein freier Tabellenname und unveränderter Bestand während des Beispiels.
+### Ein Feld ändern oder einen Record speichern
 
-~~~cpp
-#include "mrdb.h"
+Bei einer vorhandenen ID kannst du nur das gewünschte Feld ändern:
 
-#include <exception>
-#include <filesystem>
-#include <iostream>
-#include <stdexcept>
-#include <string>
+```cpp
+mrdb::Update("PROJEKTE", recordId, {{"STATUS", "Abgeschlossen"}});
+```
 
-auto main() -> int
-{
-    try {
-        std::filesystem::create_directories("./mrdb-fehlerbeispiel");
-        mrdb::Init({"./mrdb-fehlerbeispiel/"});
+Soll der Datensatz zuvor gelesen und bearbeitet werden, verwende die Record-Überladung. `SetValue` allein speichert noch nicht:
 
-        auto const tablename = std::string{"PFLICHTFELD_BEISPIEL"};
-        auto table = mrdb::Table{};
-        table.Name = tablename;
-        table.Columns = {{"01", "NAME", false}};
-        mrdb::CreateTable(table); // Wirft auch bei bereits vorhandenem Namen.
+```cpp
+auto project = mrdb::SelectSingle("PROJEKTE", recordId);
+project.SetValue("STATUS", "Abgeschlossen");
+mrdb::Update(project);
+```
 
-        auto const before = mrdb::GetRecordIDs(tablename);
-        try {
-            mrdb::Insert(tablename, {{"NAME", ""}});
-            std::cerr << "Pflichtfeldprüfung hat unerwartet keinen Fehler gemeldet\n";
-            return 1;
-        }
-        catch (std::runtime_error const & error) {
-            std::cout << "Einfügen abgelehnt: " << error.what() << '\n';
-        }
+<a id="beispiel-export"></a>
 
-        if (mrdb::GetRecordIDs(tablename) != before) {
-            throw std::runtime_error("Datensatzbestand nach Ablehnung unerwartet verändert");
-        }
+### Feldnamen und Werte gemeinsam ausgeben
 
-        mrdb::Insert(tablename, {{"NAME", "Messschieber"}});
-        auto const records = mrdb::SelectAll(tablename);
-        if (records.empty()) {
-            throw std::runtime_error("Gespeicherten Datensatz erwartet");
-        }
+`GetValuesAsKeyValues` liefert die Feldpaare in Spaltenreihenfolge und eignet sich etwa für eine einfache Textansicht eines Datensatzes:
 
-        try {
-            std::cout << records.front().GetValue(-1) << '\n';
-        }
-        catch (std::out_of_range const & error) {
-            std::cout << "Indexfehler: " << error.what() << '\n';
-        }
-        return 0;
-    }
-    catch (std::exception const & error) {
-        std::cerr << "Datenzugriff fehlgeschlagen: " << error.what() << '\n';
-        return 1;
-    }
+```cpp
+auto const project = mrdb::SelectSingle("PROJEKTE", recordId);
+auto const fields = project.GetValuesAsKeyValues();
+for (auto const & field : fields) {
+    std::cout << field.Key << " = " << field.Value << '\n';
 }
-~~~
+```
 
-Der Bestandstest ist eine zusätzliche Prüfung des Beispiels. Er ist kein Beleg für einen allgemeinen Rollback bei I/O-Fehlern. Ein `std::runtime_error` allein identifiziert auch nicht zweifelsfrei einen Pflichtfeldfehler; dafür existiert kein eigener Fehlertyp.
+<a id="beispiel-schutz-loeschen"></a>
 
-<a id="quellen"></a>
+### Schreibschutz verwenden und ein Projekt löschen
 
-## Quellen und Prüfstand
+```cpp
+mrdb::SetTableReadOnly("PROJEKTE", true);
+auto const projects = mrdb::SelectAll("PROJEKTE"); // Lesen ist weiter möglich.
+std::cout << projects.size() << '\n';
+mrdb::SetTableReadOnly("PROJEKTE", false);
+mrdb::Delete("PROJEKTE", recordId); // Vorhandenes Projekt bewusst entfernen.
+```
 
-Die untersuchten lokalen Quellen liegen in zwei Repositories: der Bibliothekscode unter `D:/csharp/CPP/tools/`, die Pages-Quellen unter `D:/git/mathias/`. `mrdb.md` im Wurzelverzeichnis des Pages-Repositories ist die Quelle der Einstiegsseite `mrdb.html`. Deren Navigation verwendet relative `.md`-Links; diese Seite folgt derselben Struktur und liegt daneben. Die Konfiguration `_config.yml` enthält keine aktive abweichende Permalink- oder Ausgabevorgabe. Die beiden Seiten verweisen gegenseitig aufeinander.
+Der Schreibschutz gilt für mrdb-Datensatzänderungen. Er ersetzt keine Zugriffsrechte auf das Datenverzeichnis.
 
-Maßgebliche Dateien und ergänzend untersuchte Verwendungen:
+<a id="fehler"></a>
 
-- `CPP/tools/mrdb.h`: öffentliche Deklarationen, Record und sämtliche Implementierungen; API-Quelle dieser Referenz.
-- `CPP/tools/wherevector.h`: Filtertypen, Add-Überladungen und Iteratoren.
-- `CPP/tools/tools.h`, `CPP/tools/tools.cpp`: Link-Abhängigkeit, Namensnormalisierung/-prüfung, Leerwert- und Teilstringsemantik.
-- `CPP/tools/mrdbtest/CMakeLists.txt`, `main.cpp`: C++20 und CRUD-/Filterverwendungen; ältere kommentierte Abschnitte mit anderen Typen/Methoden sind keine Quelle zusätzlicher aktueller API.
-- `CPP/tools/kvs.h`: Nutzung über `Init`, Filter und CRUD; dieser Wrapper kann den gemeinsamen Pfad neu setzen.
-- `CPP/estw/estw3/mrdbstore.cpp`, `tests/mrdb_tests.cpp`, `datensatzdetails.cpp`: Schemaeinrichtung, Wertezugriff, Teilupdates und ReadOnly-Verwendung. Anwendungseigene Sperren, Transaktionssicherungen und Datentypkonvertierungen werden nicht mrdb zugeschrieben.
+## Fehlerbehandlung
 
-Die Bibliothek wurde für diese Dokumentation nicht verändert; der SHA-256-Vergleich von `mrdb.h` vor und nach der Bearbeitung stimmt überein. Alle 45 expliziten öffentlichen Funktions-/Member-Signaturen aus den beiden Headern wurden statisch mit der Referenz abgeglichen, einschließlich Überladungen und gelöschter Operationen. Die Beispielaufrufe wurden gegen die vorhandenen API-Namen geprüft; es gibt drei vollständige Programme. Alle 25 relativen Markdown-Datei-/Abschnittslinks beider Seiten wurden auf vorhandene Ziele geprüft, ohne Fehler. Auch Codeblockbegrenzungen und doppelte explizite Anker wurden geprüft.
+Die API verwendet Exceptions und keine numerischen Fehlercodes. `Insert`, `Update`, `Delete`, `CreateTable` und andere `void`-Funktionen melden keinen Erfolg als Rückgabewert. Eine Ausnahme ist `IsTableExist`: `false` kann sowohl eine fehlende Tabelle als auch einen Fehler bedeuten. Für eine erfolgreiche Existenzprüfung muss die anschließende Operation trotzdem auf Fehler reagieren.
 
-Entsprechend der Projektanweisung wurden keine Builds und keine Beispielkompilierungen ausgeführt. Ein lokaler Jekyll-Build wurde nicht ausgeführt; im untersuchten Dokumentationsrepository sind kein Gemfile und kein lokaler Buildworkflow vorhanden. Die Beispiele sind vollständige Programme oder mit dem angegebenen Setup direkt verwendbare Ausschnitte; erfolgreiche Kompilierung und Laufzeit sind damit noch nicht nachgewiesen.
+| Situation | Fehlerbehandlung |
+| --- | --- |
+| Fehlende Tabelle oder Zeile, ungültige Namen/Werte, Schreibschutz | In der Regel `std::runtime_error` abfangen. |
+| Unbekannter Spaltenname bei `Record::GetValue` oder `SetValue` | `std::invalid_argument` abfangen. |
+| Ungültiger Index bei `Record::GetValue` | `std::out_of_range` abfangen. |
+| Fehler beim Dateisystemzugriff | Unter anderem `std::filesystem::filesystem_error`; über `std::exception` ebenfalls erfassbar. |
+| `isValidRecord` schlägt fehl | `std::runtime_error` abfangen; normale Rückkehr bedeutet bestandene Prüfung. |
 
-Zurück zur [mrdb-Startseite](mrdb.md).
+Die Fehlertexte können dem Anwender zur Diagnose angezeigt werden. Verlasse dich für die Programmsteuerung auf Ausnahmetypen und zulässige Eingaben statt auf den Wortlaut einzelner Meldungen.
+
+<a id="beispiel-fehler"></a>
+
+### Fehler einer Änderung behandeln
+
+Die Datenbasis und Tabelle seien wie im Schnelleinstieg vorbereitet. Ein leerer Name ist für die Pflichtspalte `NAME` nicht zulässig:
+
+```cpp
+try {
+    mrdb::Update("PROJEKTE", recordId, {{"NAME", ""}});
+}
+catch (std::runtime_error const & error) {
+    std::cerr << "Projekt konnte nicht geändert werden: " << error.what() << '\n';
+}
+```
+
+Bei einem möglicherweise fehlenden Feld lässt sich ein ungültiger Spaltenname gesondert behandeln:
+
+```cpp
+try {
+    auto const project = mrdb::SelectSingle("PROJEKTE", recordId);
+    std::cout << project.GetValue("BESCHREIBUNG") << '\n';
+}
+catch (std::invalid_argument const & error) {
+    std::cerr << "Spalte nicht verfügbar: " << error.what() << '\n';
+}
+catch (std::exception const & error) {
+    std::cerr << "Projekt konnte nicht gelesen werden: " << error.what() << '\n';
+}
+```
+
+`SelectAll` und `Select` liefern bei einer lesbaren Tabelle ohne Zeilen beziehungsweise ohne Treffer einen leeren Vektor. Das ist ein reguläres Ergebnis:
+
+```cpp
+auto filter = mrdb::WhereVector{};
+filter.Add("STATUS", "Geplant");
+auto const projects = mrdb::Select("PROJEKTE", filter);
+if (projects.empty()) {
+    std::cout << "Keine geplanten Projekte vorhanden" << '\n';
+}
+```
+
+Nach einem Dateizugriffsfehler bei einer Schreiboperation solltest du den betroffenen Bestand prüfen, bevor du den Aufruf wiederholst. Die API bietet keine Transaktions- oder Rücksetzfunktion; Änderungen können teilweise erfolgt sein. Koordiniere gleichzeitige Datenzugriffe in deinem Programm und mit anderen Schreibern, insbesondere während Änderungen.
