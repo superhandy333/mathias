@@ -1,3 +1,4 @@
+{% raw %}
 # mrdb – ausführliche Dokumentation
 
 <small>[Entwicklung](develop.md) / [mrdb-Startseite](mrdb.md) / Dokumentation</small>
@@ -1295,3 +1296,4 @@ Die Bibliothek wurde für diese Dokumentation nicht verändert; der SHA-256-Verg
 Entsprechend der Projektanweisung wurden keine Builds und keine Beispielkompilierungen ausgeführt. Ein lokaler Jekyll-Build wurde nicht ausgeführt; im untersuchten Dokumentationsrepository sind kein Gemfile und kein lokaler Buildworkflow vorhanden. Die Beispiele sind vollständige Programme oder mit dem angegebenen Setup direkt verwendbare Ausschnitte; erfolgreiche Kompilierung und Laufzeit sind damit noch nicht nachgewiesen.
 
 Zurück zur [mrdb-Startseite](mrdb.md).
+{% endraw %}
