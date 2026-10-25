@@ -1,3 +1,4 @@
+{% raw %}
 # mrdb – Anwenderhandbuch und API-Referenz
 
 <small>[Entwicklung](develop.md) / [mrdb-Startseite](mrdb.md) / Anwenderhandbuch</small>
@@ -1400,3 +1401,4 @@ if (projects.empty()) {
 ```
 
 Nach einem Dateizugriffsfehler bei einer Schreiboperation solltest du den betroffenen Bestand prüfen, bevor du den Aufruf wiederholst. Die API bietet keine Transaktions- oder Rücksetzfunktion; Änderungen können teilweise erfolgt sein. Koordiniere gleichzeitige Datenzugriffe in deinem Programm und mit anderen Schreibern, insbesondere während Änderungen.
+{% endraw %}
