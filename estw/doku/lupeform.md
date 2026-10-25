@@ -10,6 +10,8 @@ Das LupeForm kann in verschiedenen Modi geöffnet werden:
 
 Im Simulationsmodus wird die "normale" ESTW-Logik ausgeführt.
 
+Das LupeForm startet bei jedem Öffnen im Simulationsmodus maximiert. Das separate ToolForm liegt am unteren Rand des Monitor-Arbeitsbereichs, auf dem das LupeForm dargestellt wird. Es hat beim Öffnen dieselbe sichtbare Fensterbreite wie das LupeForm und ein Fünftel seiner Fensterhöhe. Bei Größen- oder Positionsänderungen des LupeForm werden Größe und Position des ToolForm entsprechend angepasst. Das ToolForm bleibt manuell in der Größe veränderbar; seine Buttons bleiben dabei unverändert 100 × 25 Pixel groß und sind mit 10 Pixel Abstand am rechten Rand untereinander angeordnet.
+
 ### Fahrstraßenauswahl
 
 Mit der linken Maustaste können im Simulationsmodus ausschließlich **Signale** und **Blindziele** für eine Fahrstraße markiert werden. Die beiden markierten Elemente bilden gemeinsam die Start-/Zielkombination; ihre Auswahlreihenfolge ist ohne Bedeutung. Eines der Elemente muss als **Fahrstraßenstart** und das andere als **Fahrstraßenziel** derselben Fahrstraße projektiert sein. Die Auswahl enthält höchstens zwei Elemente.

@@ -1,6 +1,6 @@
-# Zugstrasse – Mechanik
+# Zugstrasse
 
-Dieses Dokument beschreibt den ersten fachlichen Entwurf der Zustandsmechanik einer **Zugstrasse** in `estw3`. Die Beschreibung basiert zunächst auf der Mechanik der Rangierstrasse. Für die Zugstrasse ist zusätzlich ein eigener Zustand für den **Flankenschutz** erforderlich. Die genaue fachliche Ausgestaltung dieses Zustands ist noch festzulegen.
+Dieses Dokument beschreibt die Zustandsmechanik einer **Zugstrasse** in `estw3`. Die Beschreibung ist als fachliche Vorgabe für die Implementierung zu verstehen.
 
 Für Signalarten, Halt- und Fahrtstellungen sowie die Ermittlung der Vorsignalgeschwindigkeit gelten die verbindlichen Vorgaben aus [signale.md](signale.md).
 
@@ -40,9 +40,24 @@ Diese strukturellen Festlegungen stellen sicher, dass jede Zugstrasse über eind
 
 ## 1. Zulassungsprüfung
 
-Die speziellen Zulassungsbedingungen für eine Zugstrasse werden in diesem Abschnitt dokumentiert. Die Zulassungsprüfung ist nur dann positiv, wenn **alle** für die Zugstrasse geltenden Bedingungen erfüllt sind.
+Für eine Zugstrasse gelten die folgenden Zulassungsbedingungen. Die Zulassungsprüfung ist nur dann positiv, wenn **alle** Bedingungen erfüllt sind.
 
-Die zugstrassenspezifischen Zulassungsbedingungen sind derzeit noch nicht abschließend festgelegt und werden hier ergänzt, sobald sie fachlich definiert sind. Allgemeine Bedeutung und Zweck der Zulassungsprüfung sind in [estw.md](estw.md) beschrieben.
+1. **Fahrstrassenziel aufgelöst:** Das Fahrstrassenziel muss aufgelöst sein. Das als Fahrstrassenziel projektierte **Signal oder Blindziel** darf keinen Zielfestlegemelder zeigen. Der Zustand des Zielfestlegemelders (ZIF) am Fahrstrassenzielelement wird bei der Zulassungsprüfung geprüft. Ist er gesetzt, ist die Zulassungsprüfung negativ.
+2. **Startelement als Zugstraßenstart zugelassen:** Das als Fahrstrassenstart projektierte **Signal** muss in den Projektierungsdaten als Start einer Zugstrasse zugelassen sein (`PZS = 1`). Ist `PZS` nicht gesetzt, ist die Zulassungsprüfung negativ.
+3. **Zielelement als Zugstraßenziel zugelassen:** Das als Fahrstrassenziel projektierte **Signal oder Blindziel** muss in den Projektierungsdaten als Ziel einer Zugstrasse zugelassen sein (`PRZ = 1`). Ist `PRZ` nicht gesetzt, ist die Zulassungsprüfung negativ.
+4. **Gleiselement für Zugstraßen zugelassen:** Für jedes der Zugstrasse zugeordnete **Fahrstrassenelement**, dessen referenziertes Element vom Elementtyp **Gleis** ist, muss der Programmfall `PZ` an genau diesem Gleiselement gesetzt sein (`PZ = 1`). Ist `PZ` bei mindestens einem solchen Gleiselement nicht gesetzt, ist die Zulassungsprüfung negativ.
+5. **Keine Beanspruchung der Fahrwegelemente, Auflöseelemente und Blindziele:**:** Alle zur Zugstrasse gehörenden **Fahrwegelemente**, **Auflöseelemente** und **Blindziele** müssen frei von jeder bereits vorhandenen Beanspruchung sein. Ist mindestens eines dieser Fahrwegelemente bereits beansprucht, ist die Zulassungsprüfung negativ.
+6. **Keine widersprechende Sperrlage einer Weiche:** Für alle zur Zugstrasse gehörenden **Weichen** als **Fahrstrassenelement** wird die für diese Zugstrasse projektierte `SollStellung` betrachtet. Eine solche Weiche darf nicht in einer Lage gesperrt sein, die dieser Sollstellung widerspricht. Ist eine Weiche beispielsweise in der Gegenlage zur benötigten Sollstellung gesperrt, ist die Zulassungsprüfung negativ. Als „gesperrt“ gilt eine Weiche sowohl bei projektierter Stellsperre durch einen gesetzten Programmfall `PSSL` oder `PSSR` als auch bei einer zur Laufzeit durch den Befehl `WUS` wirksamen Umstellsperre.
+7. **Keine widersprechende Verschlusslage einer Weiche:** Für alle zur Zugstrasse gehörenden **Weichen** als **Fahrstrassenelement** wird die für diese Zugstrasse projektierte `SollStellung` betrachtet. Eine solche Weiche darf nicht in einer Lage verschlossen sein, die dieser Sollstellung widerspricht. Ist eine Weiche beispielsweise in der Gegenlage zur benötigten Sollstellung verschlossen, ist die Zulassungsprüfung negativ.
+8. **Keine aufgefahrene Weiche:** Keine für die Zugstrasse benötigte **Weiche** als **Fahrstrassenelement** darf zum Zeitpunkt der Zulassungsprüfung aufgefahren sein. Ist mindestens eine dieser Weichen aufgefahren, ist die Zulassungsprüfung negativ – unabhängig davon, ob ihre aktuelle Lage ansonsten der projektierten `SollStellung` entspricht oder entsprechen könnte.
+9. **Startsignal auf Strang A nicht beansprucht:** Am **Startsignal** darf auf **Strang A** keine bereits vorhandene Beanspruchung vorliegen. Liegt dort eine Beanspruchung vor, ist die Zulassungsprüfung negativ.
+10. **Startsignal in Haltstellung:** Das **Startsignal** muss die **Haltstellung** zeigen. Zeigt es einen anderen Signalbegriff, ist die Zulassungsprüfung negativ.
+11. **Keine Signalsperre am Startsignal:** Am **Startsignal** darf keine **Signalsperre (SS)** aktiv sein. Ist das Startsignal durch die Signalsperre gesperrt, ist die Zulassungsprüfung negativ.
+12. **Zielsignal auf Strang B nicht beansprucht:** Ist das Fahrstrassenziel ein **Signal**, darf an diesem **Zielsignal** auf **Strang B** keine bereits vorhandene Beanspruchung vorliegen. Liegt dort eine Beanspruchung vor, ist die Zulassungsprüfung negativ.
+13. **Zielsperre am Zielsignal beachten:** Ist das Fahrstrassenziel ein **Signal**, muss für genau dieses **Zielsignal** mindestens eine der folgenden Voraussetzungen erfüllt sein: Der Programmfall `PZSP` ist am Zielsignal nicht gesetzt, oder `PZSP` ist dort gesetzt und das Zielsignal wird zur Laufzeit von keiner **aktiven Zugstrasse** als **Flankenschutzelement** verwendet. Eine Zugstrasse gilt hierfür als aktiv, wenn sie eingeschaltet ist (Status `> 0`). Die Zulassungsprüfung ist somit negativ, wenn `PZSP` am Zielsignal gesetzt ist und genau dieses Signal gleichzeitig in mindestens einer aktiven Zugstrasse als Flankenschutzelement verwendet wird. Eine bloße Projektierung des Signals als Flankenschutzelement in einer ausgeschalteten Zugstrasse genügt nicht. Bei einem Blindziel ist diese Bedingung nicht anzuwenden.
+14. **Keine Befahrbarkeitssperre an Fahrstrassenelementen:** Bei **keinem Fahrstrassenelement** der anzufordernden Fahrstrasse darf eine **Befahrbarkeitssperre** aktiv sein. Ist bei mindestens einem Fahrstrassenelement eine Befahrbarkeitssperre gesetzt, ist die Zulassungsprüfung negativ.
+
+Für die Bedingungen 5, 9 und 12 ist ausschließlich entscheidend, ob an dem jeweils geprüften Element beziehungsweise Strang bereits eine Beanspruchung vorhanden ist. Ihre Herkunft ist ohne Bedeutung; auch eine von der zu prüfenden Fahrstrasse selbst verursachte Beanspruchung gilt als vorhanden und führt zu einer negativen Zulassungsprüfung. Eine Zuordnung der Beanspruchung zu einer Fahrstrasse oder eine Referenzzählung wird für diese Prüfung nicht benötigt.
 
 ## 2. Zustandsmodell
 
