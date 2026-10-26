@@ -63,7 +63,7 @@ Die Rangierstrasse durchläuft beim Einstellen die Zustände **0 bis 4**. Der Ü
 
 Die Fahrstrasse ist ausgeschaltet. Dies ist ihre Grundstellung.
 
-Wird die Fahrstrasse gewählt, während sie sich in Status 0 befindet, wird die **Zulassungsprüfung (ZP)** durchgeführt. Die dafür geltenden rangierstrassenspezifischen Bedingungen sind im Abschnitt **„Zulassungsprüfung“** dieses Dokuments beschrieben.
+Wird die Fahrstrasse gewählt, während sie sich in Status 0 befindet, wird die **Zulassungsprüfung (ZP) für Rangierstrassen** durchgeführt. Die dafür geltenden rangierstrassenspezifischen Bedingungen sind im Abschnitt **„Zulassungsprüfung“** dieses Dokuments beschrieben.
 
 Nur bei positiver Zulassungsprüfung darf mit dem Einstellen der Fahrstrasse fortgefahren werden.
 
