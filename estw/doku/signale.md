@@ -70,3 +70,7 @@ Für das Signalsystem **KS** gilt:
 |-|-|
 |0|KS2|
 |> 0|KS1|
+
+## Bildschirmdarstellung
+
+![Signale Bildschirmdarstellung](2455-signal.svg)

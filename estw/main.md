@@ -18,6 +18,7 @@ Privates Stellwerkssystem zum Steuern von Modelleisenbahnen.
 [Mainform](doku/mainform.md)  
 [Rangierstrasse](doku/rangierstrasse.md)  
 [Rules IsValid ESTWData](doku/rules_isvalid_estwdata.md)  
+[Signale](doku/signale.md)  
 [Weiche](doku/weiche.md)  
 [Zugstrasse](doku/zugstrasse.md)  
 

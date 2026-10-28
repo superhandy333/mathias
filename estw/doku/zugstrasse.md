@@ -72,14 +72,14 @@ Die Fahrstrasse ist ausgeschaltet. Dies ist ihre Grundstellung.
 Wird die Fahrstrasse gewählt, während sie sich in Status 0 befindet, wird die **Zulassungsprüfung (ZP) für Zugstrassen** durchgeführt. Die dafür geltenden zugstrassenspezifischen Bedingungen werden im Abschnitt **„Zulassungsprüfung“** dieses Dokuments beschrieben.
 
 Nur bei positiver Zulassungsprüfung darf mit dem Einstellen der Fahrstrasse fortgefahren werden.
-
+---------------------------------------------------------------------------------------------------------------------------
 ### Status 1 – Beanspruchungen anfordern
 
 **Voraussetzung:** Die Zulassungsprüfung ist positiv abgeschlossen.
 
 Die in diesem Abschnitt beschriebenen Beanspruchungen sind **Zugstraßenbeanspruchungen**, im Folgenden kurz **Beanspruchungen** genannt.
 
-Die folgenden Regeln gelten für die Rollen **Fahrwegelement**, **Fahrstrassenstart**, **Fahrstrassenziel**, **Auflöseelement**, **Vorwegelement** und **Unterwegselement**. Für **Flankenschutzelemente** und **Flankenschutztransportelemente** werden in diesem Schritt keine Beanspruchungen nach diesen Regeln angefordert. Ob, wann und auf welchen Strängen diese Elemente beansprucht werden, ist im Rahmen der noch offenen Flankenschutzregeln festzulegen. Aus dem Elementtyp allein darf keine Beanspruchung nach den folgenden Regeln abgeleitet werden.
+Die folgenden Regeln gelten für die Rollen **Fahrwegelement**, **Fahrstrassenstart**, **Fahrstrassenziel**, **Auflöseelement**, **Vorwegelement** und **Unterwegselement**. Für **Flankenschutzelemente** und **Flankenschutztransportelemente** werden in diesem Schritt keine Beanspruchungen nach diesen Regeln angefordert.
 
 **Aktionen:**
 
@@ -95,12 +95,14 @@ Die folgenden Regeln gelten für die Rollen **Fahrwegelement**, **Fahrstrassenst
 
 Das Setzen einer Beanspruchung ist als Anforderung zu verstehen. Der Übergang zum nächsten Schritt darf erst erfolgen, wenn die erforderlichen Beanspruchungszustände an den oben genannten Elementen und Strängen tatsächlich vorliegen.
 
+---------------------------------------------------------------------------------------------------------------------------
 ### Status 2 – Weichen in Sollstellung bringen
 
 **Voraussetzung:** Die in Status 1 geforderten Beanspruchungen sind an den dort genannten Elementen und Strängen tatsächlich gesetzt.
 
 **Aktion:** Alle als **Fahrwegelemente** projektierten **Weichen** werden in ihre für die Fahrstrasse projektierte `SollStellung` gebracht, sofern sie diese noch nicht eingenommen haben.
 
+---------------------------------------------------------------------------------------------------------------------------
 ### Status 3 – Weichen verschließen
 
 **Voraussetzungen:**
@@ -110,6 +112,7 @@ Das Setzen einer Beanspruchung ist als Anforderung zu verstehen. Der Übergang z
 
 **Aktion:** Alle als **Fahrwegelemente** projektierten **Weichen** werden **verschlossen**.
 
+---------------------------------------------------------------------------------------------------------------------------
 ### Status 4 – Fahrstrassenüberwachungsebene Rangierstrasse (FÜM blinkend)
 
 **Voraussetzungen**
@@ -117,42 +120,39 @@ Das Setzen einer Beanspruchung ist als Anforderung zu verstehen. Der Übergang z
 - Die Voraussetzungen aus Status 3 sind weiterhin erfüllt.
 - Alle als **Fahrwegelemente** projektierten **Weichen** sind **verschlossen**.
 
-**Aktion:** Der Fahrstrassenüberwachungsmelder am Startsignal wird auf blinkend gesetzt.
+**Aktion:**
+- Der Fahrstrassenüberwachungsmelder am Startsignal wird auf blinkend gesetzt.
+- Alle als **Unterwegssignale** projektierten **Signale** werden in ihre für die Fahrstrasse projektierte `SollStellung` gebracht. 
+- Alle als **Flankenschutzelemente** projektierten **Weichen** werden in ihre für die Fahrstrasse projektierte `SollStellung` gebracht, sofern sie diese noch nicht eingenommen haben. Mit Erreichen dieser Stellung werden sie sofort **verschlossen**.
 
-### Status 5 – Flankenschutzweichen in Sollstellung bringen und verschließen
-
-**Voraussetzungen**
-
-- Die Voraussetzungen aus Status 4 sind weiterhin erfüllt.
-- Der Fahrstrassenüberwachungsmelder am Startsignal ist auf blinkend gesetzt.
-
-**Aktion:** Alle als **Flankenschutzelemente** projektierten **Weichen** werden in ihre für die Fahrstrasse projektierte `SollStellung` gebracht, sofern sie diese noch nicht eingenommen haben. In dieser Stellung werden sie sofort **verschlossen**.
-
-### Status 6 – Fahrstrassenüberwachungsebene Zugstrasse (FÜM dauerhaft an)
+---------------------------------------------------------------------------------------------------------------------------
+### Status 6 – Fahrstrassenüberwachungsebene Zugstrasse (FÜM Ruhelicht)
 
 **Voraussetzungen:**
 
 - Die Voraussetzungen aus Status 5 sind weiterhin erfüllt.
 - Alle als **Flankenschutzelemente** projektierten **Weichen** sind in ihrer projektierten `SollStellung` verschlossen.
 - Alle als **Flankenschutzelemente** projektierten **Signale** sind in Haltstellung.
-- Alle als **Flankenschutztransportelemente** projektierten **Elemente** sind nicht besetzt.
+- Alle als **Startsignal**, **Zielsignal**, **Fahrwegelement**, **Blindziel**, **Auflöseelement**, **Unterwegselement**, **Vorwegelement** und **Flankenschutztransportelement** projektierten **Elemente** sind nicht besetzt.
+- Alle als **Unterwegselemente** projektierten Signale (Fahrwegsignale) werden in ihre jeweils für das Fahrstrassenelement projektierte `SollStellung` gebracht.
 
-**Aktion:** Der Fahrstrassenüberwachungsmelder am Startsignal wird auf dauerhaft an gesetzt.
+**Aktion:** Der Fahrstrassenüberwachungsmelder am Startsignal wird auf dauerhaft an (Ruhelicht) gesetzt.
 
+---------------------------------------------------------------------------------------------------------------------------
 ### Status 7 – Startsignal in Fahrtstellung bringen
 
 **Voraussetzungen:**
 
 - Die Voraussetzungen aus Status 6 sind weiterhin erfüllt.
 - Der Fahrstrassenüberwachungsmelder am Startsignal ist dauerhaft an.
-- Alle als **Fahrwegelement**, **Blindelement**, **Blindziel**, **Unterwegselement** oder **Vorwegelement** projektierten **Elemente** sind nicht besetzt.
 
 **Aktionen:**
 
 - Das **Startsignal** wird in die für die Fahrstrasse projektierte Sollstellung, also die **Fahrtstellung**, gebracht.
-- Alle als **Unterwegselemente** projektierten Signale (Fahrwegsignale) werden in ihre jeweils für das Fahrstrassenelement projektierte `SollStellung` gebracht.
+
 - Zyklisch wird in diesem Status die aktuelle Hauptsignalgeschwindigkeit des als **Vorwegelement** projektierten Signals als Vorsignalgeschwindigkeit in das Startsignal eingetragen.
 
+---------------------------------------------------------------------------------------------------------------------------
 ## 3. Auflösung der Zugstrasse
 
 Die Auflösung der Fahrstrasse wird durch **Anklicken des zugehörigen Auflöseelements** gestartet.
