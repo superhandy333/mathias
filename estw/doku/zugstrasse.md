@@ -122,7 +122,7 @@ Das Setzen einer Beanspruchung ist als Anforderung zu verstehen. Der Übergang z
 
 **Aktion:**
 - Der Fahrstrassenüberwachungsmelder am Startsignal wird auf blinkend gesetzt.
-- Alle als **Unterwegssignale** projektierten **Signale** werden in ihre für die Fahrstrasse projektierte `SollStellung` gebracht. 
+- Alle als **Unterwegssignale** projektierten **Signale** werden in ihre für die Fahrstrasse projektierte `SollStellung` gebracht. Das gilt nur dann, wenn die SollStellung -1, -2 oder -3 ist.
 - Alle als **Flankenschutzelemente** projektierten **Weichen** werden in ihre für die Fahrstrasse projektierte `SollStellung` gebracht, sofern sie diese noch nicht eingenommen haben. Mit Erreichen dieser Stellung werden sie sofort **verschlossen**.
 
 ---------------------------------------------------------------------------------------------------------------------------

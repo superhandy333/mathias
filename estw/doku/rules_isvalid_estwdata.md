@@ -173,6 +173,7 @@ vorhanden sind; ungültige Referenzen werden durch die vorangehenden Referenzpr�
 | Auflöseelement | `0` |
 | Blindziel / Blind | `0` |
 
+Ist ein Signal als **Unterwegssignal** projektiert, muss seine `SollStellung` -1, -2 oder -3 sein.
 Für andere Elementtypen führt diese Sollstellungsprüfung keine zusätzliche Einschränkung ein.
 
 ### Zusätzliche Konsistenzprüfungen je Fahrstrasse (bezogen auf ihre Fahrstrassenelemente)
