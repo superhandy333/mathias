@@ -130,11 +130,30 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 
 |Feld|Beschreibung|Pflichtfeld|
 |-|-|-|
-|id|Eindeutige Identifikationsnummer des Fahrstrassenelementtyps. Diese ID wird in der Tabelle `Fahrstrassenelemente` referenziert.|x|
+|id|Eindeutige Identifikationsnummer des Fahrstrassenelementtyps. Diese ID wird in der Tabelle [Fahrstrassenelemente](#fahrstrassenelemente) referenziert.|x|
 |bezeichnung|Name des Fahrstrassenelementtyps (max. 50 Zeichen)|x|
 |beschreibung|Erläuternder Text als Beschreibung zum Fahrstrassenelementtyp (max. 254 Zeichen)||
 
+|ID|Bezeichnung|Beschreibung|
+|-|-|-|
+|1|Fahrwegelement||
+|2|Fahrstrassenstart||
+|3|Fahrstrassenziel||
+|4|Auflöseelement||
+|5|Flankenschutzelement||
+|6|Vorwegelement||
+|7|Unterwegselement||
+|8|Flankenschutztransportelement||
+
 ## Fahrstrassenelemente
+
+|Feld|Beschreibung|Pflichtfeld|
+|-|-|-|
+|id|Eindeutige Identifikationsnummer des Fahrstrassenelements. Wird automatisch vergeben.|x|
+|fahrstrasse_id|Identifikationsnummer der Fahrstrasse, zu der das Element gehört. Wert aus dem Feld `id` der Tabelle [Fahrstrassen](#fahrstrassen).|x|
+|element_id|Identifikationsnummer des Elements. Wert aus dem Feld `id` der Tabelle [Elemente](#elemente).|x|
+|fahrstrassenelementtyp_id|Identifikationsnummer des Fahrstrassenelementtyps. Wert aus dem Feld `id` der Tabelle [Fahrstrassenelementtypen](#fahrstrassenelementtypen).|x|
+|sollstellung|Sollstellung, die das Element einnehmen muss, damit die Fahrstrasse eingestellt werden kann. Bei einem Startsignal wird sie als [Hauptsignalgeschwindigkeit](doku/signale.md#hauptsignalgeschwindigkeit) verwendet.|x|
 
 ## Fahrstrassenkombinationen
 
@@ -149,6 +168,6 @@ Autor<br>
 
 Mathias Rentsch<br>
 rentsch@online.de<br>
-März 2026
+November 2026
 
 [sbahn](../sbahn/index.md)
