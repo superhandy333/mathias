@@ -7,7 +7,39 @@ Für Signalarten, Halt- und Fahrtstellungen sowie die Ermittlung der Vorsignalge
 ## Struktureller Aufbau und Definition in der Datenstruktur
 
 Im Sinne des Datenmodells verknüpft eine **Fahrstrasse** (`Fahrstrasse`) mehrere **Elemente** (`Element`) eines Projekts über zugeordnete **Fahrstrassenelemente** (`FahrstrassenElement`). Jedes Fahrstrassenelement weist dem referenzierten Element eine spezifische funktionale Rolle (`FahrstrassenElementtyp`) innerhalb der Fahrstrasse zu.
-  
+
+### Bedingungen nach Elementtyp
+
+Für die Projektierung eines Elements in einer **Zugstrasse** sind ausschließlich die folgenden Zuordnungen von Elementtyp zu Fahrstrassenelementtyp zulässig. `ElementTypId` bezeichnet dabei den Typ des referenzierten Elements (`Element.TypId`); die Rollen-IDs beziehen sich auf `FahrstrassenElement.TypId`.
+
+- **Gleis (`ElementTypId = 1`):**
+  - Ein Element vom Typ Gleis darf nur als **Fahrwegelement (`TypId = 1`)** oder **Flankenschutztransportelement (`TypId = 8`)** projektiert sein.
+  - Seine `SollStellung` muss `0` sein.
+- **Weiche (`ElementTypId = 2`):**
+  - Ein Element vom Typ Weiche darf nur als **Fahrwegelement (`TypId = 1`)**, **Flankenschutzelement (`TypId = 5`)** oder **Flankenschutztransportelement (`TypId = 8`)** projektiert sein.
+  - Seine `SollStellung` muss `-1` (links) oder `1` (rechts) sein.
+- **Signal (`ElementTypId = 3`):**
+  - Ein Element vom Typ Signal darf nur als **Fahrwegelement (`TypId = 1`)**, **Fahrstrassenstart (`TypId = 2`)**, **Fahrstrassenziel (`TypId = 3`)**, **Flankenschutzelement (`TypId = 5`)**, **Vorwegelement (`TypId = 6`)**, **Unterwegselement (`TypId = 7`)** oder **Flankenschutztransportelement (`TypId = 8`)** projektiert sein.
+  - Als **Fahrwegelement (`TypId = 1`)** muss seine `SollStellung` `0` sein.
+  - Als **Fahrstrassenstart (`TypId = 2`)** muss seine `SollStellung` im ganzzahligen Bereich von `1` bis einschließlich `16` liegen.
+  - Als **Fahrstrassenziel (`TypId = 3`)** muss seine `SollStellung` `0` sein.
+  - Als **Flankenschutzelement (`TypId = 5`)** muss seine `SollStellung` `0` sein.
+  - Als **Vorwegelement (`TypId = 6`)** muss seine `SollStellung` `0` sein. Die projektierte `SollStellung` wird für diese Rolle im Fahrstrassenablauf nicht ausgewertet oder berücksichtigt.
+  - Als **Unterwegselement (`TypId = 7`)** muss seine `SollStellung` im ganzzahligen Bereich von `-3` bis einschließlich `-1` liegen.
+  - Als **Flankenschutztransportelement (`TypId = 8`)** muss seine `SollStellung` `0` sein.
+- **Blindziel (`ElementTypId = 4`):**
+  - Ein Element vom Typ Blindziel darf nur als **Fahrwegelement (`TypId = 1`)**, **Fahrstrassenziel (`TypId = 3`)** oder **Flankenschutztransportelement (`TypId = 8`)** projektiert sein.
+  - Seine `SollStellung` muss `0` sein.
+- **Auflöseelement (`ElementTypId = 5`):**
+  - Ein Element vom Typ Auflöseelement darf nur als **Fahrwegelement (`TypId = 1`)**, **Auflöseelement (`TypId = 4`)** oder **Flankenschutztransportelement (`TypId = 8`)** projektiert sein.
+  - Seine `SollStellung` muss `0` sein.
+
+Jedes referenzierte Element muss zum selben Projekt wie die Zugstrasse gehören. Ein Element darf innerhalb derselben Zugstrasse nur einmal zugeordnet sein, auch bei unterschiedlichen Rollen. In unterschiedlichen Fahrstrassen darf dasselbe Element erneut verwendet werden.
+
+Die Zuordnungen entsprechen der verbindlichen Tabelle in [datenstrukturen.md](datenstrukturen.md#zulässige-zuordnungen-zu-elementtypen). Für Referenzen, Eindeutigkeit, Projektzugehörigkeit und Sollstellungen gelten die Bedingungen aus [rules_isvalid_estwdata.md](rules_isvalid_estwdata.md). Die hier genannten Sollstellungen beschreiben die strukturelle Datenvalidität; weitere Bedingungen für die Zulassung und den Ablauf der Zugstrasse stehen in den folgenden Abschnitten.
+
+### Bedingungen nach Fahrstrassenelementtyp
+
 Für die datentechnische Gültigkeit und Konsistenz einer Zugstrasse gelten hinsichtlich ihrer Fahrstrassenelemente folgende verbindliche Bedingungen:
 
 - **Fahrwegelement (`TypId = 1`):**
@@ -43,21 +75,36 @@ Diese strukturellen Festlegungen stellen sicher, dass jede Zugstrasse über eind
 Für eine Zugstrasse gelten die folgenden Zulassungsbedingungen. Die Zulassungsprüfung ist nur dann positiv, wenn **alle** Bedingungen erfüllt sind.
 
 1. **Fahrstrassenziel aufgelöst:** Das Fahrstrassenziel muss aufgelöst sein. Das als Fahrstrassenziel projektierte **Signal** oder **Blindziel** darf keinen Zielfestlegemelder zeigen. Der Zustand des Zielfestlegemelders (ZIF) am Fahrstrassenzielelement wird bei der Zulassungsprüfung geprüft. Ist er gesetzt, ist die Zulassungsprüfung negativ.
+
 2. **Startelement als Zugstraßenstart zugelassen:** Das als Fahrstrassenstart projektierte **Signal** muss in den Projektierungsdaten als Start einer Zugstrasse zugelassen sein (`PZS = 1`). Ist `PZS` nicht gesetzt, ist die Zulassungsprüfung negativ.
-3. **Zielelement als Zugstraßenziel zugelassen:** Das als Fahrstrassenziel projektierte **Signal** oder **Blindziel** muss in den Projektierungsdaten als Ziel einer Zugstrasse zugelassen sein (`PRZ = 1`). Ist `PRZ` nicht gesetzt, ist die Zulassungsprüfung negativ.
-4. **Gleiselement für Zugstraßen zugelassen:** Für jedes der Zugstrasse zugeordnete **Fahrstrassenelement**, dessen referenziertes Element vom Elementtyp **Gleis** ist, muss der Programmfall `PZ` an genau diesem Gleiselement gesetzt sein (`PZ = 1`). Ist `PZ` bei mindestens einem solchen Gleiselement nicht gesetzt, ist die Zulassungsprüfung negativ.
-5. **Keine Beanspruchung der Fahrwegelemente, Auflöseelemente und Blindziele:** Alle zur Zugstrasse gehörenden **Fahrwegelemente**, **Auflöseelemente** und **Blindziele** müssen frei von jeder bereits vorhandenen Beanspruchung sein. Ist mindestens eines dieser Fahrwegelemente bereits beansprucht, ist die Zulassungsprüfung negativ.
-6. **Keine Beanspruchung auf Strang B eines Vorwegelementes:** Ein zur Zugstrasse gehörendes **Vorwegelement (Signal)** muss frei von jeder bereits vorhandenen Beanspruchung auf **Strang B** sein. Liegt dort eine solche Beanspruchung vor, ist die Zulassungsprüfung negativ.
+
+3. **Zielelement als Zugstraßenziel zugelassen:** Das als Fahrstrassenziel projektierte **Signal** oder **Blindziel** muss in den Projektierungsdaten als Ziel einer Zugstrasse zugelassen sein (`PZZ = 1`). Ist `PZZ` nicht gesetzt, ist die Zulassungsprüfung negativ.
+
+4. **Gleiselement für Zugstraßen zugelassen:** Für jedes der Zugstrasse zugeordnete **Fahrwegelement**, dessen referenziertes Element vom Elementtyp **Gleis** ist, muss der Programmfall `PZ` an genau diesem Gleiselement gesetzt sein (`PZ = 1`). Ist `PZ` bei mindestens einem solchen Gleiselement nicht gesetzt, ist die Zulassungsprüfung negativ.
+
+5. **Keine Beanspruchung der Fahrwegelemente, Auflöseelemente und Blindziele:** Alle zur Zugstrasse gehörenden **Fahrwegelemente**, das als **Auflöseelement** (Fahrstrassenelementtyp) projektierte **Auflöseelement** (Elementtyp) und gegebenenfalls das als Fahrstrassenziel projektierte **Blindziel** müssen frei von jeder bereits vorhandenen Beanspruchung sein. Ist mindestens eines dieser Elemente bereits beansprucht, ist die Zulassungsprüfung negativ.
+
+6. **Keine Beanspruchung auf Strang B eines Vorwegelementes:** Ein zur Zugstrasse gehörendes **Vorwegelement (Signal)** muss frei von einer bereits vorhandenen Beanspruchung auf **Strang B** sein. Liegt dort eine solche Beanspruchung vor, ist die Zulassungsprüfung negativ.
+
 7. **Keine Beanspruchung auf Strang A und Strang B von Unterwegselementen:** Jedes zur Zugstrasse gehörende **Unterwegselement (Signal)** muss sowohl auf **Strang A** als auch auf **Strang B** frei von jeder bereits vorhandenen Beanspruchung sein. Liegt an mindestens einem dieser Signale auf einem der beiden Stränge eine Beanspruchung vor, ist die Zulassungsprüfung negativ.
-8. **Keine widersprechende Sperrlage einer Weiche:** Für alle zur Zugstrasse gehörenden **Weichen** als **Fahrstrassenelement** wird die für diese Zugstrasse projektierte `SollStellung` betrachtet. Eine solche Weiche darf nicht in einer Lage gesperrt sein, die dieser Sollstellung widerspricht. Ist eine Weiche beispielsweise in der Gegenlage zur benötigten Sollstellung gesperrt, ist die Zulassungsprüfung negativ. Als „gesperrt“ gilt eine Weiche sowohl bei projektierter Stellsperre durch einen gesetzten Programmfall `PSSL` oder `PSSR` als auch bei einer zur Laufzeit durch den Befehl `WUS` wirksamen Umstellsperre.
+
+8. **Keine widersprechende Sperrlage einer Weiche:** Für alle zur Zugstrasse gehörenden **Weichen** als **Fahrwegelement** wird die für diese Zugstrasse projektierte `SollStellung` betrachtet. Eine solche Weiche darf nicht in einer Lage gesperrt sein, die dieser Sollstellung widerspricht. Ist eine Weiche beispielsweise in der Gegenlage zur benötigten Sollstellung gesperrt, ist die Zulassungsprüfung negativ. Als „gesperrt“ gilt eine Weiche sowohl bei projektierter Stellsperre durch einen gesetzten Programmfall `PSSL` oder `PSSR` als auch bei einer zur Laufzeit durch den Befehl `WUS` wirksamen Umstellsperre.
+
 9. **Keine widersprechende Verschlusslage einer Weiche:** Für alle zur Zugstrasse gehörenden **Weichen** als **Fahrstrassenelement** wird die für diese Zugstrasse projektierte `SollStellung` betrachtet. Eine solche Weiche darf nicht in einer Lage verschlossen sein, die dieser Sollstellung widerspricht. Ist eine Weiche beispielsweise in der Gegenlage zur benötigten Sollstellung verschlossen, ist die Zulassungsprüfung negativ.
-10. **Keine aufgefahrene Weiche:** Keine für die Zugstrasse benötigte **Weiche** als **Fahrstrassenelement** darf zum Zeitpunkt der Zulassungsprüfung aufgefahren sein. Ist mindestens eine dieser Weichen aufgefahren, ist die Zulassungsprüfung negativ – unabhängig davon, ob ihre aktuelle Lage ansonsten der projektierten `SollStellung` entspricht oder entsprechen könnte.
+
+10. **Keine aufgefahrene Weiche:** Keine für die Zugstrasse benötigte **Weiche** als **Fahrwegelement** darf zum Zeitpunkt der Zulassungsprüfung aufgefahren sein. Ist mindestens eine dieser Weichen aufgefahren, ist die Zulassungsprüfung negativ – unabhängig davon, ob ihre aktuelle Lage ansonsten der projektierten `SollStellung` entspricht oder entsprechen könnte.
+
 11. **Startsignal auf Strang A nicht beansprucht:** Am **Startsignal** darf auf **Strang A** keine bereits vorhandene Beanspruchung vorliegen. Liegt dort eine Beanspruchung vor, ist die Zulassungsprüfung negativ.
+
 12. **Startsignal in Haltstellung:** Das **Startsignal** muss die **Haltstellung** zeigen. Zeigt es einen anderen Signalbegriff, ist die Zulassungsprüfung negativ.
+
 13. **Keine Signalsperre am Startsignal:** Am **Startsignal** darf keine **Signalsperre (SS)** aktiv sein. Ist das Startsignal durch die Signalsperre gesperrt, ist die Zulassungsprüfung negativ.
+
 14. **Zielsignal auf Strang B nicht beansprucht:** Ist das Fahrstrassenziel ein **Signal**, darf an diesem **Zielsignal** auf **Strang B** keine bereits vorhandene Beanspruchung vorliegen. Liegt dort eine Beanspruchung vor, ist die Zulassungsprüfung negativ.
+
 15. **Zielsperre am Zielsignal beachten:** Ist das Fahrstrassenziel ein **Signal**, muss für genau dieses **Zielsignal** mindestens eine der folgenden Voraussetzungen erfüllt sein: Der Programmfall `PZSP` ist am Zielsignal nicht gesetzt, oder `PZSP` ist dort gesetzt und das Zielsignal wird zur Laufzeit von keiner **aktiven Zugstrasse** als **Flankenschutzelement** verwendet. Eine Zugstrasse gilt hierfür als aktiv, wenn sie eingeschaltet ist (Status `> 0`). Die Zulassungsprüfung ist somit negativ, wenn `PZSP` am Zielsignal gesetzt ist und genau dieses Signal gleichzeitig in mindestens einer aktiven Zugstrasse als Flankenschutzelement verwendet wird. Eine bloße Projektierung des Signals als Flankenschutzelement in einer ausgeschalteten Zugstrasse genügt nicht. Bei einem Blindziel ist diese Bedingung nicht anzuwenden.
-16. **Keine Befahrbarkeitssperre an Fahrstrassenelementen:** Bei **keinem Fahrstrassenelement** der anzufordernden Fahrstrasse darf eine **Befahrbarkeitssperre** aktiv sein. Ist bei mindestens einem Fahrstrassenelement eine Befahrbarkeitssperre gesetzt, ist die Zulassungsprüfung negativ.
+
+16. **Keine Befahrbarkeitssperre im befahrenen Bereich:** Bei keinem Element des **befahrenen Bereichs** der anzufordernden Zugstrasse darf eine **Befahrbarkeitssperre** aktiv sein. Für diese Prüfung umfasst der befahrene Bereich die Elemente in den Rollen **Fahrwegelement (`TypId = 1`)**, **Fahrstrassenstart (`TypId = 2`)**, **Fahrstrassenziel (`TypId = 3`)**, **Auflöseelement (`TypId = 4`)**, **Vorwegelement (`TypId = 6`)** und **Unterwegselement (`TypId = 7`)**. Ist bei mindestens einem dieser Elemente eine Befahrbarkeitssperre gesetzt, ist die Zulassungsprüfung negativ. Befahrbarkeitssperren an **Flankenschutzelementen (`TypId = 5`)** und **Flankenschutztransportelementen (`TypId = 8`)** werden für diese Bedingung nicht berücksichtigt. Maßgeblich ist die Rolle des Elements in der anzufordernden Zugstrasse.
 
 Für die Bedingungen 5, 6, 7, 11 und 14 ist ausschließlich entscheidend, ob an dem jeweils geprüften Element beziehungsweise Strang bereits eine Beanspruchung vorhanden ist. Ihre Herkunft ist ohne Bedeutung; auch eine von der zu prüfenden Fahrstrasse selbst verursachte Beanspruchung gilt als vorhanden und führt zu einer negativen Zulassungsprüfung. Eine Zuordnung der Beanspruchung zu einer Fahrstrasse oder eine Referenzzählung wird für diese Prüfung nicht benötigt.
 
@@ -169,53 +216,30 @@ Für die Zugstrasse muss zusätzlich noch festgelegt werden, **wann und unter we
 
 Damit gilt insbesondere die fachliche Sicherheitsregel: **Weichenverschluss und Beanspruchungen dürfen bei der Fahrstrassenauflösung erst entfernt werden, nachdem das Startsignal nachweislich die Haltstellung erreicht hat.**
 
-## 4. Zustandsfolge
+## 4. Noch zu ergänzende Punkte
 
-```text
-Status 0
-  Fahrstrasse ausgeschaltet
-       |
-       | Fahrstrasse gewählt
-       v
-  Zulassungsprüfung
-       |
-       | ZP positiv
-       v
-Status 1
-  Beanspruchungen anfordern
-       |
-       | alle erforderlichen Beanspruchungen gesetzt
-       v
-Status 2
-  Weichen in Sollstellung bringen
-       |
-       | alle Weichen in Sollstellung
-       v
-Status 3
-  Weichen verschließen
-       |
-       | alle Weichen verschlossen
-       v
-  Flankenschutz herstellen
-  (Statusnummer und Detailmechanik noch festzulegen)
-       |
-       | Flankenschutz hergestellt
-       v
-Status 4
-  Startsignal in Fahrtstellung bringen
-```
+Die zulässigen Element-/Rollenzuordnungen, die rollenabhängigen Sollstellungswerte der Signale und die Bedingungen der Zulassungsprüfung sind beschrieben. Der Haltbegriff ist für Zug- und Rangierstrassen einheitlich auf `HSV == 0` festgelegt; Kennlicht (`HSV = -3`) ist kein Haltbegriff.
 
-Die genaue Einordnung und Nummerierung des zusätzlichen Flankenschutz-Zustands wird ergänzt, sobald die fachliche Mechanik festgelegt ist.
+Für Flankenweichen ist bereits festgelegt, dass sie ab **Status 4** in ihre Sollstellung gebracht und nach deren tatsächlichem Erreichen verschlossen werden. **Status 6** verlangt die verschlossenen Flankenweichen in Sollstellung, die Haltstellung der Flankensignale und die dort beschriebene Freiprüfung einschließlich der Flankenschutztransportelemente. Für die Weichenverschlüsse gilt der gemeinsame Verschlusszähler gemäß [weiche.md](weiche.md).
 
-## 5. Noch zu ergänzende Punkte
+Folgende fachliche Festlegungen und Präzisierungen stehen noch aus:
 
-Dieser Stand ist ein erster Entwurf auf Basis der Rangierstrassenmechanik. Insbesondere sind für den **Flankenschutz** noch festzulegen:
+1. **Vollständige Statusfolge:** Status 6 verweist auf die Voraussetzungen aus **Status 5**, obwohl Status 5 nicht beschrieben ist. Es ist festzulegen, ob ein solcher Status benötigt wird und welche Voraussetzungen, Aktionen und Übergänge er besitzt oder ob der Verweis anzupassen ist.
 
-- Position und Statusnummer innerhalb der Zustandsfolge,
-- Voraussetzungen für die Herstellung des Flankenschutzes,
-- Aktionen an Flankenschutzelementen und Flankenschutztransportelementen,
-- Prüfung, wann der Flankenschutz vollständig hergestellt ist,
-- Verhalten bei nicht herstellbarem Flankenschutz,
-- Aufhebung des Flankenschutzes bei der Fahrstrassenauflösung.
+2. **Herstellung und Bindung des Signalflankenschutzes:** Die geforderte Haltstellung der Flankensignale ist definiert. Noch fehlen der Zeitpunkt der Haltanforderung, das Setzen und Rücknehmen einer Flankenbeanspruchung (`BEAF`) sowie die Regeln, die während des benötigten Schutzes eine Fahrtstellung oder Ersatzsignalbedienung verhindern.
 
-Weitere fachliche Bedingungen, Fehler- und Rückfallzustände sowie gegebenenfalls weitere Zustände werden ergänzt, sobald sie festgelegt sind.
+3. **Konflikte und nicht herstellbarer Flankenschutz:** Für Flankensignale sind die Zulässigkeit gemeinsamer Schutzanforderungen und der Umgang mit einer bereits bestehenden Fahrt- oder Zielverwendung festzulegen. Bei Weichen sind widersprechende Stellungsanforderungen zu behandeln; die gemeinsame Nutzung eines Verschlusses in derselben Lage ist durch [weiche.md](weiche.md) bereits vorgesehen. Für nicht herstellbaren Flankenschutz ist zu bestimmen, ob die Zugstrasse wartet, abgebrochen wird oder einen anderen definierten Zustand einnimmt.
+
+4. **Flankenschutztransportelemente:** Die Freiprüfung in Status 6 und die Ausnahme von der Befahrbarkeitssperrenprüfung in ZP 16 sind festgelegt. Offen ist, ob diese Elemente zusätzlich gegen andere Nutzungen gebunden werden müssen. Falls eine solche Bindung erforderlich ist, fehlen Erwerb, Konfliktprüfung und Freigabe. Aus Status 1 folgt keine Beanspruchung dieser Rolle.
+
+5. **Unterwegssignale:** Die zulässigen Sollstellungen `-3`, `-2` und `-1` sind festgelegt. Zu präzisieren sind die zusätzliche Funktion der erneuten Sollstellungsanforderung in Status 6 nach der Anforderung in Status 4 und die zugehörigen Prüfungen des tatsächlich erreichten Signalzustands. Kennlicht darf dabei nicht als Haltbestätigung gewertet werden.
+
+6. **Fahrtfreigabe des Startsignals:** Es ist zu bestimmen, ob Status 7 die Fahrtanforderung oder die tatsächlich bestätigte Fahrtstellung bezeichnet und wann die Anforderung ausgeführt beziehungsweise wiederholt wird. Dabei sind die allgemeinen Regeln aus [fahrstrasse.md](fahrstrasse.md) zur einmaligen Fahrtanforderung mit dem Zugablauf in Status 7 abzugleichen. Das Verhalten bei Wiederholungssperre, Signalsperre, Ersatzsignal und Flankenbeanspruchung ist für Erstfreigabe und Wiederfreigabe zu konkretisieren.
+
+7. **Vorsignalgeschwindigkeit:** Die Quelle ist gemäß [signale.md](signale.md#vorsignalgeschwindigkeit) das Vorwegelement oder bei dessen Fehlen das Zielelement. Offen bleiben die Behandlung eines Blindziels ohne Vorwegelement und die Abbildung negativer Hauptsignalgeschwindigkeiten der Quelle auf den VSV-Wertebereich `0` bis `16`. Außerdem ist der Zeitpunkt der ersten gültigen VSV vor beziehungsweise bei Fahrtfreigabe festzulegen.
+
+8. **Zielfestlegemelder und Melderrücknahme:** Für den Zug-ZIF fehlen die Zeitpunkte des Setzens, der Rücknahme und eines erneuten Setzens. Die Behandlung gemeinsam verwendeter Ziele ist dabei festzulegen. Auch die Rücknahme des FÜM bei Rückfall und Auflösung ist zu beschreiben; blinkend in Status 4 und Ruhelicht in Status 6 sind bereits festgelegt.
+
+9. **Rückfall und Wiederfreigabe:** Bei weggefallenen Überwachungsvoraussetzungen werden gemäß [fahrstrasse.md](fahrstrasse.md) Start- und Unterwegssignale auf Halt angefordert. Noch fehlen der jeweilige Rückfallstatus, die dabei erhalten bleibenden Beanspruchungen und Verschlüsse, die Melderzustände sowie die Voraussetzungen und Aktionen einer Wiederfreigabe. Soweit erforderlich, ist reguläre Belegung durch die Zugfahrt von technischen Störungen zu unterscheiden.
+
+10. **Auflösung und Flankenschutzfreigabe:** Die Haltbestätigung des Startsignals vor dem Entfernen von Weichenverschlüssen und Beanspruchungen ist festgelegt. Zu ergänzen sind die Behandlung der Unterwegssignale, die Bedingungen und Reihenfolge der Flankenschutzfreigabe sowie die Rücknahme von `BEAF`, FÜM und Zug-ZIF. Dabei müssen weiterhin benötigte Verschlussbeiträge und Schutzanforderungen anderer Fahrstrassen erhalten bleiben. Diese Regeln sind auch für eine Auflösung während des Einstellvorgangs zu beschreiben.

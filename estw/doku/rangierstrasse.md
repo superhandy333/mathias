@@ -41,7 +41,7 @@ Der Zustand des Zielfestlegemelders (ZIF) am Fahrstrassenzielelement wird bei de
 
 1. **Startelement als Rangierstraßenstart zugelassen:** Das als Fahrstrassenstart projektierte **Signal** muss in den Projektierungsdaten als Start einer Rangierstrasse zugelassen sein (`PRS = 1`). Ist `PRS` nicht gesetzt, ist die Zulassungsprüfung negativ.
 2. **Zielelement als Rangierstrassenziel zugelassen:** Das als Fahrstrassenziel projektierte **Signal oder Blindziel** muss in den Projektierungsdaten als Ziel einer Rangierstrasse zugelassen sein (`PRZ = 1`). Ist `PRZ` nicht gesetzt, ist die Zulassungsprüfung negativ.
-3. **Gleiselement für Rangierstrassen zugelassen:** Für jedes der Rangierstrasse zugeordnete **Fahrstrassenelement**, dessen referenziertes Element vom Elementtyp **Gleis** ist, muss der Programmfall `PR` an genau diesem Gleiselement gesetzt sein (`PR = 1`). Ist `PR` bei mindestens einem solchen Gleiselement nicht gesetzt, ist die Zulassungsprüfung negativ.
+3. **Gleiselement für Rangierstrassen zugelassen:** Für jedes der Rangierstrasse zugeordnete **Fahrwegelement**, dessen referenziertes Element vom Elementtyp **Gleis** ist, muss der Programmfall `PR` an genau diesem Gleiselement gesetzt sein (`PR = 1`). Ist `PR` bei mindestens einem solchen Gleiselement nicht gesetzt, ist die Zulassungsprüfung negativ.
 4. **Keine Beanspruchung der Fahrwegelemente, Auflöseelemente und Blindziele:** Alle zur Rangierstrasse gehörenden **Fahrwegelemente**, **Auflöseelemente** und **Blindziele** müssen frei von jeder bereits vorhandenen Beanspruchung sein. Ist mindestens eines dieser Elemente bereits beansprucht, ist die Zulassungsprüfung negativ.
 5. **Keine widersprechende Sperrlage einer Weiche:** Für alle zur Rangierstrasse gehörenden **Weichen** wird die für diese Rangierstrasse projektierte `SollStellung` betrachtet. Eine Weiche darf nicht in einer Lage gesperrt sein, die dieser Sollstellung widerspricht. Ist eine Weiche beispielsweise in der Gegenlage zur benötigten Sollstellung gesperrt, ist die Zulassungsprüfung negativ. Als „gesperrt“ gilt eine Weiche sowohl bei projektierter Stellsperre durch einen gesetzten Programmfall `PSSL` oder `PSSR` als auch bei einer zur Laufzeit durch den Befehl `WUS` wirksamen Umstellsperre.
 6. **Keine widersprechende Verschlusslage einer Weiche:** Für alle zur Rangierstrasse gehörenden **Weichen** wird die für diese Rangierstrasse projektierte `SollStellung` betrachtet. Eine Weiche darf nicht in einer Lage verschlossen sein, die dieser Sollstellung widerspricht. Ist eine Weiche beispielsweise in der Gegenlage zur benötigten Sollstellung verschlossen, ist die Zulassungsprüfung negativ.
@@ -129,36 +129,3 @@ Die Auflösung erfolgt in einer festen Reihenfolge:
 5. Abschließend wird der Status der Fahrstrasse wieder auf **Status 0 – Fahrstrasse ausgeschaltet** gesetzt.
 
 Damit gilt insbesondere die fachliche Sicherheitsregel: **Weichenverschluss und Beanspruchungen dürfen bei der Fahrstrassenauflösung erst entfernt werden, nachdem das Startsignal nachweislich die Haltstellung erreicht hat.**
-
-## 4. Zustandsfolge
-
-```text
-Status 0
-  Fahrstrasse ausgeschaltet
-       |
-       | Fahrstrasse gewählt
-       v
-  Zulassungsprüfung
-       |
-       | ZP positiv
-       v
-Status 1
-  Beanspruchungen anfordern
-       |
-       | alle erforderlichen Beanspruchungen gesetzt
-       v
-Status 2
-  Weichen in Sollstellung bringen
-       |
-       | alle Weichen in Sollstellung
-       v
-Status 3
-  Weichen verschließen
-       |
-       | alle Weichen verschlossen
-       v
-Status 4
-  Startsignal in Fahrtstellung bringen
-```
-
-Die Fahrstrassenauflösung wird unabhängig von dieser Einstellfolge durch das Auflöseelement angestoßen und führt nach Haltstellung des Startsignals, Aufhebung der Weichenverschlüsse und Entfernung der Beanspruchungen zurück zu Status 0.

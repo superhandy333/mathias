@@ -169,12 +169,30 @@ vorhanden sind; ungültige Referenzen werden durch die vorangehenden Referenzpr�
 |-|-|
 | Gleis | `0` |
 | Weiche | `-1`, `1` |
-| Signal | `-3` bis einschließlich `16` |
+| Signal | `-3` bis einschließlich `16`; zusätzliche Einschränkungen nach Fahrstrassenelementtyp siehe unten |
 | Auflöseelement | `0` |
 | Blindziel / Blind | `0` |
 
 Ist ein Signal als **Unterwegssignal** projektiert, muss seine `SollStellung` -1, -2 oder -3 sein.
 Für andere Elementtypen führt diese Sollstellungsprüfung keine zusätzliche Einschränkung ein.
+
+##### Sollstellung von Signalen in Zugstrassen nach Fahrstrassenelementtyp
+
+Für ein Signal (`Element.TypId = 3`), das einer **Zugstrasse (`Fahrstrasse.TypId = 2`)** zugeordnet ist, gelten je nach Rolle ausschließlich die folgenden ganzzahligen Sollstellungswerte. Die Rollen-ID bezeichnet `FahrstrassenElement.TypId`.
+
+| Fahrstrassenelementtyp | Rollen-ID | Zulässige `SollStellung` |
+|---|---|---|
+| Fahrwegelement | `1` | `0` |
+| Fahrstrassenstart | `2` | `1` bis einschließlich `16` |
+| Fahrstrassenziel | `3` | `0` |
+| Flankenschutzelement | `5` | `0` |
+| Vorwegelement | `6` | `0` |
+| Unterwegselement | `7` | `-3` bis einschließlich `-1` |
+| Flankenschutztransportelement | `8` | `0` |
+
+Beim **Vorwegelement** wird die projektierte `SollStellung` im Fahrstrassenablauf nicht ausgewertet oder berücksichtigt; in den Projektierungsdaten muss sie dennoch `0` sein.
+
+Diese Einschränkungen entsprechen den [Bedingungen nach Elementtyp für Zugstrassen](zugstrasse.md#bedingungen-nach-elementtyp). Die rollenabhängige Prüfung setzt zusätzlich gültige Referenzen auf die Fahrstrasse und den Fahrstrassenelementtyp voraus. Ein anderer Sollstellungswert ist ein Validierungsfehler. Die Regeln für zulässige Rollen bleiben zusätzlich gültig; insbesondere ist ein Signal als Auflöseelement (`TypId = 4`) weiterhin unzulässig. Die obige Tabelle gilt ausschließlich für Zugstrassen; die Sollstellungsregeln für Rangierstrassen werden dadurch nicht geändert.
 
 ### Zusätzliche Konsistenzprüfungen je Fahrstrasse (bezogen auf ihre Fahrstrassenelemente)
 

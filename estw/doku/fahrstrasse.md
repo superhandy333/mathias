@@ -2,7 +2,7 @@
 
 Dieses Dokument beschreibt die für **Rangierstraßen** und **Zugstraßen** gemeinsam gültige Fahrstraßenlogik. Die jeweiligen Besonderheiten und konkreten Statusfolgen sind in [rangierstrasse.md](rangierstrasse.md) und [zugstrasse.md](zugstrasse.md) beschrieben.
 
-Die fachliche Bedeutung der Halt- und Fahrtstellungen eines Signals wird abhängig von der Fahrstraßenart durch die [Hauptsignalgeschwindigkeit](signale.md#hauptsignalgeschwindigkeit) festgelegt.
+Die fachliche Bedeutung der Signalstellungen wird durch die [Hauptsignalgeschwindigkeit](signale.md#hauptsignalgeschwindigkeit) festgelegt. Für Zug- und Rangierstrassen ist ausschließlich `HSV = 0` die **Haltstellung**. Eine Haltanforderung fordert diesen Wert an; eine Haltbestätigung setzt den tatsächlich erreichten Zustand `HSV == 0` voraus. `HSV = -3` bedeutet **Kennlicht** und ist kein Haltbegriff. Die Bedeutung der Fahrtstellungen hängt von der Fahrstraßenart ab.
 
 ## Zustand einer Fahrstraße
 

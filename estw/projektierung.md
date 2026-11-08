@@ -45,7 +45,6 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |3| S| Signal|
 |4| B| Blindziel|
 |5| A| Auflöseelement|
-|7| Z| Zusatzelement|
 |99| T| Test|
 
 ## Elemente

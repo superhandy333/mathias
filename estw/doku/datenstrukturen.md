@@ -18,7 +18,7 @@ Die folgenden Abschnitte beschreiben die grundlegenden Datenstrukturen, die im S
 |bezeichnung|Ausgeschriebener Name des Elementtyps, beispielsweise `Weiche` (max. 50 Zeichen)|x|
 |beschreibung|Erläuternder Text als Beschreibung zum Elementtyp (max. 254 Zeichen)||
 
-Elementtypen im System sind fest definierte Kategorien von Elementen. Ihre Katalogdaten werden als Datenbankeinträge verwaltet; die stabilen IDs sind zusätzlich zentral durch `ElementTypId` in [structs.h](../structs.h) benannt. Die fachliche und technische Identifikation erfolgt ausschließlich über diese ID; die `bezeichnung` dient der Anzeige und darf nicht zur Steuerung der Programmlogik verwendet werden.
+Elementtypen im System sind fest definierte Kategorien von Elementen. Ihre Katalogdaten werden als Datenbankeinträge verwaltet; die stabilen IDs sind zusätzlich zentral durch `ElementTypId` in `structs.h` benannt. Die fachliche und technische Identifikation erfolgt ausschließlich über diese ID; die `bezeichnung` dient der Anzeige und darf nicht zur Steuerung der Programmlogik verwendet werden.
 
 |ElementTypId|Bezeichnung|
 |-|-|

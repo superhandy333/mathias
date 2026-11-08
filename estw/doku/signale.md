@@ -22,22 +22,26 @@ Ein Signal besitzt in seiner Zustandslogik zwei Geschwindigkeitswerte:
 
 Die Hauptsignalgeschwindigkeit eines Signals gibt an, ob und mit welcher Geschwindigkeit ein Zug das Signal passieren darf. Sie ist ein ganzzahliger Wert im Bereich von `-3` bis `16`.
 
+Für **Zugstrassen und Rangierstrassen** gilt gleichermaßen: Ausschließlich die Hauptsignalgeschwindigkeit `0` ist ein **Haltbegriff** beziehungsweise eine **Haltstellung**. Die Werte `-1` und `-2` bezeichnen Rangierfahrt und sind auch bei der Prüfung einer Zugstrasse keine Haltbegriffe.
+
 Für **Zugstrassen** gilt:
 
-- Eine Hauptsignalgeschwindigkeit kleiner oder gleich `0` ist eine **Haltstellung**.
+- Die Hauptsignalgeschwindigkeit `0` ist die **Haltstellung**.
 - Eine Hauptsignalgeschwindigkeit größer `0` ist eine **Fahrtstellung**. Der Wert multipliziert mit `10` ergibt die maximal zulässige Geschwindigkeit in km/h.
 
 Für **Rangierstrassen** gilt:
 
-- Die Hauptsignalgeschwindigkeit `0` ist die reguläre **Haltstellung**.
+- Die Hauptsignalgeschwindigkeit `0` ist die **Haltstellung**.
 - Die Hauptsignalgeschwindigkeiten `-1` und `-2` sind **Fahrtstellungen**.
-- Hauptsignalgeschwindigkeiten größer `0` sind ungültig und deshalb als **Haltstellung** zu interpretieren.
+- Hauptsignalgeschwindigkeiten größer `0` sind für Rangierstrassen ungültig und dürfen nicht als **Haltstellung** gewertet werden.
 
-Die Hauptsignalgeschwindigkeit `-3` bedeutet unabhängig von der Fahrstraßenart, dass das Signal für die Fahrstrasse nicht relevant ist.
+Die Hauptsignalgeschwindigkeit `-3` bedeutet **Kennlicht**. Das Signal hat in dieser Stellung sowohl für eine Zugstrasse als auch für eine Rangierstrasse keine Bedeutung; der Lokführer darf es ignorieren. **Kennlicht ist kein Haltbegriff** und erfüllt keine geforderte Haltstellung oder Haltbestätigung.
+
+Wird in der Fahrstrassenlogik eine Haltstellung angefordert, ist damit die Anforderung von `HSV = 0` gemeint. Eine tatsächlich erreichte Haltstellung ist ausschließlich bei `HSV == 0` bestätigt. Dies gilt insbesondere für die Zulassungsprüfung, den Signalflankenschutz, die Reaktion auf weggefallene Überwachungsvoraussetzungen und die Fahrstrassenauflösung. Die projektierte `SollStellung` allein ist kein Nachweis des tatsächlich erreichten Signalzustands.
 
 |Wert|Bedeutung|
 |-|-|
-|-3|Signal für die Fahrstrasse nicht relevant|
+|-3|Kennlicht: Signal für Zug- und Rangierstrassen ohne Bedeutung; kein Haltbegriff|
 |-2|Fahrtstellung für Rangierstrassen (ohne Rot)|
 |-1|Fahrtstellung für Rangierstrassen (mit Rot)|
 |0|Halt|
