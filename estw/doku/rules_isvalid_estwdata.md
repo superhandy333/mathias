@@ -190,7 +190,7 @@ Für ein Signal (`Element.TypId = 3`), das einer **Zugstrasse (`Fahrstrasse.TypI
 | Unterwegselement | `7` | `-3` bis einschließlich `-1` |
 | Flankenschutztransportelement | `8` | `0` |
 
-Beim **Vorwegelement** wird die projektierte `SollStellung` im Fahrstrassenablauf nicht ausgewertet oder berücksichtigt; in den Projektierungsdaten muss sie dennoch `0` sein.
+Beim **Fahrstrassenziel** und beim **Vorwegelement** wird die projektierte `SollStellung` im Fahrstrassenablauf nicht ausgewertet oder berücksichtigt; in den Projektierungsdaten muss sie dennoch `0` sein. Für ein Blindziel in der Rolle **Fahrstrassenziel** gilt dies ebenfalls.
 
 Diese Einschränkungen entsprechen den [Bedingungen nach Elementtyp für Zugstrassen](zugstrasse.md#bedingungen-nach-elementtyp). Die rollenabhängige Prüfung setzt zusätzlich gültige Referenzen auf die Fahrstrasse und den Fahrstrassenelementtyp voraus. Ein anderer Sollstellungswert ist ein Validierungsfehler. Die Regeln für zulässige Rollen bleiben zusätzlich gültig; insbesondere ist ein Signal als Auflöseelement (`TypId = 4`) weiterhin unzulässig. Die obige Tabelle gilt ausschließlich für Zugstrassen; die Sollstellungsregeln für Rangierstrassen werden dadurch nicht geändert.
 

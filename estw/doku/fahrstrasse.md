@@ -25,6 +25,14 @@ Die Zulassungsprüfung ist eine **einmalige Prüfung ganz am Anfang des Einschal
 
 Die allgemein gültige Beschreibung der Zulassungsprüfung sowie die Verweise auf die typabhängigen Bedingungen befinden sich in [estw.md](estw.md). Die speziellen Bedingungen für Rangier- und Zugstraßen sind in [rangierstrasse.md](rangierstrasse.md) beziehungsweise [zugstrasse.md](zugstrasse.md) beschrieben.
 
+### Diagnose bei Abweisung
+
+Eine abgewiesene Anforderung liefert einen Ablehnungsgrund. Ist die Ursache einem vorhandenen Element zuzuordnen, enthält die Diagnose dessen **Name und Element-ID** sowie die verletzte Bedingung. Bei mehreren Ursachen wird ausschließlich die **erste** Verletzung in der bestehenden Prüfreihenfolge gemeldet; innerhalb der Elementprüfung gilt die Reihenfolge der projektierten Fahrstrassenelemente. Die Prüfung endet unmittelbar mit diesem Ergebnis. Die Diagnose entsteht während der ursprünglichen Struktur- beziehungsweise Zulassungsprüfung und wird über `Fs::requestActivationWithResult()` und `Estw::requestFahrstrasseWithResult()` an die Commandline weitergereicht. Eine zusätzliche Zulassungsprüfung zur Ermittlung der Ursache findet nicht statt.
+
+Die bestehenden booleschen Anforderungsfunktionen verwenden denselben Prüfpfad. Ablehnungen verändern keine Beanspruchungen, Verschlüsse, Signalstellungen oder Melder. Eine angenommene Anforderung enthält keine Ablehnungsdiagnose. Name, ID und Grund sind im zurückgegebenen Ergebnis als Werte festgehalten.
+
+Allgemeine Ursachen wie eine fehlende oder mehrdeutige Fahrstrassenauswahl, eine bereits aktive Fahrstrasse oder eine unvollständige Pflichtrollen-Projektierung werden ohne Elementzuordnung gemeldet. Bei einer nicht auflösbaren Elementreferenz wird, soweit verfügbar, die projektierte Element-ID mit dem Ersatztext `Element` statt eines unbekannten Namens ausgegeben. Die Zulassungsbedingungen und die spätere Zustandsmechanik werden durch diese Diagnose nicht verändert.
+
 ## Zyklische Prüfung der Statusvoraussetzungen
 
 Nach dem erfolgreichen Beginn des Einschaltvorgangs werden die Voraussetzungen für das **Erreichen beziehungsweise Beibehalten eines Status größer 1 zyklisch überprüft**.
@@ -36,7 +44,7 @@ Bei jeder zyklischen Überprüfung ist für die beteiligten Fahrstraßenelemente
 Von der zyklischen Prüfung beziehungsweise Ausführung sind insbesondere folgende Vorgänge ausgenommen:
 
 1. **Zulassungsprüfung:** Sie wird nur **einmal ganz am Anfang** durchgeführt und danach nicht erneut ausgeführt.
-2. **Fahrtstellung des Startsignals:** Das Setzen der Fahrtstellung des Startsignals wird nur **einmal beim Erreichen von Status 4** ausgeführt. Diese Aktion wird bei späteren zyklischen Prüfungen nicht erneut ausgelöst.
+2. **Fahrtstellung des Startsignals:** Die Fahrtstellung des Startsignals wird einmalig beim Erreichen von **Status 4 bei Rangierstrassen** beziehungsweise **Status 6 bei Zugstrassen** angefordert. Diese Aktion wird bei späteren zyklischen Prüfungen innerhalb desselben Status nicht erneut ausgelöst. Die in [rangierstrasse.md](rangierstrasse.md) beschriebene erneute Fahrtanforderung beim Wiedererreichen von Status 4 nach einem Rückfall auf Status 3 bleibt davon unberührt. Für Zugstrassen gelten die Regeln zur einmaligen Fahrtanforderung und Wiederholungssperre aus [zugstrasse.md](zugstrasse.md).
 
 ## Reaktion auf weggefallene Voraussetzungen
 

@@ -66,7 +66,16 @@ Wird in der Fahrstrassenlogik eine Haltstellung angefordert, ist damit die Anfor
 
 Die Vorsignalgeschwindigkeit eines Signals ist nur für **Zugstrassen** relevant. Sie gibt an, mit welcher Geschwindigkeit der Zug das im Fahrweg vorausliegende Hauptsignal passieren darf. Die Vorsignalgeschwindigkeit ist ein ganzzahliger Wert im Bereich von `0` bis `16`.
 
-In der Fahrstraßenlogik wird die Vorsignalgeschwindigkeit aus der Hauptsignalgeschwindigkeit des Elements ermittelt, das in der Zugstrasse als **Vorwegelement** projektiert ist. Ist kein Vorwegelement projektiert, wird das **Zielelement** zur Ermittlung der Vorsignalgeschwindigkeit verwendet.
+In der Fahrstraßenlogik wird die Vorsignalgeschwindigkeit aus der Hauptsignalgeschwindigkeit des Elements ermittelt, das in der Zugstrasse als **Vorwegelement** projektiert ist. Ist kein Vorwegelement projektiert, wird das **Zielelement** zur Ermittlung der Vorsignalgeschwindigkeit verwendet. Ist auch kein Zielelement als Signal vorhanden (Blindziel), wird immer die Vorsignalgeschwindigkeit als `0` angenommen.
+
+A: Vorwegelement oder Zielelement als Signal
+
+|HSV an A|VSV am Startsignal|
+|-|-|
+|-3..-1|0|
+|0..16|0..16|
+
+A: kein Element (z.B. Fahrt in Stumpfgleise): VSV am Startsignal immer 0
 
 Für das Signalsystem **KS** gilt:
 

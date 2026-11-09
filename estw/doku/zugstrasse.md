@@ -22,14 +22,14 @@ Für die Projektierung eines Elements in einer **Zugstrasse** sind ausschließli
   - Ein Element vom Typ Signal darf nur als **Fahrwegelement (`TypId = 1`)**, **Fahrstrassenstart (`TypId = 2`)**, **Fahrstrassenziel (`TypId = 3`)**, **Flankenschutzelement (`TypId = 5`)**, **Vorwegelement (`TypId = 6`)**, **Unterwegselement (`TypId = 7`)** oder **Flankenschutztransportelement (`TypId = 8`)** projektiert sein.
   - Als **Fahrwegelement (`TypId = 1`)** muss seine `SollStellung` `0` sein.
   - Als **Fahrstrassenstart (`TypId = 2`)** muss seine `SollStellung` im ganzzahligen Bereich von `1` bis einschließlich `16` liegen.
-  - Als **Fahrstrassenziel (`TypId = 3`)** muss seine `SollStellung` `0` sein.
+  - Als **Fahrstrassenziel (`TypId = 3`)** muss seine `SollStellung` `0` sein. Die projektierte `SollStellung` wird für diese Rolle im Fahrstrassenablauf nicht ausgewertet oder berücksichtigt.
   - Als **Flankenschutzelement (`TypId = 5`)** muss seine `SollStellung` `0` sein.
   - Als **Vorwegelement (`TypId = 6`)** muss seine `SollStellung` `0` sein. Die projektierte `SollStellung` wird für diese Rolle im Fahrstrassenablauf nicht ausgewertet oder berücksichtigt.
   - Als **Unterwegselement (`TypId = 7`)** muss seine `SollStellung` im ganzzahligen Bereich von `-3` bis einschließlich `-1` liegen.
   - Als **Flankenschutztransportelement (`TypId = 8`)** muss seine `SollStellung` `0` sein.
 - **Blindziel (`ElementTypId = 4`):**
   - Ein Element vom Typ Blindziel darf nur als **Fahrwegelement (`TypId = 1`)**, **Fahrstrassenziel (`TypId = 3`)** oder **Flankenschutztransportelement (`TypId = 8`)** projektiert sein.
-  - Seine `SollStellung` muss `0` sein.
+  - Seine `SollStellung` muss `0` sein. Als **Fahrstrassenziel (`TypId = 3`)** wird die projektierte `SollStellung` im Fahrstrassenablauf nicht ausgewertet oder berücksichtigt.
 - **Auflöseelement (`ElementTypId = 5`):**
   - Ein Element vom Typ Auflöseelement darf nur als **Fahrwegelement (`TypId = 1`)**, **Auflöseelement (`TypId = 4`)** oder **Flankenschutztransportelement (`TypId = 8`)** projektiert sein.
   - Seine `SollStellung` muss `0` sein.
@@ -70,7 +70,7 @@ Für die datentechnische Gültigkeit und Konsistenz einer Zugstrasse gelten hins
 
 Diese strukturellen Festlegungen stellen sicher, dass jede Zugstrasse über eindeutige Start-, Ziel- und Auflösepunkte verfügt und die beteiligten Stellwerkselemente die dafür zulässigen Elementtypen besitzen.
 
-## 1. Zulassungsprüfung
+## Zulassungsprüfung
 
 Für eine Zugstrasse gelten die folgenden Zulassungsbedingungen. Die Zulassungsprüfung ist nur dann positiv, wenn **alle** Bedingungen erfüllt sind.
 
@@ -98,7 +98,7 @@ Für eine Zugstrasse gelten die folgenden Zulassungsbedingungen. Die Zulassungsp
 
 12. **Startsignal in Haltstellung:** Das **Startsignal** muss die **Haltstellung** zeigen. Zeigt es einen anderen Signalbegriff, ist die Zulassungsprüfung negativ.
 
-13. **Keine Signalsperre am Startsignal:** Am **Startsignal** darf keine **Signalsperre (SS)** aktiv sein. Ist das Startsignal durch die Signalsperre gesperrt, ist die Zulassungsprüfung negativ.
+13. **Keine Signalsperre am Startsignal oder an Unterwegssignalen:** Am **Startsignal** und an jedem als **Unterwegselement** projektierten **Signal** darf keine **Signalsperre (SS)** aktiv sein. Ist an mindestens einem dieser Signale eine Signalsperre aktiv, ist die Zulassungsprüfung negativ.
 
 14. **Zielsignal auf Strang B nicht beansprucht:** Ist das Fahrstrassenziel ein **Signal**, darf an diesem **Zielsignal** auf **Strang B** keine bereits vorhandene Beanspruchung vorliegen. Liegt dort eine Beanspruchung vor, ist die Zulassungsprüfung negativ.
 
@@ -108,7 +108,7 @@ Für eine Zugstrasse gelten die folgenden Zulassungsbedingungen. Die Zulassungsp
 
 Für die Bedingungen 5, 6, 7, 11 und 14 ist ausschließlich entscheidend, ob an dem jeweils geprüften Element beziehungsweise Strang bereits eine Beanspruchung vorhanden ist. Ihre Herkunft ist ohne Bedeutung; auch eine von der zu prüfenden Fahrstrasse selbst verursachte Beanspruchung gilt als vorhanden und führt zu einer negativen Zulassungsprüfung. Eine Zuordnung der Beanspruchung zu einer Fahrstrasse oder eine Referenzzählung wird für diese Prüfung nicht benötigt.
 
-## 2. Zustandsmodell
+## Zustandsmodell
 
 Die Zugstrasse durchläuft beim Einstellen mehrere aufeinanderfolgende Zustände. Der Übergang in den jeweils nächsten Zustand erfolgt erst, wenn die dafür genannten Voraussetzungen erfüllt sind. Dadurch werden angeforderte Aktionen zunächst an den beteiligten ESTW-Elementen ausgelöst und ihr tatsächlicher Zustand anschließend geprüft.
 
@@ -171,75 +171,91 @@ Das Setzen einer Beanspruchung ist als Anforderung zu verstehen. Der Übergang z
 - Der Fahrstrassenüberwachungsmelder am Startsignal wird auf blinkend gesetzt.
 - Alle als **Unterwegssignale** projektierten **Signale** werden in ihre für die Fahrstrasse projektierte `SollStellung` gebracht. Das gilt nur dann, wenn die SollStellung -1, -2 oder -3 ist.
 - Alle als **Flankenschutzelemente** projektierten **Weichen** werden in ihre für die Fahrstrasse projektierte `SollStellung` gebracht, sofern sie diese noch nicht eingenommen haben. Mit Erreichen dieser Stellung werden sie sofort **verschlossen**.
+- An allen als **Flankenschutzelemente** projektierten **Signalen** wird das Flag `BEAF` gesetzt. Ein Signal darf zur Laufzeit gleichzeitig höchstens **einer Fahrstrasse** als Flankenschutzsignal dienen. Eine gleichzeitige Flankenbeanspruchung desselben Signals durch mehrere Fahrstrassen ist unzulässig. Die Projektierung desselben Signals als Flankenschutzelement in unterschiedlichen Fahrstrassen bleibt zulässig.
+
+Solange ein Flankenschutz momentan nicht herstellbar ist, bleibt die Zugstrasse in **Status 4** und versucht die Anforderungen zyklisch erneut. Bereits erworbene eigene Beanspruchungen und Verschlussbeiträge bleiben bestehen. Fremde Flankenbindungen werden nicht übernommen oder aufgehoben. Eine bestehende Start-/Fahrtverwendung auf Strang A und ein eingeschaltetes Ersatzsignal verhindern den Erwerb einer Flankenbindung; bei `PZSP` verhindert zusätzlich eine aktive Zielverwendung den Erwerb. Eine reine Vorwegbeanspruchung auf Strang B ist keine Zielverwendung. An Flankensignale wird keine Haltanforderung gesendet.
+
+Auch die Sollstellungsanforderungen an Unterwegssignale werden während dieses Wartens wiederholt. Nach Erreichen der Überwachungsebene wird ein Stellungsverlust nach den Regeln unter **Weitere Bedingungen** behandelt; dann erfolgt keine erneute Sollstellungsanforderung.
 
 ---------------------------------------------------------------------------------------------------------------------------
-### Status 6 – Fahrstrassenüberwachungsebene Zugstrasse (FÜM Ruhelicht)
+### Status 5 – Fahrstrassenüberwachungsebene Zugstrasse (FÜM Ruhelicht)
+
+**Voraussetzungen:**
+
+- Die Voraussetzungen aus Status 4 sind weiterhin erfüllt.
+- Alle als **Flankenschutzelemente** projektierten **Weichen** sind in ihrer projektierten `SollStellung` verschlossen.
+- Alle als **Flankenschutzelemente** projektierten **Signale** sind in Haltstellung.
+- Alle als **Flankenschutzelemente** projektierten **Signale** mit gesetztem Programmfall `PZSP` werden momentan nicht als Ziel einer Rangier- oder Zugstrasse beansprucht.
+- Alle als **Startsignal**, **Zielsignal**, **Fahrwegelement**, **Blindziel**, **Auflöseelement**, **Unterwegselement**, **Vorwegelement** und **Flankenschutztransportelement** projektierten **Elemente** sind nicht besetzt.
+- Alle als **Unterwegselemente** projektierten Signale (Fahrwegsignale) haben ihre jeweils für das Fahrstrassenelement projektierte `SollStellung` erreicht.
+
+**Aktion:**
+- Der Fahrstrassenüberwachungsmelder am Startsignal wird auf dauerhaft an (Ruhelicht) gesetzt.
+- Der Zielfestlegemelder am Ziel wird gesetzt (Ruhelicht).
+
+---------------------------------------------------------------------------------------------------------------------------
+### Status 6 – Startsignal in Fahrtstellung bringen
 
 **Voraussetzungen:**
 
 - Die Voraussetzungen aus Status 5 sind weiterhin erfüllt.
-- Alle als **Flankenschutzelemente** projektierten **Weichen** sind in ihrer projektierten `SollStellung` verschlossen.
-- Alle als **Flankenschutzelemente** projektierten **Signale** sind in Haltstellung.
-- Alle als **Startsignal**, **Zielsignal**, **Fahrwegelement**, **Blindziel**, **Auflöseelement**, **Unterwegselement**, **Vorwegelement** und **Flankenschutztransportelement** projektierten **Elemente** sind nicht besetzt.
-- Alle als **Unterwegselemente** projektierten Signale (Fahrwegsignale) werden in ihre jeweils für das Fahrstrassenelement projektierte `SollStellung` gebracht.
-
-**Aktion:** Der Fahrstrassenüberwachungsmelder am Startsignal wird auf dauerhaft an (Ruhelicht) gesetzt.
-
----------------------------------------------------------------------------------------------------------------------------
-### Status 7 – Startsignal in Fahrtstellung bringen
-
-**Voraussetzungen:**
-
-- Die Voraussetzungen aus Status 6 sind weiterhin erfüllt.
 - Der Fahrstrassenüberwachungsmelder am Startsignal ist dauerhaft an.
+- Der Zielfestlegemelder am Ziel ist gesetzt (Ruhelicht).
 
 **Aktionen:**
 
-- Das **Startsignal** wird in die für die Fahrstrasse projektierte Sollstellung, also die **Fahrtstellung**, gebracht.
-
-- Zyklisch wird in diesem Status die aktuelle Hauptsignalgeschwindigkeit des als **Vorwegelement** projektierten Signals als Vorsignalgeschwindigkeit in das Startsignal eingetragen.
+- Beim Erreichen von **Status 6** wird am **Startsignal** einmalig die für die Fahrstrasse projektierte Sollstellung, also die **Fahrtstellung**, angefordert. Die tatsächlich erreichte Fahrtstellung wird nicht geprüft und ist keine Voraussetzung für diesen Status. Wird die Anforderung nicht umgesetzt, führt dies allein weder zu einer erneuten Fahrtanforderung noch zu einem Rückfall oder Abbruch der Zugstrasse.
+- Zyklisch wird in diesem Status die Vorsignalgeschwindigkeit des Startsignals gemäß [signale.md](signale.md#vorsignalgeschwindigkeit) ermittelt und eingetragen. Als Quelle dient das **Vorwegsignal**, bei dessen Fehlen das **Zielsignal**. Ist kein Vorwegsignal vorhanden und das Ziel ein **Blindziel**, wird `VSV = 0` eingetragen. Eine Hauptsignalgeschwindigkeit der Quelle von `-3` bis `-1` ergibt `VSV = 0`; Werte von `0` bis `16` werden unverändert übernommen. Die zyklische Ermittlung und Aktualisierung reicht aus; ein vorheriger oder gleichzeitiger Eintrag der VSV ist keine Voraussetzung für die Fahrtfreigabe des Startsignals.
 
 ---------------------------------------------------------------------------------------------------------------------------
-## 3. Auflösung der Zugstrasse
+## Auflösung der Zugstrasse
 
 Die Auflösung der Fahrstrasse wird durch **Anklicken des zugehörigen Auflöseelements** gestartet.
 
-Die Auflösung erfolgt zunächst entsprechend der Rangierstrasse in einer festen Reihenfolge:
+Die Auflösung erfolgt in einer festen Reihenfolge:
 
-1. Zunächst wird am **Startsignal die Haltstellung angefordert**.
-2. Danach wird geprüft, ob das Startsignal die **Haltstellung tatsächlich erreicht** hat. Solange dies nicht der Fall ist, darf die weitere Auflösung nicht durchgeführt werden.
-3. Erst nachdem die Haltstellung erreicht wurde, wird der **Verschluss der zur Fahrstrasse gehörenden Weichen entfernt**.
-4. Anschließend werden die durch die Fahrstrasse gesetzten **Beanspruchungen entfernt**.
-5. Abschließend wird der Status der Fahrstrasse wieder auf **Status 0 – Fahrstrasse ausgeschaltet** gesetzt.
+1. Zunächst wird am **Startsignal und an allen Unterwegssignalen die Haltstellung angefordert**.
+2. Danach wird geprüft, ob das Startsignal **und alle Unterwegssignale** die **Haltstellung tatsächlich erreicht** haben (`HSV == 0`). Solange dies nicht der Fall ist, darf die weitere Auflösung nicht durchgeführt werden. Insbesondere ist Kennlicht keine Haltbestätigung.
+3. Erst nachdem die Haltstellung erreicht wurde, wird der **Verschluss der zur Fahrstrasse gehörenden Weichen entfernt**. Das gilt auch für Flankenschutzweichen. "Verschluss wird entfernt" heisst: Der Verschlusszähler der Weiche wird um 1 dekrementiert.
+4. Anschließend werden die durch die Fahrstrasse gesetzten **Beanspruchungen entfernt**. Dazu gehört ausdrücklich auch die Rücknahme von `BEAF` an den durch diese Fahrstrasse als Flankenschutzsignal beanspruchten Signalen.
+5. Der FÜM am Startsignal erlischt.
+6. Der ZIF am Ziel erlischt.
+7. Abschließend wird der Status der Fahrstrasse wieder auf **Status 0 – Fahrstrasse ausgeschaltet** gesetzt.
 
-Für die Zugstrasse muss zusätzlich noch festgelegt werden, **wann und unter welchen Bedingungen der Flankenschutz bei der Auflösung aufgehoben wird**. Bis zu dieser Festlegung wird hierzu keine konkrete Reihenfolge vorgegeben.
+Damit gilt insbesondere die fachliche Sicherheitsregel: **Weichenverschluss und Beanspruchungen dürfen bei der Fahrstrassenauflösung erst entfernt werden, nachdem Startsignal und alle Unterwegssignale nachweislich die Haltstellung erreicht haben.** Die Auflösung ist aus jeder aktiven Einstellphase möglich. Zurückgenommen werden ausschließlich tatsächlich erworbene eigene Verschlussbeiträge und Flankenbindungen; fremde Beiträge bleiben erhalten. Nach vollständiger Auflösung wird die Wiederholungssperre des Startsignals für eine neue Einstellung zurückgesetzt.
 
-Damit gilt insbesondere die fachliche Sicherheitsregel: **Weichenverschluss und Beanspruchungen dürfen bei der Fahrstrassenauflösung erst entfernt werden, nachdem das Startsignal nachweislich die Haltstellung erreicht hat.**
+## Weitere Bedingungen
 
-## 4. Noch zu ergänzende Punkte
+- Fällt während der Fahrstellung des Startsignals eines der Unterwegssignale auf Halt, so fällt auch das Startsignal auf Halt. Eine Wiederholung der Fahrtstellung tritt nicht ein, solange die Fahrstrasse nicht wieder vollständig aufgelöst wurde (Wiederholungssperre).
+
+- Fällt eine Bedingung für den Zustand "Fahrstrassenüberwachungsebene Zugstrasse" weg, so erlischt der FÜM am Startsignal. Die Fahrstrasse bleibt bis zum Zeitpunkt festgelegt, d.h. der ZIF am Ziel bleibt weiterhin sichtbar.
+
+- Bei Verlust einer bereits erforderlichen Statusvoraussetzung werden Startsignal und Unterwegssignale auf Halt angefordert. Der Verlust wird bis zur vollständigen Auflösung gespeichert. Der zuletzt erreichte Status bleibt erhalten; es gibt keine automatische Wiederfreigabe. Auch nach Wiederkehr der Bedingungen bleiben die Signale auf Halt und der FÜM aus. Beanspruchungen, eigene Verschlussbeiträge, Flankenbindungen und ein bereits gesetzter Ziel-ZIF bleiben bis zur geregelten Auflösung erhalten. Fehlende Bedingungen für einen erstmals bevorstehenden Übergang (beispielsweise ein noch nicht freier Transportbereich in Status 4) sind dagegen ein Wartegrund.
+
+## Noch zu ergänzende Punkte
 
 Die zulässigen Element-/Rollenzuordnungen, die rollenabhängigen Sollstellungswerte der Signale und die Bedingungen der Zulassungsprüfung sind beschrieben. Der Haltbegriff ist für Zug- und Rangierstrassen einheitlich auf `HSV == 0` festgelegt; Kennlicht (`HSV = -3`) ist kein Haltbegriff.
 
-Für Flankenweichen ist bereits festgelegt, dass sie ab **Status 4** in ihre Sollstellung gebracht und nach deren tatsächlichem Erreichen verschlossen werden. **Status 6** verlangt die verschlossenen Flankenweichen in Sollstellung, die Haltstellung der Flankensignale und die dort beschriebene Freiprüfung einschließlich der Flankenschutztransportelemente. Für die Weichenverschlüsse gilt der gemeinsame Verschlusszähler gemäß [weiche.md](weiche.md).
+Für Flankenweichen ist bereits festgelegt, dass sie ab **Status 4** in ihre Sollstellung gebracht und nach deren tatsächlichem Erreichen verschlossen werden. **Status 5** verlangt die verschlossenen Flankenweichen in Sollstellung, die Haltstellung der Flankensignale, die dort beschriebene Freiprüfung einschließlich der Flankenschutztransportelemente und die tatsächlich erreichten Sollstellungen der Unterwegssignale. Anschließend wird der FÜM auf Ruhelicht gesetzt. **Status 6** fordert bei weiterhin erfüllten Voraussetzungen aus Status 5 und dauerhaft eingeschaltetem FÜM die Fahrtstellung des Startsignals an und aktualisiert zyklisch dessen Vorsignalgeschwindigkeit. Für die Weichenverschlüsse gilt der gemeinsame Verschlusszähler gemäß [weiche.md](weiche.md).
 
-Folgende fachliche Festlegungen und Präzisierungen stehen noch aus:
+Für die folgenden fachlichen Festlegungen und Präzisierungen gilt dieser Klärungsstand:
 
-1. **Vollständige Statusfolge:** Status 6 verweist auf die Voraussetzungen aus **Status 5**, obwohl Status 5 nicht beschrieben ist. Es ist festzulegen, ob ein solcher Status benötigt wird und welche Voraussetzungen, Aktionen und Übergänge er besitzt oder ob der Verweis anzupassen ist.
+1. **Bezug der Statusvoraussetzungen – erledigt:** Die Statusfolge **0 bis 6** ist beschrieben. **Status 5** verlangt nun die weiterhin erfüllten Voraussetzungen aus **Status 4**; der bisherige Selbstverweis ist korrigiert. **Status 6** übernimmt die Voraussetzungen aus Status 5 und verlangt zusätzlich den dauerhaft eingeschalteten FÜM. Das blinkende FÜM-Anzeigebild ist in Status 4 als Aktion beschrieben und wird nicht als Voraussetzung in Status 5 übernommen.
 
-2. **Herstellung und Bindung des Signalflankenschutzes:** Die geforderte Haltstellung der Flankensignale ist definiert. Noch fehlen der Zeitpunkt der Haltanforderung, das Setzen und Rücknehmen einer Flankenbeanspruchung (`BEAF`) sowie die Regeln, die während des benötigten Schutzes eine Fahrtstellung oder Ersatzsignalbedienung verhindern.
+2. **Herstellung und Bindung des Signalflankenschutzes – Statusprüfung und Freigabe geklärt, Schutzfunktionen gesondert zu behandeln:** In **Status 4** wird an allen als Flankenschutzelemente projektierten Signalen `BEAF` gesetzt. **Status 5** prüft, ob sich diese Signale tatsächlich in Haltstellung (`HSV == 0`) befinden. Eine Haltanforderung an die Flankensignale ist hierfür nicht vorgesehen; ihre Haltstellung wird ausschließlich als Statusvoraussetzung geprüft. Ein Signal kann gleichzeitig nur einer Fahrstrasse Flankenschutz bieten. Bei deren Auflösung wird `BEAF` im Schritt **Beanspruchungen entfernen** zurückgenommen. Der Schutz gegen das Einschalten des Ersatzsignals bei `BEAF = true` ist Gegenstand der noch zu erstellenden Funktionsbeschreibung **Ersatzsignal**. Die Schutzbindung gegen Fahrt wird gesondert untersucht und hier noch nicht festgelegt.
 
-3. **Konflikte und nicht herstellbarer Flankenschutz:** Für Flankensignale sind die Zulässigkeit gemeinsamer Schutzanforderungen und der Umgang mit einer bereits bestehenden Fahrt- oder Zielverwendung festzulegen. Bei Weichen sind widersprechende Stellungsanforderungen zu behandeln; die gemeinsame Nutzung eines Verschlusses in derselben Lage ist durch [weiche.md](weiche.md) bereits vorgesehen. Für nicht herstellbaren Flankenschutz ist zu bestimmen, ob die Zugstrasse wartet, abgebrochen wird oder einen anderen definierten Zustand einnimmt.
+3. **Konflikte und nicht herstellbarer Flankenschutz – geklärt:** Die Zugstrasse wartet in Status 4 und prüft zyklisch erneut. Fremde Flankenbindungen und bestehende Fahrtverwendungen werden nicht übernommen. Bei `PZSP` wird eine aktive Zielverwendung berücksichtigt. Gleichliegende Weichenverschlüsse dürfen gemeinsam genutzt werden; jede Fahrstrasse verwaltet und entfernt nur ihren eigenen Zählerbeitrag.
 
-4. **Flankenschutztransportelemente:** Die Freiprüfung in Status 6 und die Ausnahme von der Befahrbarkeitssperrenprüfung in ZP 16 sind festgelegt. Offen ist, ob diese Elemente zusätzlich gegen andere Nutzungen gebunden werden müssen. Falls eine solche Bindung erforderlich ist, fehlen Erwerb, Konfliktprüfung und Freigabe. Aus Status 1 folgt keine Beanspruchung dieser Rolle.
+4. **Flankenschutztransportelemente:** Die Freiprüfung in Status 5 und die Ausnahme von der Befahrbarkeitssperrenprüfung in ZP 16 sind festgelegt. Offen ist, ob diese Elemente zusätzlich gegen andere Nutzungen gebunden werden müssen. Falls eine solche Bindung erforderlich ist, fehlen Erwerb, Konfliktprüfung und Freigabe. Aus Status 1 folgt keine Beanspruchung dieser Rolle.
 
-5. **Unterwegssignale:** Die zulässigen Sollstellungen `-3`, `-2` und `-1` sind festgelegt. Zu präzisieren sind die zusätzliche Funktion der erneuten Sollstellungsanforderung in Status 6 nach der Anforderung in Status 4 und die zugehörigen Prüfungen des tatsächlich erreichten Signalzustands. Kennlicht darf dabei nicht als Haltbestätigung gewertet werden.
+5. **Unterwegssignale – geklärt:** Die Sollstellungen `-3`, `-2` und `-1` werden in Status 4 zyklisch angefordert und vor Status 5 tatsächlich geprüft. Ein späterer Stellungsverlust führt zu Haltanforderungen an Start und Unterwegs sowie dauerhaft ausgeschaltetem FÜM bis zur Auflösung. Bei der Auflösung wird die Haltbestätigung aller Unterwegssignale abgewartet; Kennlicht zählt nicht als Halt.
 
-6. **Fahrtfreigabe des Startsignals:** Es ist zu bestimmen, ob Status 7 die Fahrtanforderung oder die tatsächlich bestätigte Fahrtstellung bezeichnet und wann die Anforderung ausgeführt beziehungsweise wiederholt wird. Dabei sind die allgemeinen Regeln aus [fahrstrasse.md](fahrstrasse.md) zur einmaligen Fahrtanforderung mit dem Zugablauf in Status 7 abzugleichen. Das Verhalten bei Wiederholungssperre, Signalsperre, Ersatzsignal und Flankenbeanspruchung ist für Erstfreigabe und Wiederfreigabe zu konkretisieren.
+6. **Fahrtfreigabe des Startsignals – Anforderung und fehlende Stellungsprüfung geklärt: - erledigt** Die Fahrtstellung wird beim Erreichen von **Status 6** einmalig angefordert und nicht zyklisch erneut angefordert. Die tatsächlich erreichte Fahrtstellung wird nicht geprüft. Auch eine nicht umgesetzte Anforderung löst allein keine Wiederholung, keinen Rückfall und keinen Abbruch der Zugstrasse aus. Die allgemeine Regel in [fahrstrasse.md](fahrstrasse.md) unterscheidet zwischen Zugstrassen (Status 6) und Rangierstrassen (Status 4); der bisherige Anschlusswiderspruch ist damit beseitigt. Die gesonderten Schutzbedingungen zu Signalsperre, Ersatzsignal und Flankenbeanspruchung bleiben davon unberührt.
 
-7. **Vorsignalgeschwindigkeit:** Die Quelle ist gemäß [signale.md](signale.md#vorsignalgeschwindigkeit) das Vorwegelement oder bei dessen Fehlen das Zielelement. Offen bleiben die Behandlung eines Blindziels ohne Vorwegelement und die Abbildung negativer Hauptsignalgeschwindigkeiten der Quelle auf den VSV-Wertebereich `0` bis `16`. Außerdem ist der Zeitpunkt der ersten gültigen VSV vor beziehungsweise bei Fahrtfreigabe festzulegen.
+7. **Vorsignalgeschwindigkeit – erledigt:** Quelle und Wertumsetzung sind in [signale.md](signale.md#vorsignalgeschwindigkeit) festgelegt und in **Status 6** berücksichtigt: Vorwegsignal, ersatzweise Zielsignal; bei Blindziel ohne Vorwegsignal sowie bei negativer Quell-HSV gilt `VSV = 0`, Quell-HSV von `0` bis `16` wird unverändert übernommen. Die VSV wird in Status 6 zyklisch ermittelt und eingetragen. Eine gültige VSV muss nicht bereits vor oder gleichzeitig mit der Fahrtfreigabe vorliegen; die zyklische Ermittlung und Aktualisierung reicht aus.
 
-8. **Zielfestlegemelder und Melderrücknahme:** Für den Zug-ZIF fehlen die Zeitpunkte des Setzens, der Rücknahme und eines erneuten Setzens. Die Behandlung gemeinsam verwendeter Ziele ist dabei festzulegen. Auch die Rücknahme des FÜM bei Rückfall und Auflösung ist zu beschreiben; blinkend in Status 4 und Ruhelicht in Status 6 sind bereits festgelegt.
+8. **Zielfestlegemelder und Melderrücknahme – erledigt:** Zug-ZIF und FÜM-Ruhelicht werden beim Erreichen von Status 5 gesetzt. Bei Überwachungsverlust erlischt der FÜM; der Ziel-ZIF bleibt erhalten. Bei geregelter Auflösung werden zuerst die Sicherungsbeiträge, dann FÜM und ZIF zurückgenommen. Eine neue Einstellung setzt einen aufgelösten Ziel-ZIF voraus.
 
-9. **Rückfall und Wiederfreigabe:** Bei weggefallenen Überwachungsvoraussetzungen werden gemäß [fahrstrasse.md](fahrstrasse.md) Start- und Unterwegssignale auf Halt angefordert. Noch fehlen der jeweilige Rückfallstatus, die dabei erhalten bleibenden Beanspruchungen und Verschlüsse, die Melderzustände sowie die Voraussetzungen und Aktionen einer Wiederfreigabe. Soweit erforderlich, ist reguläre Belegung durch die Zugfahrt von technischen Störungen zu unterscheiden.
+9. **Überwachungsverlust und Wiederfreigabe – geklärt:** Start- und Unterwegssignale werden auf Halt angefordert, der FÜM erlischt und der zuletzt erreichte Status bleibt mit gespeichertem Überwachungsverlust erhalten. Eigene Sicherungsbeiträge und ein gesetzter Ziel-ZIF bleiben bestehen. Bis zur vollständigen Auflösung erfolgt keine Wiederfreigabe, auch nicht nach Freimeldung oder sonstiger Wiederkehr der Bedingungen.
 
-10. **Auflösung und Flankenschutzfreigabe:** Die Haltbestätigung des Startsignals vor dem Entfernen von Weichenverschlüssen und Beanspruchungen ist festgelegt. Zu ergänzen sind die Behandlung der Unterwegssignale, die Bedingungen und Reihenfolge der Flankenschutzfreigabe sowie die Rücknahme von `BEAF`, FÜM und Zug-ZIF. Dabei müssen weiterhin benötigte Verschlussbeiträge und Schutzanforderungen anderer Fahrstrassen erhalten bleiben. Diese Regeln sind auch für eine Auflösung während des Einstellvorgangs zu beschreiben.
+10. **Auflösung und Flankenschutzfreigabe – geklärt:** Start und Unterwegs auf Halt anfordern und alle Haltbestätigungen abwarten; anschließend eigene Weichenverschlussbeiträge einschließlich Flanke entfernen, eigene Beanspruchungen einschließlich `BEAF` zurücknehmen, FÜM und Zug-ZIF löschen und Status 0 setzen. Das gilt auch während des Einstellens. Fremde und noch nicht erworbene Beiträge werden nicht zurückgenommen.
