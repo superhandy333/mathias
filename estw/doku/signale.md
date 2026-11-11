@@ -87,3 +87,11 @@ Für das Signalsystem **KS** gilt:
 ## Bildschirmdarstellung
 
 ![Signale Bildschirmdarstellung](2455-signal.svg)
+
+### Flankenschutzanzeige
+
+Bei beiden Unterelementarten wird der Fußmelder (`schirm1a`) nach dem Mastmelder (`schirm1b`) gezeichnet. Damit bleibt der Fuß auch bei abweichender Farbe vollständig sichtbar.
+
+Bei aktiver Beanspruchung als Flankenschutzsignal (`BEAF = true`) und tatsächlicher Haltstellung (`HSV = 0`) wird der Signalfuß hellblau dargestellt (`LupeColorFS`). Dies gilt gleichermaßen für Hauptsignale der Unterelementart `1` und Rangiersignale der Unterelementart `2`.
+
+Nach Rücknahme der Flankenschutzbeanspruchung erhält der Fuß wieder die Farbe des aktuellen Signalbegriffs. Die Flankenschutzanzeige erfolgt ausschließlich über den hellblauen Fuß; der zusätzliche kleine rote Punkt (`melder1`) bleibt am Signal ausgeblendet.

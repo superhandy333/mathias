@@ -15,6 +15,8 @@ Die Prüfroutine soll diese Signatur haben:
 auto isvalid_estwdata(EstwData const&,ec_t&) -> bool;
 ```
 
+Für die Ergebnisanzeige im Fahrstrasseneditor besteht zusätzlich eine Überladung mit `std::set<int> & invalidFahrstrassen` als drittem Parameter. Sie führt dieselbe Prüfung mit denselben Meldungen aus und ersetzt die Menge durch die IDs der betroffenen Fahrstrassen. Fehler an Fahrstrassenelementen werden ihren Fahrstrassen zugeordnet; Fehler an verwendeten Elementen, Typen oder dem Projekt werden ebenfalls den betroffenen Fahrstrassen zugeordnet. Bei gleichen Fahrstrassenbezeichnungen werden beide Konfliktpartner erfasst. Die bestehende Signatur bleibt erhalten.
+
 - Fehler sollen in den logcollector (ec) geschrieben werden.
 - Fehler, die in den logcollector geschrieben werden, sollen immer die Typangabe (Projekt, Elementtyp, Element, ...) und die Id enthalten.
 - Gibt es am Ende keine Fehler, soll die Prüfroutine `true` zurückgeben, sonst `false`.

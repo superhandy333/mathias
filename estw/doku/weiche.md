@@ -32,20 +32,20 @@ Dabei gilt:
 |10|-1|Ordnungsstellung/Endlage links|
     
 
-## 1. Verschluss einer Weiche
+## Verschluss einer Weiche
 
 Eine Weiche besitzt genau einen **Verschlusszähler**. Dieser Zähler wird gemeinsam für Verschlüsse durch Fahrstraßen und für Verschlüsse aufgrund von Flankenschutz verwendet. Einen separaten Flankenschutz-Verschlusszähler gibt es nicht.
 
 Der Verschlusszähler ist eine nichtnegative ganze Zahl und hat mindestens den Wert `0`.
 
-### 1.1 Bedeutung des Verschlusszählers
+### Bedeutung des Verschlusszählers
 
 Der Verschlusszähler hat folgende eindeutige Bedeutung:
 
 - `0`: Die Weiche ist nicht verschlossen.
 - `> 0`: Die Weiche ist verschlossen.
 
-### 1.2 Änderung des Verschlusszählers
+### Änderung des Verschlusszählers
 
 Wenn eine Fahrstraße die Weiche als Fahrstraßenelement verschließt, wird der Verschlusszähler erhöht. Benötigt eine Fahrstraße die Weiche als Flankenschutz, wird derselbe Verschlusszähler ebenfalls erhöht.
 
@@ -55,8 +55,22 @@ Der Verschluss einer Weiche wird wieder entfernt, wenn der Verschlusszähler den
 
 Der Verschlusszähler darf dabei nicht kleiner als `0` werden.
 
-### 1.3 Gesamtregel
+### Gesamtregel
 
 Durch den gemeinsamen Zähler kann eine Weiche gleichzeitig durch mehrere Fahrstraßen sowie durch mehrere Flankenschutzforderungen verschlossen sein. Das Entfernen eines einzelnen Verschlusses gibt die Weiche deshalb nur dann frei, wenn der Verschlusszähler anschließend den Wert `0` hat.
 
 Jeder Zählerstand größer als `0` bedeutet, dass die Weiche verschlossen ist. Der Verschluss bezieht sich auf die aktuelle Lage der Weiche. Solange der Verschlusszähler größer als `0` ist, darf die Weiche nicht in eine andere Lage umgestellt werden.
+
+## Umlaufmelder
+
+Der Umlaufmelder einer Weiche ist der kleine rote Punkt im freien Bereich neben den Gleislinien. Er ist in `LupeWeiche` als `melder1` implementiert.
+
+Der Umlaufmelder soll im sichtbaren Zustand entweder Ruhelicht zeigen oder schnell rot blinken. Das schnelle Blinken verwendet 250 ms an und 250 ms aus (2 Hz). Ein separater Anzeigetimer aktualisiert ausschließlich diese Melder alle 125 ms; der bisherige Simulations- und Aktualisierungstakt der übrigen Melder bleibt erhalten.
+
+Sichtbar im Ruhelicht ist der Umlaufmelder, wenn die Weiche nicht in einer Endlage ist (stellung != -1 und stellung != 1) und der Motor nicht läuft (Motorlauf = None).
+
+Sichtbar mit schnellem Blinken ist der Umlaufmelder, wenn die Weiche nicht in einer Endlage ist (stellung != -1 und stellung != 1) und der Motor läuft (Motorlauf != None).
+
+Nicht sichtbar ist der Umlaufmelder, wenn sich die Weiche in einer Endlage befindet.
+
+Maßgeblich ist die tatsächliche Weichenstellung aus dem Laufzeitmodell. Eine im Edit- oder FS-Edit-Modus abweichende Stellungsanzeige verändert den Umlaufmelder nicht.

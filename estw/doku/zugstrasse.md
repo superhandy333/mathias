@@ -187,6 +187,7 @@ Auch die Sollstellungsanforderungen an Unterwegssignale werden während dieses W
 - Alle als **Flankenschutzelemente** projektierten **Signale** sind in Haltstellung.
 - Alle als **Flankenschutzelemente** projektierten **Signale** mit gesetztem Programmfall `PZSP` werden momentan nicht als Ziel einer Rangier- oder Zugstrasse beansprucht.
 - Alle als **Startsignal**, **Zielsignal**, **Fahrwegelement**, **Blindziel**, **Auflöseelement**, **Unterwegselement**, **Vorwegelement** und **Flankenschutztransportelement** projektierten **Elemente** sind nicht besetzt.
+- Alle als **Flankenschutzelemente** projektierten **Signale** sind nicht besetzt.
 - Alle als **Unterwegselemente** projektierten Signale (Fahrwegsignale) haben ihre jeweils für das Fahrstrassenelement projektierte `SollStellung` erreicht.
 
 **Aktion:**
