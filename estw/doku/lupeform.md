@@ -10,11 +10,29 @@ Das LupeForm kann in verschiedenen Modi geöffnet werden:
 
 Im Simulationsmodus wird die "normale" ESTW-Logik ausgeführt.
 
+Beim Öffnen startet der eingebettete MQTT-Broker mit der rechnerbezogenen Bindung
+aus dem Setup (Vorgabe: alle lokalen IPv4-Adressen, TCP-Port 1883). Die tatsächliche
+Bindung wird als Simulationsmeldung ausgegeben. Eine fehlende ausgewählte Adresse
+oder ein Portkonflikt wird gemeldet; die Simulation läuft ohne MQTT weiter, ohne
+die Bindung auf alle Adressen zu erweitern. MQTT ist weiterhin eine Ausgabe für
+lesende Panels; eingehende PUBLISH-Nachrichten werden abgewiesen. Einzelheiten
+stehen in [MQTT.md](../MQTT.md).
+
 Beim Schließen des Lupefensters über die Schließen-Schaltfläche (X) wird im Simulationsmodus zuerst eine Ja/Nein-Sicherheitsabfrage angezeigt. Sie weist darauf hin, dass beim Beenden alle derzeitigen Zustandsdaten verloren gehen. „Nein“ ist vorausgewählt. Nur „Ja“ bestätigt das Schließen; andernfalls bleibt die Simulation geöffnet. Während der Abfrage ist das ToolForm nicht bedienbar.
 
 Das LupeForm startet bei jedem Öffnen im Simulationsmodus maximiert. Das separate ToolForm liegt am unteren Rand des Monitor-Arbeitsbereichs, auf dem das LupeForm dargestellt wird. Es hat beim Öffnen dieselbe sichtbare Fensterbreite wie das LupeForm und ein Fünftel seiner Fensterhöhe. Bei Größen- oder Positionsänderungen des LupeForm werden Größe und Position des ToolForm entsprechend angepasst. Das ToolForm bleibt manuell in der Größe veränderbar; seine Buttons bleiben dabei unverändert 100 × 25 Pixel groß und sind mit 10 Pixel Abstand am rechten Rand untereinander angeordnet.
 
 Links neben den Aktionsbuttons enthält das Werkzeugfenster ausschließlich im Simulationsmodus eine `Win32Form::CommandLine`. Sie nutzt die verfügbare Breite und Höhe mit Abstand zum Fensterrand und zu den Buttons und wird bei Größenänderungen angepasst. Simulationsmeldungen werden dort als Historienzeilen ausgegeben. Die Historie behält entsprechend der Komponente nur die sichtbare Zeilenanzahl; ältere Zeilen entfallen. Reset löscht die Historie nicht. Das Eingabefeld ist vorhanden; eine Auswertung eingegebener Befehle ist noch nicht implementiert.
+
+### Lupenausschnitte
+
+Ausschließlich in der Simulation rufen F1 bis F8 die acht projektbezogenen
+Ausschnitte auf; Shift+F1 bis Shift+F8 speichern Position und Zoom dauerhaft.
+ToolForm bietet F1–F8-Buttons, die mit Shift+Klick auch speichern. Die Tastenkürzel
+gelten mit Fokus in beiden Fenstern einschließlich ihrer Kindcontrols. Bei
+deaktivierter Simulation oder in anderen Modi greifen sie nicht. Kleine ToolForms
+blenden die Ausschnittbuttons bei Platzmangel aus; die Tastatur bleibt nutzbar.
+Details stehen in [LUPENAUSSCHNITTE.md](../LUPENAUSSCHNITTE.md).
 
 ### Fahrstraßenauswahl
 

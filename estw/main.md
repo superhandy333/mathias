@@ -15,6 +15,7 @@ Privates Stellwerkssystem zum Steuern von Modelleisenbahnen.
 [Fahrstrassen-Editmodus](doku/fahrstrasseneditmodus.md)  
 [Lademechanismus Daten](doku/lademechanismus_daten.md)  
 [Lupenform](doku/lupeform.md)  
+[Lupenausschnitte](doku/LUPENAUSSCHNITTE.md)<br>
 [Mainform](doku/mainform.md)  
 [Rangierstrasse](doku/rangierstrasse.md)  
 [Rules IsValid ESTWData](doku/rules_isvalid_estwdata.md)  

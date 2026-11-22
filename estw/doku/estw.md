@@ -35,6 +35,9 @@ Felder (`struct Projekt`, `structs.h`):
 - `Id` – eindeutiger Schlüssel, wird von `Element.ProjektId` und `Fahrstrasse.ProjektId` referenziert.
 - `Bezeichnung` – Name des Projekts (Pflichtfeld).
 - `Beschreibung` – optionaler erläuternder Text.
+- `ausschnitte` – acht dauerhaft gespeicherte Lupenausschnitte mit X/Y/Zoom;
+  Persistenzfelder `x1/y1/zoom1` bis `x8/y8/zoom8`, Standard je Platz `0/0/1`.
+  Bedienung und Migration: [LUPENAUSSCHNITTE.md](../LUPENAUSSCHNITTE.md).
 
 Beziehungen: Ein Projekt besitzt 0..n `Element` und 0..n `Fahrstrasse`. Die Zusammenfassung aller zu einem Projekt gehörenden Daten erfolgt im abgeleiteten Typ `FullProjekt` (siehe 2.7).
 
@@ -175,6 +178,10 @@ Verwendungszweck: `EstwData` ist der zentrale In-Memory-Datenbestand, mit dem `M
 - `DataSource` – Enum mit den Werten `LocalCsv`, `MariaDB`, `Test` und `Mrdb`.
 - `Connection` (`ConnectionData`) – Zugangsdaten für MariaDB (Host, Port, Database, User, Password).
 - `LocalCsv` (`LocalCsvData`) – Pfad zu lokalen CSV-Dateien.
+- `mqtt` (`MqttSettings`) – rechnerbezogene MQTT-Bindung: alle IPv4-Adressen
+  (Vorgabe), Loopback oder eine bestimmte lokale IPv4-Adresse. Unabhängig von
+  Projekt und DataSource; Einzelheiten und spätere Empfangsanforderungen in
+  [MQTT.md](../MQTT.md).
 
 Fachliche Bedeutung: Steuert zur Laufzeit, ob Daten aus CSV-Dateien, aus MariaDB, aus mrdb oder aus fest hinterlegten Testdaten stammen (`generate_estw_data` in `aktionen.cpp`). Die Einstellung wird über das `ConfigForm` bearbeitet und im Key-Value-Store persistiert (`main.cpp`, [lademechanismus_daten.md](lademechanismus_daten.md)). Schreibender Zugriff im Editmodus ist für `DataSource::MariaDB` und `DataSource::Mrdb` möglich (`main.cpp`, `elementpersistence.h`); CSV- und Testdaten bleiben schreibgeschützt.
 

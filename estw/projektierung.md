@@ -29,6 +29,29 @@ Dokumentation des Projektierungsprozesses mit dem Programmsystem `estw` mit Fest
 |id|Eindeutige Identifikationsnummer des Projektes. Diese ID wird in den Tabellen [Elemente](#elemente) und [Fahrstrassen](#fahrstrassen) referenziert.|x|
 |bezeichnung|Name des Projektes (max. 50 Zeichen)|x|
 |beschreibung|Erläuternder Text als Beschreibung zum Projektes (max. 254 Zeichen)||
+|x1/y1/zoom1 bis x8/y8/zoom8|Acht dauerhaft gespeicherte Lupenausschnitte je Projekt; X/Y als Ganzzahlen, Zoom als Fließkommazahl. Standard je Platz: 0/0/1.||
+
+| Ausschnitt | X-Feld | Y-Feld | Zoom-Feld |
+| ---------- | ------ | ------ | --------- |
+| 1 | `x1` | `y1` | `zoom1` |
+| 2 | `x2` | `y2` | `zoom2` |
+| 3 | `x3` | `y3` | `zoom3` |
+| 4 | `x4` | `y4` | `zoom4` |
+| 5 | `x5` | `y5` | `zoom5` |
+| 6 | `x6` | `y6` | `zoom6` |
+| 7 | `x7` | `y7` | `zoom7` |
+| 8 | `x8` | `y8` | `zoom8` |
+
+Die Ausschnitte speichern die Darstellungsposition der Lupe in Client-Pixeln und
+den Zoom (0,1 bis 10). In der Simulation rufen F1 bis F8 die Plätze auf;
+Shift+F1 bis Shift+F8 überschreiben jeweils den gewählten Platz. Die Buttons im
+ToolForm rufen dieselben Ausschnitte auf; Shift+Klick speichert. Die Werte bleiben
+beim Schließen und erneuten Öffnen des Projekts erhalten. Die Tastenkürzel gelten
+auch mit Fokus im ToolForm. Andere Betriebsmodi erhalten keine neue Belegung.
+
+[Persistenz und Bedienung](doku/LUPENAUSSCHNITTE.md),
+[MariaDB-Schema und Migration](create_database.md#bestehende-datenbank-erweitern)
+sowie das [CSV-Exportformat](export.md) beschreiben die technische Zuordnung.
 
 ## Elementtypen
 

@@ -9,6 +9,10 @@ Die folgenden Abschnitte beschreiben die grundlegenden Datenstrukturen, die im S
 |id|Eindeutige Identifikationsnummer des Projektes. Diese ID wird in den Tabellen [Elemente](#elemente) und [Fahrstrassen](#fahrstrassen) referenziert.|x|
 |bezeichnung|Name des Projektes (max. 50 Zeichen)|x|
 |beschreibung|Erläuternder Text als Beschreibung zum Projektes (max. 254 Zeichen)||
+|x1/y1/zoom1 bis x8/y8/zoom8|Acht Lupenausschnitte. X/Y sind ganzzahlige CadForm-Viewpoints, Zoom ist eine Fließkommazahl. Standard je Platz: 0/0/1. Im C++-Modell `Projekt::ausschnitte` als Array mit acht Einträgen.||
+
+Persistenz, Migration und Bedienung sind in [LUPENAUSSCHNITTE.md](../LUPENAUSSCHNITTE.md)
+beschrieben. Ausschnitte werden in allen vier Datenquellen dauerhaft unterstützt.
 
 ## Elementtypen
 

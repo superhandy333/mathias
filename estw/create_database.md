@@ -18,6 +18,30 @@ create table projekte (
 id int not null,
 bezeichnung varchar(50) not null,
 beschreibung varchar(254),
+x1 int not null default 0,
+y1 int not null default 0,
+zoom1 float not null default 1,
+x2 int not null default 0,
+y2 int not null default 0,
+zoom2 float not null default 1,
+x3 int not null default 0,
+y3 int not null default 0,
+zoom3 float not null default 1,
+x4 int not null default 0,
+y4 int not null default 0,
+zoom4 float not null default 1,
+x5 int not null default 0,
+y5 int not null default 0,
+zoom5 float not null default 1,
+x6 int not null default 0,
+y6 int not null default 0,
+zoom6 float not null default 1,
+x7 int not null default 0,
+y7 int not null default 0,
+zoom7 float not null default 1,
+x8 int not null default 0,
+y8 int not null default 0,
+zoom8 float not null default 1,
 primary key (id)
 ) engine=innodb default charset=latin1 row_format=default;
 create unique index index1 on projekte (bezeichnung);
@@ -319,4 +343,47 @@ INSERT INTO `elemente` (`projekt_id`, `typ_id`, `hauptelement_id`, `bezeichnung`
 INSERT INTO `elemente` (`projekt_id`, `typ_id`, `hauptelement_id`, `bezeichnung`, `beschreibung`, `PFZS`, `PR`, `PRS`, `PRZ`, `PSSL`, `PSSR`, `PZ`, `PZS`, `PZZ`, `lupe1x`, `lupe1y`, `rotation`, `mirror`) VALUES (4, 1, NULL, '35G01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, 1, 0, 'N');
 INSERT INTO `elemente` (`projekt_id`, `typ_id`, `hauptelement_id`, `bezeichnung`, `beschreibung`, `PFZS`, `PR`, `PRS`, `PRZ`, `PSSL`, `PSSR`, `PZ`, `PZS`, `PZZ`, `lupe1x`, `lupe1y`, `rotation`, `mirror`) VALUES (4, 3, NULL, '35N1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 1, 0, 'N');
 
+~~~
+
+## Bestehende Datenbank erweitern
+
+Für vorhandene Tabellen `projekte` dieses additive ALTER TABLE in der gewünschten
+estw3-Datenbank ausführen, bevor Ausschnitte gespeichert oder die neue
+[Exportabfrage](export.md) verwendet werden. Das ursprüngliche CREATE-Skript nicht
+erneut ausführen. Bestehende Projekte erhalten acht Ausschnitte mit X/Y/Zoom
+`0/0/1`; vorhandene Werte bleiben erhalten. Die Anwendung führt diese Migration
+nicht automatisch aus.
+
+Die 16 Positionsspalten sind `INT NOT NULL DEFAULT 0`, die acht Zoomspalten
+`FLOAT NOT NULL DEFAULT 1`. Das folgende Skript entspricht
+`estw3/sql/projekte_ausschnitte.sql` und kann wiederholt ausgeführt werden:
+
+~~~sql
+-- In der gewünschten estw3-Datenbank ausführen. Additive, wiederholbare Migration.
+-- Bestehende Projekte erhalten für jeden Ausschnitt (0, 0, 1).
+ALTER TABLE projekte
+    ADD COLUMN IF NOT EXISTS x1 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS y1 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS zoom1 FLOAT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS x2 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS y2 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS zoom2 FLOAT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS x3 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS y3 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS zoom3 FLOAT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS x4 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS y4 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS zoom4 FLOAT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS x5 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS y5 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS zoom5 FLOAT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS x6 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS y6 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS zoom6 FLOAT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS x7 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS y7 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS zoom7 FLOAT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS x8 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS y8 INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS zoom8 FLOAT NOT NULL DEFAULT 1;
 ~~~
